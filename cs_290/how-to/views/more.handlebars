@@ -1,0 +1,50 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1>How to Bootstrap-Sass</h1>
+        <h2>More Customizing Bootstrap</h2>
+        <p> We have made some variables and mixins that we can use many times throughout our styling. But now it is time to start making actual styling classes (or id, or whatever you are styling...) to use them. </p>
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3>Components</h3></div>
+        <div class="panel-body">
+            <p>We will now create a custom thumbnails component that uses not only our mixin we created earlier, but also some predefined Bootstrap mixins. For the sake of this guide we are keeping it simple and will be based off the Bootstrap one. Copy
+                <code>/src/scss/bootstrap/_thumbnails.scss</code> into <code>/src/scss/components/_thumbnails.scss</code> then change the following lines:</p> <pre>// Mixin and adjust the regular image class
+.thumbnail {
+  display: block;
+  padding: $thumbnail-padding;
+  margin-bottom: $line-height-computed;
+  @include transition(border .2s ease-in-out);
+  @include custom-hover($gray-lighter, .9);
+
+  &gt; img,
+  a &gt; img {
+    @include img-responsive;
+    ...</pre>
+            <p>We will now go into our <code>/src/scss/_bootstrap.scss</code> and comment out the following, as we will no longer be using Bootstraps builtin thumbnails file, but instead our own customized one:</p> <pre>@import "bootstrap/thumbnails";</pre>
+            <p>We will also of course need to notify our master css file at <code>/src/scss/style.scss</code> that we want to use our new component instead. Go ahead and add the following line to that file, underneath the import of Bootstrap (which is where
+                all other component imports will go aswell):</p> <pre>@import "components/thumbnails";</pre>
+            <p>This is how it now looks, with each of the thumbnails becoming more opaque when hovered over, aswell as removing a lot of the features such as a border: </p> <img class="img-responsive" src="/public/images/hero-3.png" alt="" /> </div>
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3>Inheritence</h3></div>
+        <div class="panel-body">
+            <p>The 'A Warm Welcome!' message seems like it needs some love, so let's make the .hero-section that comes with this theme into it's own custom section.</p>
+            <p>The ultimate goal is to keep things very modularized, so we will first create a new scss file just for this section at:</p> <pre>/src/scss/sections/_hero-sections.scss</pre>
+            <p> I like what Bootstrap's .well class has to offer, so we are going to use it in it's entirety by using the <code>@extend</code> directive, aswell as add some additional margin to the top to clear the header (And yes, it will still have all
+                the benefits of the jumbotron as we have not removed that class). Add the following to that file: </p> <pre>.hero-spacer {
+  @extend .well;
+  margin-top: $navbar-height + 15px;
+}</pre>
+            <p> Note that in Sass it is also possible to do math, such as the addition taking place here. This is extremely useful in certain cases, so you should find out more at <a href="https://www.sitepoint.com/sass-basics-operators/">https://www.sitepoint.com/sass-basics-operators/</a>.
+                <p> </p>Alright, let's go ahead and add it to our master stylesheet at <code>/src/scss/style.scss</code> were all our sections will go, under everything else: </p> <pre>@import "sections/hero-section";</pre>
+            <p>And here is our final customized Bootstrap after including our new section: </p> <img class="img-responsive" src="/public/images/hero-2.png" alt="" /> </div>
+    </div>
+</div>
+<div class="row">
+    <h3>Unfortunately this is where we parts ways. I hope this guide has enabled you with a environment and some knowledge to get you started on your Sassy Bootstrappy ways. Best of luck on your endevors!</h3> </div>

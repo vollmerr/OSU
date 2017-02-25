@@ -1,0 +1,49 @@
+<div class="container">
+    <h1>Add new entry</h1>
+    <form id="entry-add">
+        <label for="">Name</label><input type="text" class="entry-add-input" name="name" value="">
+        <label for="">Reps</label><input type="number" class="entry-add-input" name="reps" value="">
+        <label for="">Weight</label><input type="number" class="entry-add-input" name="weight" value="">
+        <label for="">Date</label><input type="date" class="entry-add-input" name="date" value="">
+        <label for="">Lbs</label><input type="checkbox" class="entry-add-input" name="lbs" value="">
+        <input type="submit" name="" value="Add">
+    </form>
+    <table id="entry-table">
+        <thead>
+            <tr>
+                <td>Name</td>
+                <td>Reps</td>
+                <td>Weight</td>
+                <td>Date</td>
+                <td>Lbs</td>
+            </tr>
+        </thead>
+        <tbody id="entry-table-data">
+            {{#each results}}
+                <tr>
+                    <td>{{name}}</td>
+                    <td>{{reps}}</td>
+                    <td>{{weight}}</td>
+                    <td>{{date}}</td>
+                    <td>{{lbs}}</td>
+                    <td data-id="{{id}}">
+                        <input type="button" class="entry-edit" name="" value="Edit">
+                        <input type="button" class="entry-delete" name="" value="Delete">
+                    </td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <form id="entry-edit-form" class="hidden">
+        <input type="hidden" class="entry-edit-input" name="id" value="">
+        <label for="">Name</label><input type="text" class="entry-edit-input" name="name" value="">
+        <label for="">Reps</label><input type="number" class="entry-edit-input" name="reps" value="">
+        <label for="">Weight</label><input type="number" class="entry-edit-input" name="weight" value="">
+        <label for="">Date</label><input type="date" class="entry-edit-input" name="date" value="">
+        <label for="">Lbs</label><input type="checkbox" class="entry-edit-input" name="lbs" value="">
+        <input type="submit" name="" value="Save">
+    </form>
+</div>
+<script src="/public/js/entryDelete.js"></script>
+<script src="/public/js/entryEdit.js"></script>
+<script src="/public/js/entryAdd.js"></script>

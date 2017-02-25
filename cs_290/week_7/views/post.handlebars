@@ -1,0 +1,14 @@
+<h1>You sent the following data in a POST request:</h1>
+<h2>URL String Query:</h2>
+<ul>
+  {{#each query}}
+    <li>{{this.key}}: {{this.value}}</li>
+  {{/each}}
+</ul>
+
+<h2>Request Body:</h2>
+<ul>
+  {{#each body}}
+    <li>{{this.key}}: {{this.value}}</li>
+  {{/each}}
+</ul>

@@ -1,0 +1,133 @@
+#!/bin/bash
+#########################################################################
+# Author:	Ryan Vollmer
+# Date: 	01/27/2016
+# Purpose:	Displays average and median of given input
+# Input:	Tab delimined file or input with rows and columns
+# Usage:	./stats {-r*|-c*} [file]
+#	-r* 	specifies to compute and display rows of given input
+#	-c*	specifies to compute and display columns of given input
+#	file	[optional] tab deliminated file with rows and columns
+#########################################################################
+
+#------------------------------------------------------------------------
+# sums then prints average of given array
+# @param {array} nums	$1	- numbers to sum and get average of
+# @param {string} -n	$2	- [optional] param to print in single line
+# @param {string} '\t'	$3	- [optional] param to add tabs between results
+# @return {echo}		- prints average of array
+#------------------------------------------------------------------------
+get_avg() {
+  nums=$1
+  sum=0
+  for k in ${nums[@]}; do
+   (( sum+=k ))
+  done
+  echo $2 $(((sum + ${#nums[@]} / 2) / ${#nums[@]})) $3	# print average
+}
+
+#------------------------------------------------------------------------
+# sorts then prints median of given array
+# @param {array} nums	$1	- numbers to sort and get median of
+# @param {string} -n	$2	- [optional] param to print in single line
+# @param {string} '\t'	$3	- [optional] param to add tabs between results
+# @return {echo}		- prints median of sorted array
+#------------------------------------------------------------------------
+get_med() {
+  nums=$1
+  sortedNums=( $( for k in ${nums[@]}; do echo $k; done | sort -n ) ) # sort array
+  echo $2 ${sortedNums[$((${#sortedNums[@]} / 2))]} $3 # print median
+}
+
+#------------------------------------------------------------------------
+# displays average and median of tab delim rows
+# @param {file} 	$1	- tab delim file to input from
+# @return {echo}		- prints tab seperated average and median of rows
+#------------------------------------------------------------------------
+print_rows() {
+  nums=()
+  echo -e "Average\tMedian"
+  while IFS=$'\t' read -a row; do  	# go through all lines of tmp file
+      for i in ${row[@]}; do
+        nums+=($i)
+      done
+    echo -e $(get_avg $nums) '\t' $(get_med $nums) # print rows avg and median
+    nums=()
+  done < $1
+}
+
+#------------------------------------------------------------------------
+# displays average and median of tab delim rows
+# @param {file} 	$1	- tab delim file to input from
+# @return {echo}		- prints tab seperated average and median of rows
+#------------------------------------------------------------------------
+print_cols() {
+  nums=()
+  field=1				# current column
+  len=$( head -1 $1 | tr '\t' '\n' | wc -l ) # number of columns
+  echo "Average"
+  for (( i=1; i<=$len; i+=1 )); do
+    col=( $(cut -f $i $1) )		# get column
+    for j in ${col[@]}; do
+      nums+=($j)
+    done
+    get_avg $nums -ne '\t'		# print average
+    nums=()
+  done
+  echo 
+  echo "Median"
+  for (( i=1; i<=$len; i+=1 )); do
+    col=( $(cut -f $i $1) )		# get column
+    for j in ${col[@]}; do
+      nums+=($j)
+    done
+    get_med $nums -ne '\t'		# print median
+    nums=()
+  done
+  echo
+}
+
+#########################################################################
+# Entry point - performs correct actions based off arguments provided
+# @param {string} {-r.*|-c.*}	$1	- row or columns selected
+# @param {file} $tmp		$2	- [optional] tab delim file to input from
+# @return {number} exit			- exit status, error ? 1 : 0
+#########################################################################
+usage="./stats {-rows|-cols} [file]"
+tmp="tmp_$$"
+trap "rm -f $tmp; exit 1" INT HUP TERM
+if [[ $1 =~ -[rc].* ]]; then 		# first arg valid
+ case $# in
+    1) 					# input from cli
+      cat > $tmp
+      if [[ $1 =~ -r.* ]]; then			# row
+        print_rows $tmp
+      else					# col
+        print_cols $tmp
+      fi
+      ;;
+    2) 					# input from file
+      if [ -r $2 ]; then			# file read access
+        tmp=$2;
+        if [[ $1 =~ -r.* ]]; then			# row
+          print_rows $tmp
+        else      					# col
+          print_cols $tmp 
+        fi
+      else					# cannot read file
+        echo "./stats: cannot read $2">&2	
+        exit 1
+      fi
+      ;;
+    *) 					# too few or too many args
+      echo $usage>&2
+      exit 1
+      ;;
+  esac
+else 					# not valid row or col arg
+  echo $usage>&2
+  exit 1
+fi
+
+[ $# = 1 ] && rm -f $tmp		# if tmp file created, remove it
+exit 0

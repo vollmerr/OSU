@@ -1,0 +1,95 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1>How to Bootstrap-Sass</h1>
+        <h2>Setting Up</h2>
+        <p>This section will cover how to setup our Node environment for using Bootstrap with Sass. It assumes only a very basic knowledge of Node to follow. If you feel like you are not understanding something then you should check out a tutorial on it
+            such as <a href="http://blog.modulus.io/absolute-beginners-guide-to-nodejs">http://blog.modulus.io/absolute-beginners-guide-to-nodejs</a>.</p>
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3>Dependencies</h3></div>
+        <div class="panel-body">
+            <p>We will start out a new project with the primary values:</p> <pre>npm init -y</pre>
+            <p>In our newly created package.json we will add the following dependencies:</p> <pre>"devDependencies": {
+    "bootstrap-sass": "^3.3.7",
+    "node-sass": "^3.12.2"
+}</pre>
+            <dl> <dt>bootstrap-sass</dt>
+                <dd>These will be our Bootstrap files that have a .scss extension. We will be building on top of these files, to allow us to still use the functionality of Bootstrap without having to reinvent the wheel. If we just get Bootstrap (instead of
+                    bootstrap-sass) we will not be able to make modifications, as plain CSS does not allow the funcationality of Sass.</dd>
+            </dl>
+            <dl> <dt>node-sass</dt>
+                <dd>We will be using this for compiling our Sass files into a single plain CSS file.</dd>
+            </dl>
+            <p>We will then of course need to install those dependencies:</p> <pre>npm install</pre> </div>
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3>Folder Structure</h3></div>
+        <div class="panel-body">
+            <p>We will only be creating a base structure for the files used in this guide. You will, for example, eventually be wanting a js folder, etc. Our final file structure will look like the following:</p> <pre>root/
+- public/
+    - css/
+        - style.css
+- src/
+    - scss/
+        - bootstrap/
+        - components/
+            - _tables.scss
+            - ...
+        - sections/
+            - _header.scss
+            - ...
+        - library/
+            - _variables.scss
+            - _mixins.scss
+        - _bootstrap.scss
+        - style.scss
+- package.json
+- index.html
+</pre>
+            <p>Alright, time to break this down a litte...</p>
+            <dl> <dt>/public/css/style.css</dt>
+                <dd>This is the final single file that is created after compiling all our Sass. For a production build you will of course want it to be minified. This is the only file you will be referencing on your pages for styling.</dd>
+            </dl>
+            <dl> <dt>/src/scss/bootstrap/</dt>
+                <dd>These are the bootstrap-sass files that we downloaded (see next section for migrating these). Each file is designated for a specfic functionality and named according to its purpose, such as how to style labels being held in _labels.scss.
+                    We will be refering to these files as Bootstrap components. There is also a mixins folder, that holds various mixins (more on this later) that are also named according to their functionality, such as again labels being named _labels.scss.
+                </dd>
+            </dl>
+            <dl> <dt>/src/scss/components/</dt>
+                <dd>This folder stores replacements or extensions of Bootsrap components. For example to style our tables we would add in _tables.scss. We will then import this instead of (or in addition to) our Bootstrap component, which can be found in
+                    <code>/src/scss/bootstrap/</code>.</dd>
+            </dl>
+            <dl> <dt>/src/scss/sections/</dt>
+                <dd>These files do not correspond a one-to-one relationship with the Bootstrap components, and are instead custom sections. For example headers and footers would go into this folder.</dd>
+            </dl>
+            <dl> <dt>/src/scss/_bootstrap.scss</dt>
+                <dd>This file was also included in our bootstrap-sass package (see next section move migrating these). We will be commenting/uncommenting alot in this file, so we have it outside of the bootstrap folder.</dd>
+            </dl>
+            <dl> <dt>/src/scss/styles.scss</dt>
+                <dd>This file will be our master scss file, the one that imports all other files needed and is eventually converted into CSS. In fact importing other files will be all that is happening in this file, there will be no declaring variables, creating
+                    mixins, or styling. Note that it does not have an underscore like all other files in this directory.</dd>
+            </dl>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3>Moving Bootstrap-Sass</h3></div>
+        <div class="panel-body">
+            <p>We have installed our bootstrap-sass, however we will be refering to and altering some of these pages often throughout development. Therefore, we will be moving the ones we need to the accessible location as indicated in the file structure
+                above. </p>
+            <p>In <code>/node_modules/bootstrap-sass/assets/</code> you will find all the Bootstrap files we need. We will only be moving the stylesheets for this guide (in the stylesheets folder), as we do not care about javascript functionality and will
+                not be using glyphicons.</p>
+            <p>First, we will be moving the file named <code>/node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss</code> to <code>/src/scss/_bootstrap.scss</code>.</p>
+            <p>Then we will move the entire <code>/node_modules/bootstrap-sass/assets/stylesheets/bootstrap/</code> folder to <code>/src/scss/bootstrap/</code>.</p>
+        </div>
+    </div>
+</div>
+<div class="row"> <a href="/sass" class="btn btn-primary">Let's start making some changes!</a> </div>

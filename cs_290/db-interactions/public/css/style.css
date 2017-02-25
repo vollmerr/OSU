@@ -1,0 +1,27 @@
+.container {
+  width:600px;
+  margin: auto;
+  margin-top: 20px;
+}
+
+table {
+  width:100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+table td {
+  padding: 5px;
+  border: 1px solid #ddd;
+}
+
+form {
+  background: #eee;
+  border: 1px solid #ddd;
+}
+input, label, table {
+    float: left;
+    clear: both;
+}
+.hidden {
+    display: none;
+}

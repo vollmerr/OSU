@@ -1,0 +1,60 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1>How to Bootstrap-Sass</h1>
+        <h2>Using Sass</h2>
+        <p>Now that we have our files where we want them we can start writing some Sass!</p>
+        <p>
+            Wait... No... I'm sorry, not quite there yet...
+        </p>
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3>Compiling</h3></div>
+        <div class="panel-body">
+            <p>Before we can actually write any Sass, we need to know how to turn it in to something useful.</p>
+            <p>We will be using node-sass to accomplish this. Open up your package.json file and replace the default test script with the following:</p> <pre>"scripts": {
+    "build": "node-sass src/scss/_bootstrap.scss public/css/style.css"
+}</pre>
+            <p>We will now run:</p> <pre>npm run build</pre>
+            <p> Now, if you open up your <code>public/css/style.css</code> file, you will see the same default Bootstrap CSS file that you would download or get from a CDN. However, we don't want the boring default Bootstrap, that has a bunch of unused CSS
+                in it. So, go ahead and change your build script to point to our master custom styling file:</p> <pre>"build": "node-sass -w src/scss/style.scss public/css/style.css"</pre>
+            <p>The -w allows us to get our code automatically recompiled each time we save changes, which saves a lot of time and effort.</p>
+            <p>
+                This is by no means a production command we will be wanting to use, just for testing. For help with getting a better compiling process check out the node-sass npm documentation at <a href="https://www.npmjs.com/package/node-sass">https://www.npmjs.com/package/node-sass</a>.
+            </p>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3>Importing</h3></div>
+        <div class="panel-body">
+            <p>Almost to actually doing something with this Sass stuff, I swear...</p>
+            <p> First, need to drastically reduce how much unused Bootstrap is being used. To do this we wil open up our main Bootstrap file, located at <code>/src/scss/_bootstrap.scss</code>. We are going to start nice and fresh, by commenting out each and
+                every line, except the core variables/mixins and reset/dependencies as seen below. We will be uncommenting lines as they come into use. This will allow only the nessecary files to be imported, saving space in our final CSS file.</p> <img
+                src="/public/images/setup-1.png" alt="" />
+            <p>Now it's time to start using our own code, so open up <code>/src/scss/style.scss</code> and add the following line:</p> <pre>@import "bootstrap";</pre>
+            <p> This will be the only line needed to add Bootstrap to your master styling sheet. In fact, as mentioned earlier, the only thing that will reside in this file is imports. So, as you may have guessed, any other imports will be to our custom files
+                that we will be creating.</p>
+            <p>Another important point is that there is no underscore needed as the boostrap file has. It is built in that files with an underscore are meant to be files that are not compiled to CSS, so for ease of use we don't need to add it. The same holds
+                true for the .scss file extension, as it is assumed you are using that extension when working with Sass.</p>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3>The Order of Things</h3></div>
+        <div class="panel-body">
+            <p>The order in which you import your files in your main <code>/src/scss/style.scss</code> file is very important. Throughout development you will be adding numerous different files to be imported, so you should keep track of what goes where.</p>
+            <p>Your custom variables and mixins will need to be imported first. Bootstrap will override the values if you place them after it. Any files that will be using these variables, mixins, or anything Bootstrap realted (so everything?) will go after
+                the Boostrap import. The last thing in your file should be the sections, as they could rely on any of the above.</p>
+            <p>We will be adding them as we go, but your final <code>/src/scss/style.scss</code> file should look something like this: </p>
+            <img class="img-responsive" src="/public/images/styles.png" alt="" />
+        </div>
+    </div>
+</div>
+<div class="row"> <a href="/custom" class="btn btn-primary">Now we can finally make some changes!</a> </div>

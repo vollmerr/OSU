@@ -1,0 +1,21 @@
+{
+  "name": "database-interactions-ui",
+  "version": "1.0.0",
+  "description": "database backed site using ajax",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "forever": "./node_modules/forever/bin/forever start app.js 8084"
+   },
+  "author": "Ryan Vollmer",
+  "license": "ISC",
+  "dependencies": {
+"forever":"*",	
+    "body-parser": "^1.13.3",
+    "express": "^4.13.2",
+    "express-handlebars": "^2.0.1",
+    "express-session": "^1.11.3",
+    "mysql": "^2.8.0",
+    "request": "^2.65.0"
+  }
+}

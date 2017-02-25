@@ -1,0 +1,83 @@
+<div class="row">
+    <div class="col-lg-12">
+        <h1>How to Bootstrap-Sass</h1>
+        <h2>Customizing Bootstrap</h2>
+        <p>Whew, now that we have all that out of the way we can actually start making some changes to our styling!</p>
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3>We Need Something to Change!</h3></div>
+        <div class="panel-body">
+            <p>This guide is not about how to make layouts with Bootstrap, so we are going to grab the prebuilt Heroic Features template from <a href="https://startbootstrap.com/template-overviews/heroic-features/">https://startbootstrap.com/template-overviews/heroic-features/</a>.
+                We will remove the Bootstrap and JQuery script references located at the bottom (since this isnt about using that), then change it so the only stylesheet link is to our master stylesheet:</p> <pre>&lt;link href="public/css/style.css" rel="stylesheet"&gt;</pre>
+            <p>Remember all those @imports we commented out in our <code>/src/scss/_bootstrap.scss</code> file? Now we are going to go through and uncomment all the ones we need. To do this we will look through the names and match each one up to the classes
+                we are using in our html markup. You should work your way though, uncommenting if something seems like it is in use, and recommenting it out if no change happens. When you give up trying to find all them, here is the complete list we will
+                need uncommented:</p> <pre>// Core variables and mixins
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
+
+// Reset and dependencies
+@import "bootstrap/normalize";
+@import "bootstrap/print";
+
+// Core CSS
+@import "bootstrap/scaffolding";
+@import "bootstrap/type";
+@import "bootstrap/grid";
+@import "bootstrap/forms";
+@import "bootstrap/buttons";
+
+// Components
+@import "bootstrap/navs";
+@import "bootstrap/navbar";
+@import "bootstrap/jumbotron";
+@import "bootstrap/media";
+
+// Utility classes
+@import "bootstrap/utilities";
+@import "bootstrap/responsive-utilities";</pre>
+            <p>This is how our page should look before any changes are made, with just basic Bootstrap:</p> <img class="img-responsive" src="/public/images/hero-0.png" alt="" /> </div>
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3>Variables</h3></div>
+        <div class="panel-body">
+            <p>Probably the quickest and most noticable change we can do is alter the built in variables from Bootstrap.</p>
+            <p>We will be changing the Bootstrap $brand-primary variable found in <code>/src/scss/bootstrap/_variables.scss</code>. It is actually where all Bootstrap variables are set, and you will be opening this file for reference a lot throughout your
+                development. While it is only set in one place, it will be effecting many other variables and components, such as $link-color, $panel-primary-heading-bg, and $component-active-bg. For more information on variables take a look at <a href="https://robots.thoughtbot.com/sass-variables">https://robots.thoughtbot.com/sass-variables</a>.
+                It is important to notice that in the variable we are overwriting in the Boostrap file it has <code>!default</code> after it, meaning it will not overwrite our variable we are creating. This makes it easy in that, we won't have to go through
+                and comment out anything. For more about this see <a href="https://robots.thoughtbot.com/sass-default">https://robots.thoughtbot.com/sass-default</a>.</p>
+            <p>We will make a new file in our library section at <code>/src/scss/sections/_variables.scss</code>, which will house all our variables, be it for Bootstrap or not. Add the following line to change a Bootstrap variable:</p> <pre>$brand-primary:   #a86420;</pre>
+            <p>We will also need to notify our master css file at <code>/src/scss/style.scss</code> that we want to use our new variable. Go ahead and add the following line to that file above Bootstrap. This import will always be the first in our file,
+                and will only need to be done the one time (as all our variables will be contained in this file): </p><pre>@import "variables/variables";</pre>
+            <p>Our page will now look like this:</p> <img class="img-responsive" src="/public/images/hero-1.png" alt="" /> </div>
+    </div>
+</div>
+<div class="row">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3>Mixins</h3></div>
+        <div class="panel-body">
+            <p>We are going to make our very own mixin (which is similar to a function in programming languages), so that we can use it as many times as we want throughout our code. It will make the item it is used on transparent, and less so when it is
+                hovered over. To do this we will also be utilizing Bootstrap's opacity mixin found at <code>/src/scss/bootstrap/mixins/_opacity.scss</code> by using the <code>@include</code> directive. It would be beneficial to look thorugh the mixins
+                folder to see what mixins come with Bootstrap, as using them can save a lot of time and effort, and provide a large amount of cross-browser support for common CSS issues.</p>
+            <p>In a new file at <code>/src/scss/library/_mixins.scss</code> (which any future mixins will also go in) add the following code:</p> <pre>@mixin custom-hover($bg: #333, $op: 1) {
+  @include opacity($op / 2);
+  &:hover {
+    background: $bg;
+    @include opacity($op);
+  }
+}</pre>
+            <p>We use the <code>&amp;</code> for styling pseudo classes, such as hover, active, or visited. For more on mixins, including passing parameters, using @include, and more see <a href="https://www.sitepoint.com/sass-basics-the-mixin-directive/">https://www.sitepoint.com/sass-basics-the-mixin-directive/</a>.
+            </p>
+            <p>We will also need to import this mixin to our master css file at <code>/src/scss/style.scss</code>. Like our variables we will only need this single line (as all our mixins will be in this one file). Add the following line to that file, above
+                the import of Bootstrap and underneath your variables import: </p><pre>@import "library/mixins";</pre>
+            <p> Don't worry, we will see this mixin in action soon enough... </p>
+        </div>
+    </div>
+</div>
+<div class="row"> <a href="/more" class="btn btn-primary">Let's put that Mixin to use.</a> </div>

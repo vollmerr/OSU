@@ -1,0 +1,19 @@
+{
+  "name": "how-to-bootstrap-sass",
+  "version": "1.0.0",
+  "description": "Guide to using Bootstrap with Sass in node.js",
+  "main": "how-to-sass.js",
+  "scripts": {
+    "start": "node how-to-sass.js",
+    "forever": "./node_modules/forever/bin/forever start how-to-sass.js 8081"
+  },
+  "author": "OSU",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.13.3",
+    "express": "^4.13.2",
+    "express-handlebars": "^2.0.1",
+    "express-session": "^1.11.3",
+    "forever": "^0.15.3"
+  }
+}

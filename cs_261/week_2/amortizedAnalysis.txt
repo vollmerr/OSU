@@ -1,0 +1,18 @@
+Ryan Vollmer - Assignment 2 - CS 261
+
+1.	32 + 8 + 16 = 56 cost units
+
+	O(1)+
+
+2.	32 + 8 + 10 + 12 + 14 + 16 + 18 +
+	20 + 22 + 24 + 26 + 28 + 30 = 260 cost units
+
+	O(n)
+
+3.	push() N/2 times (array doubles)
+	pop()	(array halfs)
+	push()	(array doubles)
+	pop()	(array halfs)
+	push()	(array doubles)
+	
+	I would change the shirinking policy to be if the array is 1/4 full or less.
