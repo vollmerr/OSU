@@ -12,10 +12,17 @@ int main() {
   char buffer[MAX_CHARS];
   char *save_ptr, *token;
   int fg, done = 0;
-  int child_status = 0;
-  struct sigaction sa_SIGINT = {{0}};
+  // // init global flags
+  // g_status_type = 0;
+  // g_status_signo = 0;
+  // g_fg_only = 0;
+  g_status_check = 0;
+  // init sig handlers
+  struct sigaction sa_SIGINT = {{0}}, sa_SIGTSTP = {{0}};
   sigfillset(&sa_SIGINT.sa_mask);
-
+  sigfillset(&sa_SIGTSTP.sa_mask);
+  sa_SIGTSTP.sa_handler = handle_SIGTSTP;
+  sigaction(SIGTSTP, &sa_SIGTSTP, NULL);  // (ctrl-z)
   // do while exit not entered
   do {
     // reset sig handlers to ignore
@@ -46,11 +53,11 @@ int main() {
       }
       // builtin cmd to view status of last cmd
       else if (!strcmp(token, CMD_STATUS)) {
-        cmd_status(child_status);
+        cmd_status();
       }
       // other non-builitn cmd, run using exec
       else {
-        cmd_other(token, &save_ptr, fg, &child_status);
+        cmd_other(token, &save_ptr, fg);
       }
     }
     fflush(stdout);

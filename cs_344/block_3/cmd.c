@@ -39,18 +39,18 @@ void cmd_cd(char *token, char **save_ptr) {
  *  prints exit or termination status of last foreground process
  *  @param {int} child_status     - exit status of child process
  */
-void cmd_status(int child_status) {
-  int signo;
+void cmd_status() {
   char buffer[MAX_LEN];
-  if (WIFSIGNALED(child_status)) {
-    signo = WTERMSIG(child_status);
+  // global status set to termination
+  if (g_status_type) {
     write(STDOUT_FILENO, "terminated by signal ", 21);
   }
-  if (WIFEXITED(child_status)) {
-    signo = WEXITSTATUS(child_status);
+  // global status set to normal exit
+  else {
     write(STDOUT_FILENO, "exit value ", 11);
   }
-  write(STDOUT_FILENO, itoa((long)signo, buffer, 10), num_len((long)signo));
+  // print term signal based off global status
+  write(STDOUT_FILENO, itoa((long)g_status_signo, buffer, 10), num_len((long)g_status_signo));
   write(STDOUT_FILENO, "\n", 1);
 }
 
@@ -58,38 +58,47 @@ void cmd_status(int child_status) {
  *  Runs any non built in commands via execlp
  *  @param  {char*}  token        - token already parsed once
  *  @param  {char**} save_ptr     - pointer for strtok_r internals
- *  @param  {int}    fg           - determines if proccess ran in foreground
- *  @param {int*}    child_status - status of child process return
- *  @return {int}    child_status - exit value of last fg process         -
+ *  @param  {int}    fg           - determines if proccess ran in foreground    -
  */
-void cmd_other(char *token, char **save_ptr, int fg, int* child_status) {
+void cmd_other(char *token, char **save_ptr, int fg) {
   pid_t child = -5;
+  int child_status;
   char buffer[MAX_LEN];
-  struct sigaction sa_SIGINT = {{0}};
+  struct sigaction sa_SIGINT = {{0}}, sa_SIGTSTP = {{0}};
   // init sig handlers
   sigfillset(&sa_SIGINT.sa_mask);
-  sa_SIGINT.sa_flags = 0;
+  // create new child process
   child = fork();
-  // sperate into err / child / parent
   switch(child) {
   case -1:
-    perror("Failed to create new proccess.\n");
-    exit(EXIT_FAILURE);
+    perror(NULL);
+    exit(errno);
     break;
   case 0:
+    // child
     // init signal handlers for fg processes
-    sa_SIGINT.sa_handler = fg ? SIG_DFL : SIG_IGN;
+    sa_SIGINT.sa_handler = (fg || g_fg_only) ? SIG_DFL : SIG_IGN;
     sigaction(SIGINT, &sa_SIGINT, NULL);  // (ctrl-c)
+    sa_SIGTSTP.sa_handler = SIG_IGN;
+    sigfillset(&sa_SIGTSTP.sa_mask);
+    sigaction(SIGTSTP, &sa_SIGTSTP, NULL);  // (ctrl-c)
     // run command
-    child_new(token, save_ptr);
+    child_new(token, save_ptr, fg);
     break;
   default:
-    if (fg) {
+    // parent
+    // if no & or global fg only mode set
+    if (fg || g_fg_only) {
       // init sig handlers to not ignore
       sa_SIGINT.sa_handler = handle_SIGINT;
       sigaction(SIGINT, &sa_SIGINT, NULL);  // (ctrl-c)
       // wait for child fg child processes
-      waitpid(child, child_status, 0);
+      waitpid(child, &child_status, 0);
+      // set global status if exit successful
+      if (WIFEXITED(child_status)) {
+        g_status_type = STATUS_EXIT;
+        g_status_signo = WEXITSTATUS(child_status);
+      }
     }
     // run child in background
     else {
