@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <ctype.h>
 #include <errno.h>
 
 #define CMD_EXIT    "exit"
@@ -37,18 +38,20 @@ void handle_SIGINT (int signo);
 void handle_SIGTSTP (int signo);
 
 // utility functions
+void  print_err   ();
 char* itoa        (int value, char *result, int base);
 int   num_len     (unsigned i);
-void  expand_pids (char *str);
+void  expand_pids (char *str, int parent);
 
 // commands
 int   cmd_exit     ();
 void  cmd_cd       (char *token, char **save_ptr);
 void  cmd_status   ();
-void  cmd_other    (char *token, char **save_ptr, int fg);
+void  cmd_other    (char *token, char **save_ptr, int bg);
 
 // child process functons
+int   child_bg     (char* cmd);
 void  child_check  ();
-void  child_new    (char *token, char **save_ptr, int fg);
+void  child_new    (char *token, char **save_ptr, int bg);
 
 #endif /* / __SM_SH */

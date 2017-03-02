@@ -13,7 +13,7 @@
  */
 void handle_SIGINT (int signo) {
   char buffer[MAX_LEN];
-  char* message = "terminated by signal ";
+  char* message = "Terminated by signal ";
   // set global status so reaped next cycle
   g_status_check = 1;
   // message term signal

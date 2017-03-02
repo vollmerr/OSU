@@ -9,9 +9,10 @@
 
 /**
  * Builtin command - exit
- * Exits shell, cleans up children processes
+ * Exits shell, terminates children using SIGUSR2
  */
 int cmd_exit() {
+  kill(0, SIGUSR2);
   return 1;
 }
 
@@ -22,15 +23,18 @@ int cmd_exit() {
  *  @param {char**} save_ptr  - pointer for strtok_r internals
  */
 void cmd_cd(char *token, char **save_ptr) {
+  char buffer[MAX_CHARS];
   // get next space delim string
   token = strtok_r(NULL, " \n", save_ptr);
   // if a string, it is path to use
   if (token) {
-    chdir(token);
+    strcpy(buffer, token);
+    expand_pids(buffer, 1);
+    if (chdir(buffer)) print_err();
   }
   // else cd to users home directory
   else {
-    chdir(getenv(ENV_HOME));
+    if (chdir(getenv(ENV_HOME))) print_err();
   }
 }
 
@@ -43,11 +47,11 @@ void cmd_status() {
   char buffer[MAX_LEN];
   // global status set to termination
   if (g_status_type) {
-    write(STDOUT_FILENO, "terminated by signal ", 21);
+    write(STDOUT_FILENO, "Terminated by signal ", 21);
   }
   // global status set to normal exit
   else {
-    write(STDOUT_FILENO, "exit value ", 11);
+    write(STDOUT_FILENO, "Exit value ", 11);
   }
   // print term signal based off global status
   write(STDOUT_FILENO, itoa((long)g_status_signo, buffer, 10), num_len((long)g_status_signo));
@@ -58,37 +62,39 @@ void cmd_status() {
  *  Runs any non built in commands via execlp
  *  @param  {char*}  token        - token already parsed once
  *  @param  {char**} save_ptr     - pointer for strtok_r internals
- *  @param  {int}    fg           - determines if proccess ran in foreground    -
+ *  @param  {int}    bg           - determines if proccess ran in background
  */
-void cmd_other(char *token, char **save_ptr, int fg) {
+void cmd_other(char *token, char **save_ptr, int bg) {
   pid_t child = -5;
   int child_status;
   char buffer[MAX_LEN];
-  struct sigaction sa_SIGINT = {{0}}, sa_SIGTSTP = {{0}};
+  struct sigaction sa_SIGINT = {{0}}, sa_SIGTSTP = {{0}}, sa_SIGUSR2 = {{0}};
   // init sig handlers
   sigfillset(&sa_SIGINT.sa_mask);
   // create new child process
   child = fork();
   switch(child) {
   case -1:
-    perror(NULL);
-    exit(errno);
+    print_err();
     break;
   case 0:
     // child
-    // init signal handlers for fg processes
-    sa_SIGINT.sa_handler = (fg || g_fg_only) ? SIG_DFL : SIG_IGN;
-    sigaction(SIGINT, &sa_SIGINT, NULL);  // (ctrl-c)
-    sa_SIGTSTP.sa_handler = SIG_IGN;
+    // init signal handlers for child processes
     sigfillset(&sa_SIGTSTP.sa_mask);
-    sigaction(SIGTSTP, &sa_SIGTSTP, NULL);  // (ctrl-c)
+    sigfillset(&sa_SIGUSR2.sa_mask);
+    sa_SIGINT.sa_handler = (!bg || g_fg_only) ? SIG_DFL : SIG_IGN;
+    sa_SIGTSTP.sa_handler = SIG_IGN;
+    sa_SIGUSR2.sa_handler = SIG_DFL;
+    sigaction(SIGINT, &sa_SIGINT, NULL);    // (ctrl-c)
+    sigaction(SIGTSTP, &sa_SIGTSTP, NULL);  // (ctrl-z)
+    sigaction(SIGUSR2, &sa_SIGUSR2, NULL);   // exit
     // run command
-    child_new(token, save_ptr, fg);
+    child_new(token, save_ptr, bg);
     break;
   default:
     // parent
     // if no & or global fg only mode set
-    if (fg || g_fg_only) {
+    if (!bg || g_fg_only) {
       // init sig handlers to not ignore
       sa_SIGINT.sa_handler = handle_SIGINT;
       sigaction(SIGINT, &sa_SIGINT, NULL);  // (ctrl-c)
@@ -102,7 +108,7 @@ void cmd_other(char *token, char **save_ptr, int fg) {
     }
     // run child in background
     else {
-      write(STDOUT_FILENO, "background pid is ", 18);
+      write(STDOUT_FILENO, "Background pid is ", 18);
       write(STDOUT_FILENO, itoa((long)child, buffer, 10), num_len((long)child));
       write(STDOUT_FILENO, "\n", 1);
     }

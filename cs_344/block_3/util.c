@@ -8,6 +8,14 @@
 #include "smallsh.h"
 
 /**
+ * Prints error message based off last error and exits with error code
+ */
+void print_err() {
+  perror(NULL);
+  exit(errno);
+}
+
+/**
  * Converts integer to string
  * (Apparently itoa isnt standard...)
  * @param  {int}    value   - number to convert
@@ -51,10 +59,11 @@ int num_len(unsigned i) {
 }
 
 /**
- * Expands any occurances of $$ to the process pid
+ * Expands any occurances of $$ to the parents process pid
  * @param {char*} str     - string to expand variables in
+ * @param {int}   parent  - 1 if process is the parent
  */
-void expand_pids(char *str) {
+void expand_pids(char *str, int parent) {
   char buffer[MAX_CHARS];
   char pid[MAX_LEN];
   char var[] = "$$";
@@ -64,7 +73,7 @@ void expand_pids(char *str) {
   size_t var_len = strlen(var);
   size_t pid_len;
   // set pid as string
-  sprintf(pid, "%ld", (long)getppid());
+  sprintf(pid, "%ld", parent ? (long)getpid() : (long)getppid());
   pid_len = strlen(pid);
   while(1) {
     // find next occurance of variable in string
