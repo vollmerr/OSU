@@ -64,13 +64,13 @@ void cmd_status() {
  *  @param  {char**} save_ptr     - pointer for strtok_r internals
  *  @param  {int}    bg           - determines if proccess ran in background
  */
-void cmd_other(char *token, char **save_ptr, int bg) {
+void cmd_other(char *token, char **save_ptr, int bg, struct sigaction* sa_SIGINT) {
   pid_t child = -5;
   int child_status;
   char buffer[MAX_LEN];
-  struct sigaction sa_SIGINT = {{0}}, sa_SIGTSTP = {{0}}, sa_SIGUSR2 = {{0}};
+  struct sigaction sa_SIGTSTP = {{0}}, sa_SIGUSR2 = {{0}};
   // init sig handlers
-  sigfillset(&sa_SIGINT.sa_mask);
+  // sigfillset(&sa_SIGINT.sa_mask);
   // create new child process
   child = fork();
   switch(child) {
@@ -82,10 +82,10 @@ void cmd_other(char *token, char **save_ptr, int bg) {
     // init signal handlers for child processes
     sigfillset(&sa_SIGTSTP.sa_mask);
     sigfillset(&sa_SIGUSR2.sa_mask);
-    sa_SIGINT.sa_handler = (!bg || g_fg_only) ? SIG_DFL : SIG_IGN;
+    sa_SIGINT->sa_handler = (!bg || g_fg_only) ? SIG_DFL : SIG_IGN;
     sa_SIGTSTP.sa_handler = SIG_IGN;
     sa_SIGUSR2.sa_handler = SIG_DFL;
-    sigaction(SIGINT, &sa_SIGINT, NULL);    // (ctrl-c)
+    sigaction(SIGINT, sa_SIGINT, NULL);    // (ctrl-c)
     sigaction(SIGTSTP, &sa_SIGTSTP, NULL);  // (ctrl-z)
     sigaction(SIGUSR2, &sa_SIGUSR2, NULL);   // exit
     // run command
@@ -96,8 +96,8 @@ void cmd_other(char *token, char **save_ptr, int bg) {
     // if no & or global fg only mode set
     if (!bg || g_fg_only) {
       // init sig handlers to not ignore
-      sa_SIGINT.sa_handler = handle_SIGINT;
-      sigaction(SIGINT, &sa_SIGINT, NULL);  // (ctrl-c)
+      sa_SIGINT->sa_handler = handle_SIGINT;
+      sigaction(SIGINT, sa_SIGINT, NULL);  // (ctrl-c)
       // wait for child fg child processes
       waitpid(child, &child_status, 0);
       // set global status if exit successful

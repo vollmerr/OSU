@@ -47,7 +47,7 @@ void  expand_pids (char *str, int parent);
 int   cmd_exit     ();
 void  cmd_cd       (char *token, char **save_ptr);
 void  cmd_status   ();
-void  cmd_other    (char *token, char **save_ptr, int bg);
+void  cmd_other    (char *token, char **save_ptr, int bg, struct sigaction* sa_SIGINT);
 
 // child process functons
 int   child_bg     (char* cmd);

@@ -1,0 +1,120 @@
+Pre-script Info
+PID: 22122
+:BEGINNING TEST SCRIPT
+:
+:--------------------
+:Using comment (5 points if only next prompt is displayed next)
+::
+:
+:--------------------
+:ls (10 points for returning dir contents)
+:child.c
+cmd.c
+makefile
+mytestresults
+p3testscript
+readme.txt
+sig_handlers.c
+smallsh
+smallsh.c
+smallsh.h
+util.c
+:
+:
+:--------------------
+:ls out junk
+::
+:
+:--------------------
+:cat junk (15 points for correctly returning contents of junk)
+:child.c
+cmd.c
+junk
+makefile
+mytestresults
+p3testscript
+readme.txt
+sig_handlers.c
+smallsh
+smallsh.c
+smallsh.h
+util.c
+:
+:
+:--------------------
+:wc in junk (15 points for returning correct numbers from wc)
+: 12  12 116
+:
+:
+:--------------------
+:wc in junk out junk2; cat junk2 (10 points for returning correct numbers from wc)
+:: 12  12 116
+:
+:
+:--------------------
+:test -f badfile (10 points for returning error value of 1, note extraneous
+::Exit value 1
+:
+:
+:--------------------
+:wc in badfile (10 points for returning text error)
+:No such file or directory
+:
+:
+:--------------------
+:badfile (10 points for returning text error)
+:No such file or directory
+:
+:
+:--------------------
+:sleep 100 background (10 points for returning process ID of sleeper)
+:Background pid is 22173
+:
+:
+:--------------------
+:pkill -signal SIGTERM sleep (10 points for pid of killed process, 10 points for signal)
+:(Ignore message about Operation Not Permitted)
+:pkill: 13666 - Operation not permitted
+pkill: 22095 - Operation not permitted
+Background pid 22173 is done: Terminated by signal 15
+:
+:
+:--------------------
+:sleep 1 background (10 pts for pid of bg ps when done, 10 for exit value)
+:Background pid is 22184
+::
+Background pid 22184 is done: Exit value 0
+:
+:--------------------
+:pwd
+:/nfs/stak/students/v/vollmerr/public_html/cs_344/block_3
+:
+:
+:--------------------
+:cd
+::
+:
+:--------------------
+:pwd (10 points for being in the HOME dir)
+:/nfs/stak/students/v/vollmerr
+:
+:
+:--------------------
+:mkdir testdir22123
+::
+:
+:--------------------
+:cd testdir22123
+::
+:
+:--------------------
+:pwd (5 points for being in the newly created dir)
+:/nfs/stak/students/v/vollmerr/testdir22123
+:--------------------
+:Testing foreground-only mode (20 points for entry & exit text AND ~5 seconds between times)
+:Entering foreground-only mode (& is now ignored)
+:Thu Mar  2 00:48:32 PST 2017
+Background pid 22217 is done: Exit value 0
+::Thu Mar  2 00:48:37 PST 2017
+:Exiting foreground-only mode
+:

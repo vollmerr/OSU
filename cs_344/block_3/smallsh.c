@@ -71,7 +71,7 @@ int main() {
       }
       // other non-builitn cmd, run using exec
       else {
-        cmd_other(token, &save_ptr, bg);
+        cmd_other(token, &save_ptr, bg, &sa_SIGINT);
       }
     }
     fflush(stdout);
