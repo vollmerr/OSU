@@ -35,7 +35,7 @@ otp_enc_d:
 - 5 files (below), 5 plaintext files numbered 1 through 5, grading script, other files of mine in zip.
 
 otp_enc:
-  - connects to otp_enc_d
+  x- connects to otp_enc_d
   - performs one time pad style encryption
   - doesn't do encryption, otp_enc_d does
   - usage: otp_enc plaintext key port
@@ -45,8 +45,8 @@ otp_enc:
     - $ otp_enc myplaintext mykey 57171 > myciphertext &
   - key/text with bad chars or short key -> exit with err, value 1
   - char validation (or in entp_enc_d)
-  - if cannot find port -> print err, exit 2
-  - exit 0 on successful run
+  x- if cannot find port -> print err, exit 2
+  x- exit 0 on successful run
   - should NOT be able to connect to otp_dec_d
     - have programs reject each other
     - report rejection, terminate
@@ -60,12 +60,12 @@ otp_dec:
   - not be able to connect to otp_enc_d, same reject
 
 keygen:
-  - generates a key of specified len
-  - gen any of 27 chars using UNIX randomize methods
-  - Do not create spaces every five characters, as has been historically done.
-  - nothing fancy, rand() is fine
-  - '\n' on end
-  - errs to stderr
-  - usage: keygen keylength
-    - ex: keygen 256 > mykey
-    - 257 long cuz '\n'
+  x- generates a key of specified len
+  x- gen any of 27 chars using UNIX randomize methods
+  x- Do not create spaces every five characters, as has been historically done.
+  x- nothing fancy, rand() is fine
+  x- '\n' on end
+  ?- errs to stderr
+  x- usage: keygen keylength
+    x- ex: keygen 256 > mykey
+    x- 257 long cuz '\n'
