@@ -1,8 +1,8 @@
 #include "headers.h"
 
-void print_error(const char* err, int code) {
-  printf("%s", err);
-  exit(code);
+void print_err(const char *err) {
+  fprintf( stderr, "Error: %s\n", err);
+  exit(errno);
 }
 
 void print_usage(const char* prog, const char* msg) {
@@ -16,13 +16,14 @@ void print_usage(const char* prog, const char* msg) {
  * @return     [description]
  */
 void valid_input(const char* msg) {
-  char* c = msg;
+  int i = 0;
   // check all chars are valid
-  while (*c) {
-    if (!strchr(VALID_CHARS, *c)) {
-      print_error("ERROR: invalid characters", EXIT_FAILURE);
+  while (msg[i]) {
+    if (!strchr(VALID_CHARS, msg[i])) {
+      errno = EXIT_FAILURE;
+      print_err("Invalid characters");
     }
-    c++;
+    i++;
   }
 }
 
@@ -53,15 +54,3 @@ char char_from_i(const int c) {
   }
   return VALID_CHARS[c];
 }
-
-// int valid_length(const char* msg, ) {
-//   char* c;
-//   // check all chars are valid
-//   while (*c) {
-//     if (!strchr(VALID_CHARS, *c)) {
-//       return 0;
-//     }
-//     c++;
-//   }
-//   return 1;
-// }

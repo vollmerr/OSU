@@ -7,21 +7,31 @@
 #include <sys/socket.h>
 #include <fcntl.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <netdb.h>
+#include <sys/time.h>
 #include <time.h>
 #include <errno.h>
 #include <signal.h>
 #include <ctype.h>
+#include <sys/select.h>
 
 #define VALID_CHARS         "ABCDEFGHIJKLMNOPQRSTUVWXYZ "
 #define VALID_CHARS_LENGTH  27
 #define MAX_CONN            5
 #define HOST_NAME           "localhost"
+#define BIG_ENOUGH          100000
 
-#define EXIT_NO_HOST        2
+#define ERR_NO_HOST         2
+#define ERR_SOCKET          3
+#define ERR_CONNECT         4
+#define ERR_SEND            5
+#define ERR_RECV            6
+#define ERR_BIND            7
+
 
 // utilities
-void print_error(const char* err, int code);
+void print_err();
 void print_usage(const char* prog, const char* msg);
 
 void valid_input(const char* msg);
