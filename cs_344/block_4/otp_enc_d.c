@@ -171,13 +171,11 @@ int main(int argc, char *argv[]) {
     errno = ERR_SOCKET;
     print_err("Failed to create socket");
   }
-  // /*
   //set socket to allow multiple connections
   if(setsockopt(socket_listen, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0) {
     errno = ERR_SOCKET;
     print_err("Failed to create socket");
   }
-  // */
   // Set up the address struct for this process (the server)
   memset((char *)&address, '\0', sizeof(address)); // Clear out the address struct
   port = atoi(argv[1]); // Get the port number, convert to an integer from a string

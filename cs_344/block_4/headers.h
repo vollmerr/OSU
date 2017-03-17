@@ -21,6 +21,7 @@
 #define MAX_CONN            5
 #define HOST_NAME           "localhost"
 #define BIG_ENOUGH          100000
+#define SMALL_ENOUGH        64
 #define MAX_LEN             1024
 
 #define ERR_NO_HOST         2
@@ -30,13 +31,23 @@
 #define ERR_RECV            6
 #define ERR_BIND            7
 
+#define ARG_PROG            0
+#define ARG_MSG             1
+#define ARG_KEY             2
+#define ARG_PORT            3
 
 // utilities
-void print_err();
+void print_err(const char *err);
 void print_usage(const char* prog, const char* msg);
-
-void valid_input(const char* msg, const char* name);
-void valid_length(const char* msg, const char* key, const char* name);
 int char_to_i(const char c);
 char char_from_i(const int c);
 char* itoa (int value, char *result, int base);
+
+// client functions
+int client_init(const char* port);
+void client_err(const char *err, int socket_desc);
+void client_file_read(char *file, char *buffer, int socket_desc);
+void client_send(char *buffer, int socket_desc);
+// void client_recv(char *buffer, int socket_desc); // FIXME: dont work...
+void client_valid_input(const char* msg, const char* name, int socket_desc);
+void client_valid_length(const char* msg, const char* key, const char* name, int socket_desc);
