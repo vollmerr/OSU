@@ -191,7 +191,7 @@ int main(int argc, char *argv[]) {
   }
   // Flip the socket on - it can now receive up to 5 connections
   listen(socket_listen, MAX_CONN);
-  printf("LISTENING ON PORT %d", port);
+  // printf("LISTENING ON PORT %d", port);
   // accept connections
   addr_len = sizeof(address); // Get the size of the address for the client that will connect
   // keep server open, getting new connections

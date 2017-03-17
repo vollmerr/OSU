@@ -7,7 +7,7 @@
 #include "headers.h"
 
 const int ARG_PROG  = 0;
-const int ARG_TEXT  = 1;
+const int ARG_MSG  = 1;
 const int ARG_KEY   = 2;
 const int ARG_PORT  = 3;
 
@@ -46,35 +46,19 @@ int client_init(const char* port) {
   return socketFD;
 }
 
-/**
- * Checks if key is too short for msg
- * @param msg [description]
- * @param key [description]
- */
-void valid_length(const char* msg, const char* key) {
-  int msg_len = strlen(msg);
-  int key_len = strlen(key);
-  // compare key to message length
-  if (msg_len > key_len) {
-     errno = EXIT_FAILURE;
-     print_err("Key too short");
-  }
-}
-
-
 int socket_send(int sd, char *buffer, int len) {
-    int end = 0;        // how many bytes we've sent
-    int total = len; // how many we have left to send
-    ssize_t n;
-    while(end < len) {
-        n = send(sd, buffer + end, total, 0);
-        printf("otp_enc: 71: %zd : %s\n", n, buffer + end);
-        if (n == -1) { return -1; }
-        end += n;
-        total -= n;
-    }
-    if (n < len) printf("CLIENT: WARNING: Not all data written to socket!\n");
-    return 0;
+  int end = 0;          // how many bytes we've sent
+  int total = len;   // how many we have left to send
+  ssize_t n;
+  while(end < len) {
+    n = send(sd, buffer + end, total, 0);
+    printf("otp_enc: 71: %zd : %s\n", n, buffer + end);
+    if (n == -1) { return -1; }
+    end += n;
+    total -= n;
+  }
+  if (n < len) printf("CLIENT: WARNING: Not all data written to socket!\n");
+  return 0;
 }
 
 
@@ -94,10 +78,10 @@ int main(int argc, char *argv[]) {
   memset(text, '\0', sizeof(text));
   memset(key, '\0', sizeof(key));
   // read message file
-  fp = fopen(argv[ARG_TEXT], "r");
+  fp = fopen(argv[ARG_MSG], "r");
   if (fp) {
     i = 0; // buffer index
-    while((cur = getc(fp)) != EOF){
+    while((cur = getc(fp)) != EOF) {
       // add all of message to buffer
       text[i] = cur;
       i++;
@@ -107,12 +91,12 @@ int main(int argc, char *argv[]) {
     fclose(fp);
   }
 // printf("MSG FILE OPENED: %s\n", buffer);
-  // read key file
+// read key file
   fp = fopen(argv[ARG_KEY], "r");
   if (fp) {
     i = 0; // buffer index
 // printf("FILED OPENED!\n");
-    while((cur = getc(fp)) != EOF){
+    while((cur = getc(fp)) != EOF) {
 // printf("CURR: i:%d, cur: %c\n", i , cur);
       // add all of message to buffer
       key[i] = cur;
@@ -125,9 +109,9 @@ int main(int argc, char *argv[]) {
 // printf("KEY FILE OPENED: %s\n", buffer);
 
   // validate length and correctness of message/key
-  valid_length(text, key);
-  valid_input(key);
-  valid_input(text);
+  valid_length(text, key, argv[ARG_KEY]);
+  valid_input(key, argv[ARG_KEY]);
+  valid_input(text, argv[ARG_MSG]);
 
   // add message and key
   strcat(buffer, text);
@@ -159,7 +143,7 @@ int main(int argc, char *argv[]) {
 
 
 // printf("CHARS WRITTEN TO SERVER: %d\n", charsWritten);
-  // get return message length from server
+// get return message length from server
   memset(msg_len, '\0', sizeof(msg_len));
   charsRead = recv(socketFD, msg_len, sizeof(msg_len), MSG_WAITALL);
   if (charsRead < 0) {

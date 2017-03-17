@@ -21,6 +21,7 @@
 #define MAX_CONN            5
 #define HOST_NAME           "localhost"
 #define BIG_ENOUGH          100000
+#define MAX_LEN             1024
 
 #define ERR_NO_HOST         2
 #define ERR_SOCKET          3
@@ -34,7 +35,8 @@
 void print_err();
 void print_usage(const char* prog, const char* msg);
 
-void valid_input(const char* msg);
+void valid_input(const char* msg, const char* name);
+void valid_length(const char* msg, const char* key, const char* name);
 int char_to_i(const char c);
 char char_from_i(const int c);
 char* itoa (int value, char *result, int base);

@@ -15,15 +15,32 @@ void print_usage(const char* prog, const char* msg) {
  * @param  msg [description]
  * @return     [description]
  */
-void valid_input(const char* msg) {
+void valid_input(const char* msg, const char* name) {
   int i = 0;
   // check all chars are valid
   while (msg[i]) {
     if (!strchr(VALID_CHARS, msg[i])) {
+      char err[MAX_LEN];
       errno = EXIT_FAILURE;
-      print_err("Invalid characters");
+      sprintf(err, "Invalid characters in '%s'", name);
+      print_err(err);
     }
     i++;
+  }
+}
+
+/**
+ * Checks if key is too short for msg
+ * @param msg [description]
+ * @param key [description]
+ */
+void valid_length(const char* msg, const char* key, const char* name) {
+  // compare key to message length
+  if (strlen(msg) > strlen(key)) {
+    char err[MAX_LEN];
+    errno = EXIT_FAILURE;
+    sprintf(err, "Key '%s' too short", name);
+    print_err(err);
   }
 }
 
