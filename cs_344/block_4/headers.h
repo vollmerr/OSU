@@ -42,12 +42,13 @@ void print_usage(const char* prog, const char* msg);
 int char_to_i(const char c);
 char char_from_i(const int c);
 char* itoa (int value, char *result, int base);
-
+// server functions
+int server_init(int *socket_clients, const char *port, struct sockaddr_in *address, socklen_t *addr_len);
 // client functions
 int client_init(const char* port);
 void client_err(const char *err, int socket_desc);
 void client_file_read(char *file, char *buffer, int socket_desc);
 void client_send(char *buffer, int socket_desc);
-// void client_recv(char *buffer, int socket_desc); // FIXME: dont work...
+void client_recv(char *buffer, int socket_desc); // FIXME: dont work...
 void client_valid_input(const char* msg, const char* name, int socket_desc);
 void client_valid_length(const char* msg, const char* key, const char* name, int socket_desc);

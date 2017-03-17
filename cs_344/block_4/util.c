@@ -5,6 +5,11 @@ void print_err(const char *err) {
   exit(errno);
 }
 
+/**
+ * Prints usage of program
+ * @param prog - name of program
+ * @param msg  - message to display after name
+ */
 void print_usage(const char* prog, const char* msg) {
   printf("USAGE: %s %s\n", prog, msg);
   exit(EXIT_FAILURE);

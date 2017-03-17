@@ -1,5 +1,10 @@
 #include "headers.h"
 
+/**
+ * Prints errors for clients and closes their connection
+ * @param err         - error to display
+ * @param socket_desc - socket to close
+ */
 void client_err(const char *err, int socket_desc) {
   fprintf( stderr, "Error: %s\n", err);
   close(socket_desc);
