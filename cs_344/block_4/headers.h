@@ -37,3 +37,4 @@ void print_usage(const char* prog, const char* msg);
 void valid_input(const char* msg);
 int char_to_i(const char c);
 char char_from_i(const int c);
+char* itoa (int value, char *result, int base);

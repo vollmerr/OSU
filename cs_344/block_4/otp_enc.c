@@ -64,14 +64,16 @@ void valid_length(const char* msg, const char* key) {
 
 int socket_send(int sd, char *buffer, int len) {
     int end = 0;        // how many bytes we've sent
-    int cur = len; // how many we have left to send
+    int total = len; // how many we have left to send
     ssize_t n;
     while(end < len) {
-        n = send(sd, buffer + end, cur, 0);
+        n = send(sd, buffer + end, total, 0);
+        printf("otp_enc: 71: %zd : %s\n", n, buffer + end);
         if (n == -1) { return -1; }
         end += n;
-        cur -= n;
+        total -= n;
     }
+    if (n < len) printf("CLIENT: WARNING: Not all data written to socket!\n");
     return 0;
 }
 
@@ -82,6 +84,7 @@ int main(int argc, char *argv[]) {
   char cur;
   FILE* fp = NULL;
   int i;
+  char msg_len[64];
   // check argument length
   if (argc < 4) { print_usage(argv[ARG_PROG], "<textfile> <keyfile> <port>"); }   // Check usage & args
   // initialize socket
@@ -131,24 +134,42 @@ int main(int argc, char *argv[]) {
   strcat(buffer, "##"); // END OF TEXT
   strcat(buffer, key);
   strcat(buffer, "@@"); // add END OF KEY
-// printf("ENCRTYPED MSG TO SEND: %s", buffer);  
+// printf("ENCRTYPED MSG TO SEND: %s", buffer);
 // printf("WRITING TO SERVER: %s\n", buffer);
-  // Send message to server
-  charsWritten = socket_send(socketFD, buffer, strlen(buffer));
-
-  // charsWritten = send(socketFD, buffer, strlen(buffer), 0);   // Write to the server
+  fflush(stdout);
+  // get message length to string
+  memset(msg_len, '\0', sizeof(msg_len));
+  // char tmp[64];
+  // strcat(msg_len, itoa(strlen(buffer), tmp, 10));
+  itoa(strlen(buffer), msg_len, 10);
+  // send message length
+  charsWritten = send(socketFD, msg_len, 64, 0);   // Write to the server
   if (charsWritten < 0) {
     errno = ERR_SEND;
     close(socketFD);
-    print_err("Failed to send to host");
+    print_err("Failed to send len to host");
   }
-  if (charsWritten < strlen(buffer)) printf("CLIENT: WARNING: Not all data written to socket!\n");
+  // Send message to server
+  charsWritten = send(socketFD, buffer, strlen(buffer), 0);   // Write to the server
+  if (charsWritten < 0) {
+    errno = ERR_SEND;
+    close(socketFD);
+    print_err("Failed to send msg to host");
+  }
 
 
 // printf("CHARS WRITTEN TO SERVER: %d\n", charsWritten);
+  // get return message length from server
+  memset(msg_len, '\0', sizeof(msg_len));
+  charsRead = recv(socketFD, msg_len, sizeof(msg_len), MSG_WAITALL);
+  if (charsRead < 0) {
+    errno = ERR_RECV;
+    close(socketFD);
+    print_err("Failed to read from host");
+  }
   // Get return message from server
   memset(buffer, '\0', sizeof(buffer));   // Clear out the buffer again for reuse
-  charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0);   // Read data from the socket, leaving \0 at end
+  charsRead = recv(socketFD, buffer, atoi(msg_len), MSG_WAITALL);   // Read data from the socket, leaving \0 at end
   if (charsRead < 0) {
     errno = ERR_RECV;
     close(socketFD);
@@ -156,6 +177,9 @@ int main(int argc, char *argv[]) {
   }
   // print encrypted message
   printf("%s\n", buffer);
+  // buffer[msg_len] = '\n';
+  // write(STDOUT_FILENO, buffer, charsRead);
+  fflush(stdout);
   // Close the socket
   close(socketFD);
   return EXIT_SUCCESS;
