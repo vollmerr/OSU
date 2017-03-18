@@ -58,6 +58,9 @@ typings/
 # dotenv environment variables file
 .env
 
+# compressed folders
+*.zip
+
 ########## C
 # Prerequisites
 *.d
