@@ -44,6 +44,7 @@ char char_from_i(const int c);
 char* itoa (int value, char *result, int base);
 // server functions
 int server_init(int *socket_clients, const char *port, struct sockaddr_in *address, socklen_t *addr_len);
+int server_send(char *buffer, int socket_desc);
 // client functions
 int client_init(const char* port);
 void client_err(const char *err, int socket_desc);

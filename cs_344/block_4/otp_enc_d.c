@@ -103,22 +103,8 @@ int handle_connections (int *socket_listen, struct sockaddr_in *address, socklen
         }
         buffer[i] = '\0';
         fflush(stdout);
-        // get message length to string
-        memset(msg_len, '\0', sizeof(msg_len));
-        // convert to string
-        itoa(strlen(buffer), msg_len, 10);
-        // send message length back to the client
-        socket_read = send(socket_desc, msg_len, 64, 0);
-        if (socket_read < 0) {
-          perror(NULL);
-          return 1;
-        }
-        // Send message back to the client
-        socket_read = send(socket_desc, buffer, strlen(buffer), 0);   // Send success back
-        if (socket_read < 0) {
-          perror(NULL);
-          return 1;
-        }
+        // send message to client
+        if (server_send(buffer, socket_desc)) return 1;
       }
     }
   }

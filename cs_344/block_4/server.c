@@ -43,3 +43,29 @@ int server_init(int *socket_clients, const char *port, struct sockaddr_in *addre
   *addr_len = sizeof(*address); // Get the size of the address for the client that will connect
   return socket_listen;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+//  Socket interaction
+////////////////////////////////////////////////////////////////////////////////
+/**
+ * Sends message to client
+ * @param buffer      - buffer to send containing message
+ * @param socket_desc - socket to send to
+ * @return            - err ? 1 : 0
+ */
+int server_send(char *buffer, int socket_desc) {
+  char msg_len[SMALL_ENOUGH] = {0};
+  // make message length a string
+  itoa(strlen(buffer), msg_len, 10);
+  // send message length to server
+  if (send(socket_desc, msg_len, SMALL_ENOUGH, 0) < 0) {
+    perror(NULL);
+    return 1;
+  }
+  // Send message to server
+  if (send(socket_desc, buffer, strlen(buffer), 0) < 0) {
+    perror(NULL);
+    return 1;
+  }
+  return 0;
+}
