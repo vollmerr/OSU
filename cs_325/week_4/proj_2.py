@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 ###########################################################
-#  proj_4.py
+#  proj_2.py
 #  Ryan Vollmer - CS 325
 #  Various solutions to Coin Change problem.
 ###########################################################
@@ -81,7 +81,7 @@ def change_dp(V=[], A=0):
                     T[v] = cur_v
                     # set coin array to min one looked up
                     C[v] = C[v - V[i]][:]
-                    # exchange one of larger coin for one of smaller
+                    # add one of current coin
                     C[v][i] += 1
                     # set as new minimum of this T[v]
                     min_v = cur_v

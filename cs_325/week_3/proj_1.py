@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 # coding=utf-8
+###########################################################
+#  proj_1.py
+#  Ryan Vollmer - CS 325
+#  Various solutions to max subarray problem.
+###########################################################
 import math
 
 
