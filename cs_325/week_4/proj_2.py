@@ -7,10 +7,10 @@
 ###########################################################
 
 
-def change_slow(V=[], A=0):
+def change_slow(V, A):
     """ Divide and conquer version of Coin Change problem.
-        @param {array}  V   - Values to choose from
-        @param {int}    A   - Amount of change to make
+        @param  {array} V   - Values to choose from
+        @param  {int}   A   - Amount of change to make
         @return {array} C   - Number of coins needed for values of V
         @return {int}   m   - Minimmum number of coins needed
     """
@@ -31,7 +31,8 @@ def change_slow(V=[], A=0):
             m = m_i + m_k
             C = (C_i, C_k)
     # choose i that minimizes sum of 1) and 2)
-    return [sum(x) for x in zip(*C)], m
+    a = [sum(x) for x in zip(*C)]
+    return a, m
 
 
 """
@@ -54,11 +55,11 @@ def change_slow(V=[], A=0):
 """
 
 
-def change_greedy(V=[], A=0):
+def change_greedy(V, A):
     """ Greedy solution to finding min number of coins needed to make change.
         Always takes largest possbile coins.
-        @param {array}  V   - Values to choose from
-        @param {int}    A   - Amount of change to make
+        @param  {array} V   - Values to choose from
+        @param  {int}   A   - Amount of change to make
         @return {array} C   - Number of coins needed for values of V
         @return {int}   m   - Minimmum number of coins needed
     """
@@ -87,11 +88,11 @@ def change_greedy(V=[], A=0):
 """
 
 
-def change_dp(V=[], A=0):
+def change_dp(V, A):
     """ Dynamic Programing solution to finding min number of coins needed to make change.
         Builds a look up tables of smallest number of coins and their associated coins.
-        @param {array}  V   - Values to choose from
-        @param {int}    A   - Amount of change to make
+        @param  {array} V   - Values to choose from
+        @param  {int}   A   - Amount of change to make
         @return {array} C   - Number of coins needed for values of V
         @return {int}   m   - Minimmum number of coins needed
     """
@@ -140,12 +141,43 @@ def change_dp(V=[], A=0):
 """
 
 
+def from_file():
+    """ Prompts for input file, runs any functions in 'funcs' with
+        files input, then prints results to [input_file_name]change.txt
+        Requires input file to be .txt with following format repeated:
+            1 int int     # coins to use, variable number of ints in increasing order
+            int           # amount to make change for, single number
+    """
+    funcs = [change_slow, change_greedy, change_dp]
+    in_name = raw_input("File name:")
+    if in_name[-4:] != ".txt":
+        print("Bad file type, must be a .txt")
+        return 1
+    out_name = "%schange.txt" % in_name.replace(".txt", "")
+    print("Writing results to: %s" % out_name)
+    with open(in_name, "r") as in_f:
+        with open(out_name, "w") as out_f:
+            for func in funcs:
+                in_f.seek(0, 0)
+                out_f.write("Algorithm %s:\n" % func.__name__)
+                print("\nRunning %s..." % func.__name__)
+                while True:
+                    V = in_f.readline()
+                    A = in_f.readline()
+                    if not A:
+                        break
+                    V = [int(x) for x in V.split()]
+                    A = int(A.split()[0])
+                    print("\tfinding min using %s for %d" % (V, A))
+                    C, m = func(V, A)
+                    out_f.write("%s\n" % V)
+                    out_f.write("%s\n" % C)
+                    out_f.write("%d\n" % m)
+                    print("\t\tfound min using %s with %d coins" % (C, m))
+
+
 def main():
-    V = [1, 3, 7]
-    A = 17
-    print("change_slow:\t%s , %d" % change_slow(V, A))
-    print("change_greedy:\t%s , %d" % change_greedy(V, A))
-    print("change_dp:\t%s , %d" % change_dp(V, A))
+    from_file()
 
 
 if __name__ == '__main__':
