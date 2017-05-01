@@ -5,7 +5,10 @@
 #  Ryan Vollmer - CS 325
 #  Various solutions to Coin Change problem.
 ###########################################################
-
+import csv
+from timeit import default_timer as timer
+from random import randint
+from math import floor
 
 def change_slow(V, A):
     """ Divide and conquer version of Coin Change problem.
@@ -175,9 +178,52 @@ def from_file():
                     out_f.write("%d\n" % m)
                     print("\t\tfound min using %s with %d coins" % (C, m))
 
+def _to_csv(func, fname, fname_coin, V):
+    # write headers to csv file
+    with open(fname, 'wb') as f:
+        writer = csv.writer(f)
+        writer.writerow(['A', 'Time'])
+        writer.writerow([0, 0])
+    with open(fname_coin, 'wb') as f:
+        writer = csv.writer(f)
+        writer.writerow(['A', 'Min Coins'])
+        writer.writerow([0, 0])
+    print("-") * 50
+    print("Starting testing for %s\n" % func.__name__)
+    for A in xrange(2000, 2201):
+        print("\tstarting test %d" % A)
+        start = timer()
+        C, m = func(V, A)
+        end = timer()
+        print("\t\twriting min using %s with %d coins" % (C, m))
+        # write results to csv file
+        with open(fname, 'ab') as f:
+            writer = csv.writer(f)
+            writer.writerow([A, end - start])
+        with open(fname_coin, 'ab') as f:
+            writer = csv.writer(f)
+            writer.writerow([A, m])
+
+
+def to_csv():
+    V1 = [1,2,6,12,24,48,60]
+    V2 = [1,5,10,25,50]
+    V3 = [1,6,13,37,150]
+    # _to_csv(change_slow, "change_slow_V1.csv",  "change_slow_coin_V1.csv", V1)
+    # _to_csv(change_slow, "change_slow_V2.csv", "change_slow_coin_V2.csv", V2)
+    # _to_csv(change_slow, "change_slow_V3.csv", "change_slow_coin_V3.csv", V3)
+    # _to_csv(change_greedy, "change_greedy_V1.csv",  "change_greedy_coin2_V1.csv", V1)
+    # _to_csv(change_greedy, "change_greedy_V2.csv", "change_greedy_coin2_V2.csv", V2)
+    # _to_csv(change_greedy, "change_greedy_V3.csv", "change_greedy_coin2_V3.csv", V3)
+    _to_csv(change_dp, "change_dp_V1.csv",  "change_dp_coin2_V1.csv", V1)
+    _to_csv(change_dp, "change_dp_V2.csv", "change_dp_coin2_V2.csv", V2)
+    _to_csv(change_dp, "change_dp_V3.csv", "change_dp_coin2_V3.csv", V3)
+
+
 
 def main():
     from_file()
+    # to_csv()
 
 
 if __name__ == '__main__':
