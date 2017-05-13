@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # coding=utf-8
 ###########################################################
-#  proj_2.py
-#  Ryan Vollmer - CS 325
+#  proj_2.py - CS 325
+#  Ryan Vollmer, Clarence Pine, Parker Howell
 #  Various solutions to Coin Change problem.
 ###########################################################
 import csv
@@ -151,7 +151,7 @@ def from_file():
             1 int int     # coins to use, variable number of ints in increasing order
             int           # amount to make change for, single number
     """
-    funcs = [change_slow, change_greedy, change_dp]
+    funcs = [change_greedy, change_dp, change_slow]
     in_name = raw_input("File name:")
     if in_name[-4:] != ".txt":
         print("Bad file type, must be a .txt")
@@ -179,6 +179,9 @@ def from_file():
                     print("\t\tfound min using %s with %d coins" % (C, m))
 
 def _to_csv(func, fname, fname_coin, V):
+    """ Runs tests for Algorithms runtime and min number of coins
+        Prints results to csv files
+    """
     # write headers to csv file
     with open(fname, 'wb') as f:
         writer = csv.writer(f)
@@ -206,6 +209,8 @@ def _to_csv(func, fname, fname_coin, V):
 
 
 def to_csv():
+    """ Sets up running tests to print to csv files
+    """
     V1 = [1,2,6,12,24,48,60]
     V2 = [1,5,10,25,50]
     V3 = [1,6,13,37,150]
