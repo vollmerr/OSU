@@ -328,3 +328,29 @@ end
        15)         0.000000         -9.000000
 
  NO. ITERATIONS=      14
+
+c)
+Min cost: 15875
+Optimal shipping routes:
+route:        amount:
+P1 to W1       150.000000
+P1 to W2         0.000000
+P2 to W1       100.000000
+P2 to W2       350.000000
+P3 to W1         0.000000
+P3 to W2       125.000000
+P3 to W3        25.000000
+P4 to W2         0.000000
+P4 to W3       150.000000
+W1 to R1       100.000000
+W1 to R2       150.000000
+W1 to R3         0.000000
+W1 to R4         0.000000
+W2 to R3       100.000000
+W2 to R4       200.000000
+W2 to R5       175.000000
+W2 to R6         0.000000
+W3 to R4         0.000000
+W3 to R5        25.000000
+W3 to R6       150.000000
+W3 to R7         0.000000
