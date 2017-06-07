@@ -1,0 +1,20 @@
+
+Ryan Vollmer  - CS 325  - HW 5
+
+1.  d, because Y is NP, but it can be reduced from X in poly time. Since X is NP-complete Y must also be as X cannot be any harder than Y, else we could just use the reduction and Y to formulate X in NP time.
+
+    g, since X reduces to Y in poly time, if Y is in P we could simply use the reduction and X would then also be in P.
+
+2.  a.  false, since COMPOSITE could be in NP, but outside NP-complete.
+    b.  true, since COMPOSITE is in NP, then we could find some other algorithm in NP-complete that transforms to SUBSET-SUM. This would solve the P = NP problem.
+    c.  false, P is subset of NP, but NP is not a subset of P, therefore it can exist in P and NP such that P != NP.
+    d.  false, as a example the above.
+
+3.  a.  true, as both TSP and 3-SAT are NP-complete, and since we can verify both in poly time there exists some poly time transformation function between the two.
+    b.  false, since we know that 3-SAT is in NP, we know that 2-SAT can be reduced to 3-SAT and vise versa in poly time.
+    c.  true, If we could solve any NP-complete in poly time, then we could solve all NP-complete in poly time as they could reduce to some other NP-complete problem. This would mean P = NP which is the opposite of the hypothesis.
+
+4.
+
+5.  a.
+    b.
