@@ -32,7 +32,7 @@ def get_port():
     return int(raw_input('Listen on port: '))
 
 
-# initalized the server socket
+# initalizes the server socket
 def init_server():
     server_socket = socket.socket()
     host = socket.gethostname()
@@ -64,7 +64,7 @@ def recv_message(client_socket):
         if not msg or msg == QUIT:
             print('Connection closed. Press Enter to wait for new connections.\n')
             break
-            
+
         print(msg)
         sys.stdout.write('> ' + readline.get_line_buffer())
         sys.stdout.flush()
@@ -74,8 +74,9 @@ def recv_message(client_socket):
 
 # handles a connection between the server and client
 def handle_connection(client_socket):
+    # new thread for reciving responses
     thread.start_new_thread(recv_message ,(client_socket,))
-
+    # send input from cli to client
     while True:
         try:
             msg = raw_input('> ')
@@ -83,6 +84,7 @@ def handle_connection(client_socket):
             if msg == QUIT:
                 print('Connection closed.\n')
                 break
+
             client_socket.send(msg)
         except:
             break
@@ -96,7 +98,7 @@ def server_loop(server_socket):
         # wait for new client to connect if none
         if client_socket is None:
             client_socket = get_connection(server_socket)
-        # connected to client, send messages back and forth
+        # if connected to client, send messages back and forth
         else:
             handle_connection(client_socket)
             client_socket.close()
