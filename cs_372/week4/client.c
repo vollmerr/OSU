@@ -6,7 +6,8 @@
 #include"netinet/in.h"  
 #include"netdb.h"
 #include"pthread.h"
-  
+
+#define QUIT "\\quit\n"
 #define BUF_SIZE 490 
 #define USER_SIZE 10
 #define MSG_SIZE 500
@@ -41,8 +42,8 @@ void* receiveMessage(void* socket) {
     while (1) {
         memset(recv_buffer, 0, MSG_SIZE);  
         ret = recvfrom(sockfd, recv_buffer, MSG_SIZE, 0, NULL, NULL);  
-        if (ret < 0) {  
-            printf("Error receiving data!\n");    
+        if (ret < 0) {
+            break;   
         } else {
             swapText();
         }
@@ -51,30 +52,30 @@ void* receiveMessage(void* socket) {
 
 
 /**
- *  Initalizes and connects a socket to the server
- *  @param {int*} sockfd            - socket file desc to init and connect with
- *  @param {sockaddr_in*} addr      - address object for server to initalize
- *  @param {char**} argv            - args from cli
- */
+*  Initalizes and connects a socket to the server
+*  @param {int*} sockfd            - socket file desc to init and connect with
+*  @param {sockaddr_in*} addr      - address object for server to initalize
+*  @param {char**} argv            - args from cli
+*/
 void initSocket(int* sockfd, struct sockaddr_in* addr, char**argv) {
     int ret, serverPort;
     char* serverAddr;
-
+    
     serverAddr = argv[1]; 
     serverPort = strtol(argv[2], NULL, 10);
     *sockfd = socket(AF_INET, SOCK_STREAM, 0);  
-
+    
     if (*sockfd < 0) {  
         printf("Error creating socket!\n");  
         exit(1);  
     }  
     printf("Socket created...\n");   
-
+    
     memset(addr, 0, sizeof(*addr));  
     addr->sin_family = AF_INET;  
     addr->sin_addr.s_addr = inet_addr(serverAddr);
     addr->sin_port = htons(serverPort);
-
+    
     // connect to server
     printf("trying to connect to:   %s:%d\n", serverAddr, serverPort);
     if (connect(*sockfd, (struct sockaddr*) addr, sizeof(*addr)) < 0) {  
@@ -86,14 +87,17 @@ void initSocket(int* sockfd, struct sockaddr_in* addr, char**argv) {
 
 
 /**
- *  Handles sending messages to the server for user input
- */
+*  Handles sending messages to the server for user input
+*/
 void sendMessages(int sockfd, struct sockaddr_in* addr, char* username) {
     char input_buffer[BUF_SIZE]; 
-
+    
     while (1) {
         // get input from user
         fgets(input_buffer, BUF_SIZE, stdin);
+        if (!strcmp(input_buffer, QUIT)) {
+            break;
+        }
         // attach username to buffer to send
         snprintf(send_buffer, MSG_SIZE, "%s> %s", username, input_buffer);
         // send the message to server
@@ -111,9 +115,9 @@ void sendMessages(int sockfd, struct sockaddr_in* addr, char* username) {
 
 
 /**
- *  Handles getting the user name
- *  @param {char*} username     - name to populate
- */
+*  Handles getting the user name
+*  @param {char*} username     - name to populate
+*/
 void getUsername(char* username) {
     printf("Username: ");
     scanf("%s", username);
@@ -130,20 +134,20 @@ int main(int argc, char**argv) {
         printf("usage: client < ip address > < port number >\n");
         exit(1);  
     }
-
+    
     getUsername(username);
     initSocket(&sockfd, &addr, argv);
-
+    
     // create a new thread for receiving messages from the server
     if (pthread_create(&rThread, NULL, receiveMessage, (void*) sockfd)) {
         printf("ERROR: Failed to create thread.");
         exit(1);
     }
-
     sendMessages(sockfd, &addr, username);
 
-    close(sockfd);
-    pthread_exit(NULL);
-    
+    printf("\n\nDisconnected from server.\n\n");
+    close(sockfd);    
+    pthread_cancel(rThread);
+
     return 0;    
-}  
+}
