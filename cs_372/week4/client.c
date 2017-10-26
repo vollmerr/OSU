@@ -1,3 +1,15 @@
+/***********************************************************************
+ *
+ *  client.c
+ *  Ryan Vollmer - CS 372, Project 1
+ *
+ *  Simple client side of chat system using threads to allow 
+ *      user input and output at the same time.
+ *      
+ *  Usage: client < ip address > < port number >
+ *
+ **********************************************************************/
+
 #include"stdio.h"  
 #include"stdlib.h"  
 #include"sys/types.h"  
@@ -88,6 +100,9 @@ void initSocket(int* sockfd, struct sockaddr_in* addr, char**argv) {
 
 /**
 *  Handles sending messages to the server for user input
+*  @param {int} sockfd            - socket file desc to send messages to
+*  @param {sockaddr_in*} addr     - address object of server
+*  @param {char*} username        - users name
 */
 void sendMessages(int sockfd, struct sockaddr_in* addr, char* username) {
     char input_buffer[BUF_SIZE]; 
