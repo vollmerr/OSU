@@ -62,8 +62,8 @@ void initSocket(int* sockfd, struct sockaddr_in* addr, char**argv) {
 
     serverAddr = argv[1]; 
     serverPort = strtol(argv[2], NULL, 10);
-    
     *sockfd = socket(AF_INET, SOCK_STREAM, 0);  
+
     if (*sockfd < 0) {  
         printf("Error creating socket!\n");  
         exit(1);  
@@ -84,6 +84,7 @@ void initSocket(int* sockfd, struct sockaddr_in* addr, char**argv) {
     printf("Connected to the server...\n");  
 }
 
+
 /**
  *  Handles sending messages to the server for user input
  */
@@ -91,8 +92,6 @@ void sendMessages(int sockfd, struct sockaddr_in* addr, char* username) {
     char input_buffer[BUF_SIZE]; 
 
     while (1) {
-        // prompt for user input with username
-        printf("%s> ", username);
         // get input from user
         fgets(input_buffer, BUF_SIZE, stdin);
         // attach username to buffer to send
@@ -105,22 +104,34 @@ void sendMessages(int sockfd, struct sockaddr_in* addr, char* username) {
         // reset buffer to prompt (for swapText when recieving)
         memset(send_buffer, 0, MSG_SIZE);        
         snprintf(send_buffer, MSG_SIZE, "%s> ", username);
+        // reprompt for user input with username
+        printf("%s> ", username);
     }
+}
+
+
+/**
+ *  Handles getting the user name
+ *  @param {char*} username     - name to populate
+ */
+void getUsername(char* username) {
+    printf("Username: ");
+    scanf("%s", username);
 }
 
 
 int main(int argc, char**argv) {  
     struct sockaddr_in addr;  
+    char username[USER_SIZE];
     int sockfd;  
     pthread_t rThread;
-    // get username TODO
-    char* username = "goon";
-
+    
     if (argc < 3) {
         printf("usage: client < ip address > < port number >\n");
         exit(1);  
-    }  
+    }
 
+    getUsername(username);
     initSocket(&sockfd, &addr, argv);
 
     // create a new thread for receiving messages from the server
