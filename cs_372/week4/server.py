@@ -9,38 +9,24 @@ import readline
 
 RECV_BUFFER = 500
 QUIT = '\quit'
-
-
-# handles making cusor be on new line
-# https://stackoverflow.com/questions/2082387/reading-input-from-raw-input-without-having-the-prompt-overwritten-by-other-th
-def blank_current_readline():
-    # Next line said to be reasonably portable for various Unixes
-    (rows,cols) = struct.unpack('hh', fcntl.ioctl(sys.stdout, termios.TIOCGWINSZ,'1234'))
-
-    text_len = len(readline.get_line_buffer())+2
-
-    # ANSI escape sequences (All VT100 except ESC[0G)
-    sys.stdout.write('\x1b[2K')                         # Clear current line
-    sys.stdout.write('\x1b[1A\x1b[2K'*(text_len/cols))  # Move cursor up and clear line
-    sys.stdout.write('\x1b[0G')                         # Move to start of line
-
-
-# gets the port number from command line
-def get_port():
-    if len(sys.argv) > 1:
-        return int(sys.argv[1])
-    return int(raw_input('Listen on port: '))
+PORT = int(sys.argv[1])
+HOST = socket.gethostbyname(socket.gethostname())
 
 
 # initalizes the server socket
 def init_server():
-    server_socket = socket.socket()
-    host = socket.gethostname()
-    port = get_port()
+    server_socket = socket.socket(
+        socket.AF_INET,
+        socket.SOCK_STREAM,
+        0
+    )
 
-    server_socket.bind((host, port))
+    # allow port to be reused with no time waiting...
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_socket.bind((HOST, PORT))
     server_socket.listen(1)
-
+    print('Lisening at %s:%s' % (HOST, PORT))
+  
     return server_socket
 
 
@@ -49,26 +35,24 @@ def get_connection(server_socket):
     print('Waiting for a connection...\n')
     client_socket, client_addr = server_socket.accept()
 
+    if client_socket < 0:
+        print('Error accepting connection.\n')
+        sys.exit(1)
+
     print('Connection established with ', client_addr)
     return client_socket
 
 
 # handles reciving a message from client
 def recv_message(client_socket):
-    client_socket.send('Connection established.\n')
-
     while True:
         msg = client_socket.recv(RECV_BUFFER)
-        blank_current_readline()
         
         if not msg or msg == QUIT:
             print('Connection closed. Press Enter to wait for new connections.\n')
             break
 
         print(msg)
-        sys.stdout.write('> ' + readline.get_line_buffer())
-        sys.stdout.flush()
-
     client_socket.close()
 
 
@@ -79,7 +63,7 @@ def handle_connection(client_socket):
     # send input from cli to client
     while True:
         try:
-            msg = raw_input('> ')
+            msg = raw_input('')
 
             if msg == QUIT:
                 print('Connection closed.\n')
