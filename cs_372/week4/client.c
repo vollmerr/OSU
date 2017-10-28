@@ -103,7 +103,7 @@ void* receiveMessage(void* socket) {
 *  @param {char**} argv            - args from cli
 */
 void initSocket(int* sockfd, struct sockaddr_in* addr, char**argv) {
-    int ret, serverPort;
+    int serverPort;
     char* serverAddr;
     
     serverAddr = argv[1]; 
