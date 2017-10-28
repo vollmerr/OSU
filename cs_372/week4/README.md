@@ -1,15 +1,9 @@
-[//] # ( 
-  FOR A BETTER VIWING EXPERIENCE:
-    - rename me to README.md, OR
-    - https://github.com/vollmerr/OSU/tree/master/cs_372/week4
-)
-
 # Project 1 - CS 372
 
 ## About
-Author: Ryan Vollmer
-Purpose: Simple chat system designed for two users (one server, one client)
-Tested on: 128.193.54.182:9119 (flip2)
+- Author: Ryan Vollmer
+- Purpose: Simple chat system designed for two users (one server, one client)
+- Tested on: 128.193.54.182:9119 (flip2)
 
 ## Usage
 ### Running the project:
@@ -42,7 +36,6 @@ While connected, send the message:
 * server built using python
 * client build using C
 * Max message character limit of 500 (including username on client)
-* 
 
 ### Enchancements
 * Threaded client and server, allowing users to send multiple subsequent messages at any time
