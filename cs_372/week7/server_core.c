@@ -94,7 +94,7 @@ void handle_send_client(int fd, char *msg) {
     // increment position to send next time
     sent += MAX_DATA;
   }
-
+  
   print_debug("/handle_send_client");
 }
 

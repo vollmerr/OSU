@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -24,8 +25,9 @@
 #define ERR_BIND 2
 #define ERR_LISTEN 3
 #define ERR_SELECT 4
+#define ERR_FILE_OPEN 5
 
-// #define __DEBUG__ 1
+#define __DEBUG__ 1
 
 // initalization
 void init_server(int *server_fd);
@@ -40,6 +42,7 @@ void handle_send_client(int fd, char *msg);
 // commands
 void handle_cmd(char *cmd, int fd);
 void handle_cmd_ls(int fd);
+void handle_cmd_get(int fd, char *file_name);
 // util
 void print_debug(const char *format, ...);
 char *trim(char *s);

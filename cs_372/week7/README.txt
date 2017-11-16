@@ -11,4 +11,5 @@ C:
 - get host name -> https://stackoverflow.com/questions/504810/how-do-i-find-the-current-machines-full-hostname-in-c-hostname-and-domain-info
 - multiple packer recv -> https://stackoverflow.com/questions/4336612/handling-multiple-recv-calls-and-all-possible-scenarios
 - ls cmd -> https://stackoverflow.com/questions/12489/how-do-you-get-a-directory-listing-in-c
-// - remove newlines -> https://stackoverflow.com/questions/25615916/removing-newline-from-fgets
+- remove newlines -> https://stackoverflow.com/questions/25615916/removing-newline-from-fgets
+- reading binary file -> https://stackoverflow.com/questions/7013307/read-the-full-content-of-a-binary-file
