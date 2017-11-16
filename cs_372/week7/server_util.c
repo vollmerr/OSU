@@ -16,8 +16,9 @@ void print_debug(const char *format, ...) {
 #ifdef __DEBUG__
   va_list args;
   va_start(args, format);
-  vprintf(format, args);
   printf("\n");
+  vprintf(format, args);
+  printf("\n\n");
   va_end(args);
 #endif
 }

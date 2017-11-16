@@ -1,6 +1,6 @@
 /**
  * server_core.c
- * 
+ *
  * Core functionality of server
  */
 
@@ -65,12 +65,37 @@ void handle_recv_client(fd_set *master, int fd) {
     // clean up connection fd list
     close(fd);
     FD_CLR(fd, master);
+  } else {
+    // handle the command user sent
+    handle_cmd(trim(cmd), fd);
   }
-  // hadnle the command user sent
-  handle_cmd(trim(cmd));
 
   print_debug("recieved '%s'", cmd);
   print_debug("/handle_recv_client");
+}
+
+/**
+ * Handles sending data to a client
+ *
+ * @param {int*} fd       - client fd to send to
+ * @param {char*} msg     - message to send
+ */
+void handle_send_client(int fd, char *msg) {
+  print_debug("handle_send_client");
+
+  int sent = 0;
+  int len = strlen(msg);
+  // while not all sent
+  while (sent <= len) {
+    printf("sending packet %d / %d to fd %d\n", (sent / MAX_DATA) + 1,
+           (len / MAX_DATA) + 1, fd);
+    // send MAX_DATA worth of bytes
+    send(fd, msg + sent, MAX_DATA, 0);
+    // increment position to send next time
+    sent += MAX_DATA;
+  }
+
+  print_debug("/handle_send_client");
 }
 
 /**

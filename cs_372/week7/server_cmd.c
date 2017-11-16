@@ -8,13 +8,15 @@
 
 /**
  * Handles listsing the current directory contents
+ * 
+ * @param {int} fd      - file desc of client issuing command
  */
-void handle_cmd_ls() {
+void handle_cmd_ls(int fd) {
   print_debug("handle_cmd_ls");
 
   DIR *dp;
   struct dirent *ep;
-  char buffer[MAX_BUFFER];
+  char buffer[MAX_BUFFER] = "";
 
   dp = opendir("./");
   // opened dir
@@ -32,7 +34,7 @@ void handle_cmd_ls() {
     perror(err);
   }
 
-  // handle_send_client(buffer);
+  handle_send_client(fd, buffer);
 
   print_debug("handle_cmd_ls, buffer: %s", buffer);
   print_debug("/handle_cmd_ls");
@@ -42,12 +44,13 @@ void handle_cmd_ls() {
  * Handles calling the correct command
  *
  * @param {char*} cmd       - command to call
+ * @param {int} fd          - file desc of client issuing command
  */
-void handle_cmd(char *cmd) {
+void handle_cmd(char *cmd, int fd) {
   print_debug("handle_cmd");
 
   if (strstr(cmd, CMD_LS)) {
-    handle_cmd_ls();
+    handle_cmd_ls(fd);
   } else {
     printf("DEFAULT");
   }
