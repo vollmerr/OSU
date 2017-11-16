@@ -3,7 +3,7 @@ CFLAGS = -g -Wall
 all:
 	server
 
-client: server.c server.h
+server: server.c server.h server_cmd.c server_core.c server_init.c server_util.c
 	gcc $(CFLAGS) -o $@ $^
 
 .PHONY: clean

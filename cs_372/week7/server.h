@@ -16,6 +16,7 @@
 #define MAX_HOST_NAME 255
 #define MAX_DATA 256
 #define MAX_CLIENTS 10
+#define MAX_BUFFER 4096
 
 #define PORT "9119"  // TODO: CLI...
 
@@ -25,3 +26,18 @@
 #define ERR_SELECT 4
 
 #define __DEBUG__ 1
+// initalization
+void init_server(int *server_fd);    
+void init_server_info(struct addrinfo **ai);
+int init_server_socket(struct addrinfo *ai);
+void init_fd_sets(fd_set *master, fd_set *read_fds, int server_fd);
+// main functionality
+void server_loop(fd_set *master, fd_set *read_fds, int server_fd);
+void handle_new_client(fd_set *master, int server_fd, int *max_fd);
+void handle_recv_client(fd_set *master, int fd);
+// commands
+void handle_cmd(char *cmd);    
+void handle_cmd_ls();
+// util
+void print_debug(const char *format, ...);
+char *trim(char *s);
