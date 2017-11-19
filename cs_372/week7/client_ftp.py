@@ -94,11 +94,21 @@ class FTP:
 
 
     def recv(self):
+        # get response from server
         self.data = self.socket.recv(MAX_DATA)
         # TODO: ERROR HANDLING recv
+        # set the code
         self.set_code()
-        self.set_size()
-        return self.status()
+        # check the code
+        ok = self.status()
+        # set size if good
+        if ok:
+            # self.set_size()
+            self.size = 1024
+        # else set error
+        else:
+            self.set_error()
+        return ok
     
 
     def send(self, data=None):
@@ -108,7 +118,6 @@ class FTP:
             self.socket.sendall(data)
         # TODO: ERROR HANDLING sendall
         # get the response code from server
-        print("data sent....", data)
         return self.recv()
 
 
@@ -122,16 +131,14 @@ class FTP:
         else:
             self.code = code
         # TODO: CHECK CODE FOR ERROR, raise...
-        print("CODE", self.code)
 
 
     def set_size(self):
-        self.size = self.data[INDEX_CODE:INDEX_SIZE]
+        self.size = int(self.data[INDEX_CODE:INDEX_SIZE])            
 
     
-    def set_error(self, code=None, error=None):
-        self.code = code
-        self.error = error
+    def set_error(self):
+        self.error = self.data[INDEX_CODE:INDEX_SIZE]
         return self.print_error()
 
         
@@ -167,8 +174,11 @@ class FTP:
 
     def cmd_pwd(self):
         if self.send_cmd(CMD_PWD):
-            return self.get_data()
-        return False
+            # get the dir listing from server on newtcp conneciton
+            data = self.get_data()
+            # print it out to stdout
+            print(data)
+
 
     def cmd_quit(self):
         if self.socket:
@@ -191,13 +201,12 @@ class FTP:
         self.socket_server, addr = self.socket_data.accept()
         # if failed to connect, print error
         if self.socket_server < 0:
-           return self.set_error(CODE_FAIL_CONN, "Failed to connect to server.")
+            return "%s %s" % (CODE_FAIL_CONN, "Failed to connect to server.")
         # get data from server
-        # data = self.socket_data.recv(self.size)    
-        self.data = self.socket_server.recv(1024)    
-        print("DATA: %s" % self.data)
+        data = self.socket_server.recv(self.size)    
         # clean up connections
         self.close_data()
+        return data
 
 
     def status(self):
@@ -219,8 +228,7 @@ class FTP:
             if not self.status():
                 # if a data connection was left opened clean it up
                 self.close_data()
-                # print an error message
-                self.print_error()
+            # reset command
             self.cmd = None
 
 
