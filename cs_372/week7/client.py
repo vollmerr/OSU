@@ -16,10 +16,13 @@
 
 # bonus = cd command, username/password to access server, binary files
 
+from client_ftp import FTP
 
 
 def main():
-    pass
+    print('wtf...')
+    ftp = FTP()
+
 
 if __name__ == '__main__':
     main()

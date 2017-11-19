@@ -1,6 +1,6 @@
 /**
  * server_init.c
- * 
+ *
  * Initialization of the server
  */
 
@@ -11,24 +11,19 @@
  *
  * @param {addrinfo**} ai    - pointer to address info to fill out
  */
-void init_server_info(struct addrinfo **ai) {
-  print_debug("init_server_info");
-
+void init_server_info(struct addrinfo **ai, char *port) {
   struct addrinfo hints;
   int r;
-
-  memset(&hints, 0, sizeof hints);
   // fill address info
+  memset(&hints, 0, sizeof hints);
   hints.ai_family = AF_INET;
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_PASSIVE;
 
-  if ((r = getaddrinfo(NULL, PORT, &hints, ai)) != 0) {
+  if ((r = getaddrinfo(NULL, port, &hints, ai)) != 0) {
     fprintf(stderr, "Failed to get address info: %s\n", gai_strerror(r));
     exit(ERR_GET_ADDR);
   }
-
-  print_debug("/init_server_info");
 }
 
 /**
@@ -39,8 +34,6 @@ void init_server_info(struct addrinfo **ai) {
  * @return {int} fd         - file desc of server socket
  */
 int init_server_socket(struct addrinfo *ai) {
-  print_debug("init_server_socket");
-
   int fd;
   struct addrinfo *p;
   int yes = 1;  // for setsockopt() SO_REUSEADDR
@@ -66,9 +59,6 @@ int init_server_socket(struct addrinfo *ai) {
     fprintf(stderr, "Failed to bind\n");
     exit(ERR_BIND);
   }
-
-  print_debug("/init_server_socket");
-
   return fd;
 }
 
@@ -77,13 +67,11 @@ int init_server_socket(struct addrinfo *ai) {
  *
  * @param {int} server_fd     - file desc of server socket
  */
-void init_server(int *server_fd) {
-  print_debug("init_server");
-
+void init_server(int *server_fd, char *port) {
   struct addrinfo *ai = NULL;
   char host[MAX_HOST_NAME];
   // init the server addr info
-  init_server_info(&ai);
+  init_server_info(&ai, port);
   // create new file desc
   *server_fd = init_server_socket(ai);
   // free address info
@@ -96,8 +84,6 @@ void init_server(int *server_fd) {
   // indicate the server is listening...
   gethostname(host, MAX_HOST_NAME);
   printf("Listening at\t\t%s:%s\n\n", host, PORT);
-
-  print_debug("/init_server");
 }
 
 /**
@@ -108,13 +94,9 @@ void init_server(int *server_fd) {
  * @param {int} server_fd     - file desc of server socket
  */
 void init_fd_sets(fd_set *master, fd_set *read_fds, int server_fd) {
-  print_debug("init_fd_sets");
-
   // clear all fd sets
   FD_ZERO(master);
   FD_ZERO(read_fds);
   // add server socket to master
   FD_SET(server_fd, master);
-
-  print_debug("/init_fd_sets");
 }
