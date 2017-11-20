@@ -20,7 +20,6 @@ from client_ftp import FTP
 
 
 def main():
-    print('wtf...')
     ftp = FTP()
 
 

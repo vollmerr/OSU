@@ -54,7 +54,8 @@ void handle_send_data(int fd, char *port, char *msg);
 // commands
 void handle_cmd(fd_set *master, int fd, char *port, char *command);
 void handle_cmd_pwd(int fd, char *port);
-void handle_cmd_retr(int fd, char *file_name);
+void handle_cmd_retr(int fd, char *port, char *file_name);
+void handle_cmd_port(int fd, char *port, char *data);    
 void handle_cmd_quit(fd_set *master, int fd);
 void handle_cmd_unknown(int fd);
 // util

@@ -18,12 +18,25 @@ CMD_PWD = "PWD"
 CMD_RETR = "RETR"
 CMD_QUIT = "QUIT"
 
+CODE_OK = "200"
+CODE_BAD_REQ = "400"
+CODE_NOT_FOUND = "404"
 CODE_FAIL_CONN = "499"
+CODE_INT_ERR = "500"
+
+ERR_CODES = { 
+    CODE_BAD_REQ,
+    CODE_NOT_FOUND,
+    CODE_FAIL_CONN, 
+    CODE_INT_ERR, 
+    None
+}
 
 class FTP:
     debug = False
 
     cmd = None
+    cmd_arg = None
     data = None
     code = None
     error = None
@@ -59,7 +72,7 @@ class FTP:
 
 
     def print_error(self):
-        print("Error: %s - %s", (self.code, self.error))
+        print("Error: %s - %s" % (self.code, self.error))
 
 
     def get_addr_info(self, host, port, port_data):
@@ -103,8 +116,7 @@ class FTP:
         ok = self.status()
         # set size if good
         if ok:
-            # self.set_size()
-            self.size = 1024
+            self.set_size()
         # else set error
         else:
             self.set_error()
@@ -130,22 +142,30 @@ class FTP:
             self.code = self.data[:INDEX_CODE]
         else:
             self.code = code
-        # TODO: CHECK CODE FOR ERROR, raise...
 
 
     def set_size(self):
-        self.size = int(self.data[INDEX_CODE:INDEX_SIZE])            
+        print("SETTIG SIZE: ", self.data)
+        try:
+            self.size = int(self.data[INDEX_CODE:INDEX_SIZE])
+        except:
+            pass
+        print("SIZE: %d" % self.size)
 
     
     def set_error(self):
-        self.error = self.data[INDEX_CODE:INDEX_SIZE]
+        self.error = self.data[INDEX_CODE+1:]
         return self.print_error()
 
         
     def get_cmd(self):
         #  get command if none set (from cli params)
         if self.cmd is None:
-            self.cmd = raw_input('Command:\t\t')
+            args = raw_input('Command:\t\t').split()
+            if len(args) > 1:
+                self.cmd, self.cmd_arg = args
+            else:
+                self.cmd, self.cmd_arg = [args[0], None]
 
 
     def send_cmd(self, cmd, data=None):
@@ -155,7 +175,8 @@ class FTP:
 
 
     def handle_cmd(self):
-        c = self.cmd 
+        c = self.cmd
+        print("C::", c)
         if c == CMD_QUIT or c == '-q':
             return self.cmd_quit()
         elif c == CMD_PORT or c == '-p':
@@ -163,9 +184,18 @@ class FTP:
         elif c == CMD_PWD or c == '-l':
             return self.cmd_pwd()
         elif c == CMD_RETR or c == '-f':
-            pass
+            return self.cmd_retr()
         else:
             pass
+
+
+    def cmd_quit(self):
+        if self.socket:
+            self.send_cmd(CMD_QUIT)
+            self.socket.close()
+        self.close_data()
+        # set code as quit to break run loop
+        self.code = CMD_QUIT
 
 
     def cmd_port(self):
@@ -180,12 +210,14 @@ class FTP:
             print(data)
 
 
-    def cmd_quit(self):
-        if self.socket:
-            self.socket.close()
-        self.close_data()
-        # set code as quit to break run loop
-        self.code = CMD_QUIT
+    def cmd_retr(self):
+        print("IN RETR...")
+        if self.send_cmd(CMD_RETR, self.cmd_arg):
+            print("HANDLING RETR...")
+            # get the file from server on newtcp conneciton
+            data = self.get_data()
+            # print it out to stdout
+            print(data)
 
 
     def get_data(self):
@@ -203,16 +235,14 @@ class FTP:
         if self.socket_server < 0:
             return "%s %s" % (CODE_FAIL_CONN, "Failed to connect to server.")
         # get data from server
-        data = self.socket_server.recv(self.size)    
+        data = self.socket_server.recv(self.size)
         # clean up connections
         self.close_data()
         return data
 
 
     def status(self):
-        # TODO: check if code is ok...
-        # TODO: const code status list
-        if self.code == '404':
+        if self.code in ERR_CODES:
             return False
         return True
 

@@ -18,10 +18,8 @@ void handle_cmd_pwd(int fd, char *port) {
   char data[MAX_BUFFER] = "";
   char len[MAX_BUFFER] = "";
   // if data port not set, err
-  if (!strcmp(
-          port,
-          "")) {  // TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    handle_send_code(fd, CODE_INT_ERR, "Failed to list directory.");
+  if (!strcmp(port,"")) {
+    handle_send_code(fd, CODE_INT_ERR, "Data port not set.");
     return;
   }
   // get current dir listing
@@ -49,40 +47,44 @@ void handle_cmd_pwd(int fd, char *port) {
  * Handles sending a file to client
  *
  * @param {int} fd            - file desc of client issuing command
+ * @param {char*} port        - port to send data to
  * @param {char*} file_name   - name of file to send
  */
-void handle_cmd_retr(int fd, char *file_name) {
+void handle_cmd_retr(int fd, char *port, char *file_name) {
   FILE *fp;
   struct stat info;
-  char *buffer;
+  char *data; 
+  char len[MAX_BUFFER] = "";
   // check if file exists, get info about it
   if (stat(file_name, &info) != 0) {
-    // send not found error to client
-    handle_send_client(fd, "FILE NOT FOUND");
+    handle_send_code(fd, CODE_NOT_FOUND, "File not found.");
     return;
   }
   // allocate some space to store the file
-  buffer = malloc(info.st_size);
-  if (buffer == NULL) {
-    perror("Failed to allocate buffer");
+  data = malloc(info.st_size);
+  if (data == NULL) {
+    handle_send_code(fd, CODE_INT_ERR, "Failed to allocate memory.");
     return;
   }
   // open the file
   fp = fopen(file_name, "rb");
   if (fp == NULL) {
-    perror("Failed to open file");
+    handle_send_code(fd, CODE_INT_ERR, "Failed to open file.");
     return;
   }
   // read the file
-  if (fread(buffer, info.st_size, 1, fp) != 1) {
-    perror("Failed to read file");
+  if (fread(data, info.st_size, 1, fp) != 1) {
+    handle_send_code(fd, CODE_INT_ERR, "Failed to open file.");
     fclose(fp);
     return;
   }
   // close file
   fclose(fp);
-  // send file to client
-  handle_send_client(fd, buffer);
+  // send ok with length of data
+  sprintf(len, "%zu", strlen(data));
+  handle_send_code(fd, CODE_OK, len);
+  // send data
+  handle_send_data(fd, port, data);
 }
 
 /**
@@ -138,12 +140,13 @@ void handle_cmd(fd_set *master, int fd, char *port, char *command) {
   if (command != NULL) {
     arg = strtok(NULL, delim);
   }
-  printf("handle_cmd: port: '%s', command: '%s', cmd: %s, arg: %s\n ", port, command, cmd, arg);
+  printf("handle_cmd: port: '%s', command: '%s', cmd: %s, arg: %s\n ", port,
+         command, cmd, arg);
   // match command and take action on it
   if (!strcmp(cmd, CMD_PWD)) {  // PWD
     handle_cmd_pwd(fd, port);
   } else if (!strcmp(cmd, CMD_RETR)) {  // RETR
-    handle_cmd_retr(fd, arg);
+    handle_cmd_retr(fd, port, arg);
   } else if (!strcmp(cmd, CMD_PORT)) {  // PORT
     handle_cmd_port(fd, port, arg);
   } else if (!strcmp(cmd, CMD_QUIT)) {  // QUIT

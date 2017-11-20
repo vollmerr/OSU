@@ -67,6 +67,7 @@ void handle_recv_client(fd_set *master, int fd, char *port) {
 void handle_send_client(int fd, char *msg) {
   int sent = 0;
   int len = strlen(msg);
+  print_debug("SENDING: %s", msg);
   // while not all sent
   while (sent <= len) {
     printf("sending packet %d / %d to fd %d\n", (sent / MAX_DATA) + 1,
@@ -81,141 +82,63 @@ void handle_send_client(int fd, char *msg) {
 void handle_send_code(int fd, char *code, char *desc) {
   char buffer[MAX_DATA];
   // concat code infront of desc
-  strcpy(buffer, code);
-  strcpy(buffer, " ");
-  strcpy(buffer, desc);
+  sprintf(buffer, "%s %s", code, desc);
   // send code reponse to client
   handle_send_client(fd, buffer);
 }
 
 void handle_send_data(int fd, char *port, char *msg) {
-  int sockfd, numbytes;
-  char buf[MAX_DATA];
+  int sockfd;
   struct addrinfo hints, *servinfo, *p;
   int rv;
   char s[INET_ADDRSTRLEN];
-
+  // will do for now as spent wayyy too many hours on this....
+  // get ip address based off clients fd
+  struct sockaddr_in addr;
+  socklen_t addr_size = sizeof(struct sockaddr_in);
+  getpeername(fd, (struct sockaddr *)&addr, &addr_size);
+  char clientip[20];
+  strcpy(clientip, inet_ntoa(addr.sin_addr));
+  // get host name based off ip address.........
+  struct hostent *he;
+  struct in_addr hostname;
+  inet_aton(clientip, &hostname);
+  he = gethostbyaddr(&hostname, sizeof hostname, AF_INET);
+  // fill socket info
   memset(&hints, 0, sizeof hints);
-  hints.ai_family = AF_UNSPEC;
+  hints.ai_family = AF_INET;
   hints.ai_socktype = SOCK_STREAM;
-
-  if ((rv = getaddrinfo("flip2", port, &hints, &servinfo)) != 0) {
+  // get address info
+  if ((rv = getaddrinfo(he->h_name, port, &hints, &servinfo)) != 0) {
     fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
     exit(1);
   }
-
   // loop through all the results and connect to the first we can
   for (p = servinfo; p != NULL; p = p->ai_next) {
     if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {
       perror("client: socket");
       continue;
     }
-
+    // connnect to client
     if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
       perror("client: connect");
       close(sockfd);
       continue;
     }
-
     break;
   }
-
+  // make sure we actually have a socket
   if (p == NULL) {
     fprintf(stderr, "client: failed to connect\n");
     exit(2);
   }
-  
+
   inet_ntop(p->ai_family, &(((struct sockaddr_in *)p)->sin_addr), s,
             sizeof s);
   printf("client: connecting to %s\n", s);
-
-  freeaddrinfo(servinfo);  // all done with this structure
-
-  // if ((numbytes = recv(sockfd, buf, MAX_DATA - 1, 0)) == -1) {
-  //   perror("recv");
-  //   exit(1);
-  // }
-
-  // buf[numbytes] = '\0';
-
-  // printf("client: received '%s'\n", buf);
-
-  // close(sockfd);
-
-
-  
-  // int client_fd;
-  // int rv;
-  // // struct addrinfo *p;
-  // struct addrinfo hints, *client_info, *p;
-  // memset(&hints, 0, sizeof hints);
-  // hints.ai_family = AF_INET;
-  // hints.ai_socktype = SOCK_STREAM;
-  // // connect to clients data port
-  // struct sockaddr_in addr;
-  // socklen_t addr_size = sizeof(struct sockaddr_in);
-  // getpeername(fd, (struct sockaddr *)&addr, &addr_size);
-  // // TODO erro handle...
-  // if ((rv = getaddrinfo(inet_ntoa(addr.sin_addr), port, &hints,
-  //                       &client_info)) != 0) {
-  //   fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
-  //   return;
-  // }
-  // printf("tring to connect to... '%s' on port '%s' .... ",
-  //        inet_ntoa(addr.sin_addr), port);
-  // // loop through all the results and connect to the first we can
-  // for (p = client_info; p != NULL; p = p->ai_next) {
-  //   if ((client_fd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) ==
-  //       -1) {
-  //     continue;
-  //   }
-
-  //   if (connect(client_fd, p->ai_addr, p->ai_addrlen) == -1) {
-  //     close(client_fd);
-  //     continue;
-  //   }
-
-  //   break;
-  // }
-  // if (p == NULL) {
-  //   fprintf(stderr, "client: failed to connect\n");
-  //   return;
-  // }
-
-  // freeaddrinfo(client_info);  // all done with this structure
-  // // send data
-  // handle_send_client(client_fd, msg);
-  // // close connection
-  // close(client_fd);
-
-  // int client_port;
-  // char *client_addr;
-  // int client_fd;
-
-  // // struct sockaddr_in name;
-  // // socklen_t addr_size = sizeof(struct sockaddr_in);
-  // // getpeername(fd, (struct sockaddr *)&name, &addr_size);
-
-  // // client_addr = inet_ntoa(name.sin_addr);
-  // // client_port = strtol(port, NULL, 10);
-  // client_fd = socket(AF_INET, SOCK_STREAM, 0);
-  // if (client_fd < 0) {
-  //   printf("Error creating socket!\n");
-  //   exit(1);
-  // }
-
-  // struct sockaddr_in addr;
-  // memset(&addr, 0, sizeof(addr));
-  // addr.sin_family = AF_INET;
-  // addr.sin_addr.s_addr = inet_addr("flip2");
-  // addr.sin_port = htons(9118);
-
-  // // connect to server
-  // if (connect(client_fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
-  //   printf("Error connecting to the server!\n");
-  //   exit(1);
-  // }
-  // printf("Connected to \t\t%s:%d\n\n", client_addr, client_port);
+  // free our addr info
+  freeaddrinfo(servinfo);
+  // send the data to the client
   handle_send_client(sockfd, msg);
   close(sockfd);
 }

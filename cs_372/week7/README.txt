@@ -15,7 +15,7 @@ C:
 - reading binary file -> https://stackoverflow.com/questions/7013307/read-the-full-content-of-a-binary-file
 - ftp client (file only) -> ftp://gaia.cs.umass.edu/pub/kurose/ftpserver.c
 - get client address from fd -> https://stackoverflow.com/questions/20472072/c-socket-get-ip-address-from-filedescriptor-returned-from-accept
-
+- get host name form ip address -> https://www.gta.ufrj.br/ensino/eel878/sockets/gethostbynameman.html
 
 Python:
 - ftp client -> https://github.com/python/cpython/blob/master/Lib/ftplib.py
