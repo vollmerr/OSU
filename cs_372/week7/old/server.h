@@ -24,8 +24,6 @@
 #define MAX_CLIENTS 10
 #define MAX_BUFFER 4096
 
-#define PORT "9119"  // TODO: CLI...
-
 #define ERR_GET_ADDR 1
 #define ERR_BIND 2
 #define ERR_LISTEN 3

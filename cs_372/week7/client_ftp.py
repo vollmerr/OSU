@@ -90,7 +90,6 @@ class FTP:
 
 
     def connect(self):
-        print("ABOUT TO CONECCET>...")
         # make new file desc
         self.socket = socket.socket()
         # connect to server
@@ -222,10 +221,11 @@ class FTP:
             while (os.path.isfile('./' + name + uid + dot + ext)):
                 id = id + 1
                 uid = '_' + str(id)
+            file_name = './' + name + uid + dot + ext
             # open file and write data to it
-            with open('./' + name + uid + dot + ext, 'w') as f:
+            with open(file_name, 'w') as f:
                 f.write(data)
-            print("File saved as %s" % './' + name + uid + dot + ext)
+            print("File saved as %s" % file_name)
 
 
     def get_data(self):

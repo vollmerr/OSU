@@ -106,7 +106,8 @@ void handle_cmd_port(int fd, char *port, char *data) {
  * @param {int} fd           - client fd to get data from
  */
 void handle_cmd_quit(fd_set *master, int fd) {
-  printf("Connection closed on socket %d", fd);
+  printf("Connection closed on socket %d\n\n", fd);
+  fflush(stdout);
   // clean up connection fd list
   close(fd);
   FD_CLR(fd, master);
@@ -140,7 +141,7 @@ void handle_cmd(fd_set *master, int fd, char *port, char *command) {
   if (command != NULL) {
     arg = strtok(NULL, delim);
   }
-  printf("handle_cmd: port: '%s', command: '%s', cmd: %s, arg: %s\n ", port,
+  printf("handle_cmd: port: '%s', command: '%s', cmd: '%s', arg: %s\n ", port,
          command, cmd, arg);
   // match command and take action on it
   if (!strcmp(cmd, CMD_PWD)) {  // PWD

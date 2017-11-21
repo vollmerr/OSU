@@ -83,7 +83,7 @@ void init_server(int *server_fd, char *port) {
   }
   // indicate the server is listening...
   gethostname(host, MAX_HOST_NAME);
-  printf("Listening at\t\t%s:%s\n\n", host, PORT);
+  printf("Listening at\t\t%s:%s\n\n", host, port);
 }
 
 /**
