@@ -26,6 +26,17 @@ ERR_CODES = {
 }
 
 class FTP:
+    """Initiates annd runs a mini-FTP client
+
+    Commands:
+        SHORT   LONG    ARGS        DESC
+
+        -p      PORT    portnum     sets the data port number     
+        -l      PWD                 prints the working directory of the server
+        -f      RETR    filename    retrieves a copy of file
+        -q      QUIT                quits the client
+
+    """
     debug = False
 
     cmd = None
@@ -42,17 +53,18 @@ class FTP:
     socket_data = None 
     socket_server = None   
 
-    def __init__(self, host=None, port=None, port_data=None, cmd=None):
+    # Initalies the ftp client, asks user for args if not provided
+    # Connects to the sever, Sends the data port then
+    def __init__(self, addr=None, port=None, data=None, cmd=None):
+        print("host: %s, port: %s, port_data: %s, cmd: %s\n" % (addr, port, data, cmd) )
         # get the address info, use any passed from cli
-        self.get_addr_info(host, port, port_data)
+        self.get_addr_info(addr, port, data)
         # connect to the server
         self.connect()
         # send the server the data port
         self.cmd_port()
         # if they passed in a command, set it, otherwise get it when needed
         self.cmd = cmd
-        # run the loop
-        self.run()
 
 
     def __exit__(self, *args):
@@ -68,16 +80,20 @@ class FTP:
         print("Error: %s - %s" % (self.code, self.error))
 
 
-    def get_addr_info(self, host, port, port_data):
+    def get_addr_info(self, host=None, port=None, port_data=None):
+        print("host: %s, port: %s, port_data: %s, IN IT\n" % (host, port, port_data) )
         # set host from cli if none
         if host is None:
             self.host = raw_input('Host:\t\t\t')
         else:
             self.host = str(host)
         # set port for commands from cli if none
+        print('port: ', port)
         if port is None:
+            print('port: IS NONE???', port)
             self.port = int(raw_input('Connection Port:\t'))
         else:
+            print('port: not none...', port)
             self.port = int(port)
         # set port for data from cli if none
         if port_data is None:

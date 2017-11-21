@@ -1,26 +1,29 @@
-# Written in Python
-# NO sendfile or predfiened functions that make trivial
-# short and long files
-# .txt file (extra for binary)
-# CITE SOURCES AS YOU GO!
-# CHECK OUTPUT / INPUT FROM PDF
-
-# validate cli params
-# establish TCP control connection @SERVER_HOST:SERVER_PORT
-# send a command to server
-# initiate TCP data connection
-# -l = display directory from server
-# -g <FILENAME> = error ? display error : svae file from server, display message
-# close connection and terminate
-
-
-# bonus = cd command, username/password to access server, binary files
-
+import argparse
 from client_ftp import FTP
 
 
+# gets command line args to init ftp client
+def get_args():
+    parser = argparse.ArgumentParser(description='Basic FTP client.')
+
+    parser.add_argument('-a', dest='addr', help='server hostname or IP address')
+    parser.add_argument('-p', dest='port', help='server port number')
+    parser.add_argument('-d', dest='data', help='data port number')
+    parser.add_argument('cmd', nargs='?', help='command to use')
+
+    args = parser.parse_args()
+    
+    return {
+        'addr': args.addr,
+        'port': args.port,
+        'data': args.data,
+        'cmd': args.cmd,
+    }
+
+
 def main():
-    ftp = FTP()
+    ftp = FTP(**get_args())
+    ftp.run()
 
 
 if __name__ == '__main__':

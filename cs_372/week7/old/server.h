@@ -35,7 +35,7 @@
 #define CODE_NOT_FOUND "404"
 #define CODE_INT_ERR "500"
 
-#define __DEBUG__ 1
+#define __DEBUG__ 0
 
 // initalization
 void init_server(int *server_fd, char *port);
