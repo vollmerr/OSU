@@ -1,13 +1,6 @@
+import os
 import sys
 import socket
-
-# Format for conn messages:
-# <Code>[size]
-# len(code) = 3
-# len(size) = 10 (is size of message)
-
-# Format for data messages:
-# data...
 
 MAX_DATA = 1024
 INDEX_CODE = 3
@@ -211,13 +204,28 @@ class FTP:
 
 
     def cmd_retr(self):
-        print("IN RETR...")
         if self.send_cmd(CMD_RETR, self.cmd_arg):
-            print("HANDLING RETR...")
             # get the file from server on newtcp conneciton
             data = self.get_data()
-            # print it out to stdout
-            print(data)
+            # get pieces of file name
+            id = 0
+            uid = ''
+            fn = self.cmd_arg.split('.')
+            name = fn[0]
+            if len(fn) > 1:
+                dot = '.'
+                ext = fn[1]
+            else:
+                dot = ''
+                ext = ''
+            # while file exists, get unique name
+            while (os.path.isfile('./' + name + uid + dot + ext)):
+                id = id + 1
+                uid = '_' + str(id)
+            # open file and write data to it
+            with open('./' + name + uid + dot + ext, 'w') as f:
+                f.write(data)
+            print("File saved as %s" % './' + name + uid + dot + ext)
 
 
     def get_data(self):
@@ -235,7 +243,15 @@ class FTP:
         if self.socket_server < 0:
             return "%s %s" % (CODE_FAIL_CONN, "Failed to connect to server.")
         # get data from server
-        data = self.socket_server.recv(self.size)
+        data = b''
+        size = self.size
+        while len(data) < size:
+            packet = self.socket_server.recv(size - len(data))
+            # did not recv all of it, error
+            if not packet:
+                data = "%s %s" % (CODE_INT_ERR, "Failed to recv all data.")
+                break
+            data += packet
         # clean up connections
         self.close_data()
         return data

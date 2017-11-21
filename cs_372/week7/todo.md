@@ -1,4 +1,4 @@
-- server send data length
+<!-- - server send data length -->
 - client use data length to recv all
 
 - add codes on server
@@ -8,4 +8,9 @@
 - error handling server
 
 - retr command server
+    - send non text?
 - retr command client
+    - save file...
+
+- window management
+    - print top

@@ -23,3 +23,4 @@ Python:
 - ftp sepc -> http://www.networksorcery.com/enp/protocol/ftp.htm
 - ftp cmds -> https://en.wikipedia.org/wiki/List_of_FTP_commands
 - arg parsing -> https://docs.python.org/2/library/argparse.html#module-argparse
+- recv multiple packets -> https://stackoverflow.com/questions/17667903/python-socket-receive-large-amount-of-data
