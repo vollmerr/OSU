@@ -68,7 +68,7 @@ class FTP:
         # connect to the server
         self.connect()
         # send the server the data port
-        self.cmd_port()
+        self.cmd_port(port)
         # if they passed in a command, set it, otherwise get it when needed
         self.cmd = cmd
         self.cmd_arg = arg
@@ -124,7 +124,7 @@ class FTP:
             self.socket.connect((self.host, self.port))
             print('Connected to %s:%s\n' % (self.host, self.port))
         except Exception as e:
-            print('Error: %s\n', e)
+            print('Error: %s\n' % e)
             raise
 
 
@@ -145,7 +145,7 @@ class FTP:
                 self.set_error()
             return ok
         except Exception as e:
-            print('Error: %s\n', e)
+            print('Error: %s\n' % e)
             return False
     
 
@@ -160,7 +160,7 @@ class FTP:
             # get the response code from server
             return self.recv()
         except Exception as e:
-            print('Error: %s\n', e)
+            print('Error: %s\n' % e)
             return False
 
 
@@ -211,7 +211,7 @@ class FTP:
     # calls the correct command based off user input
     def handle_cmd(self):
         c = self.cmd
-        if c == CMD_QUIT or c == '-Q`':
+        if c == CMD_QUIT or c == '-Q':
             return self.cmd_quit()
         elif c == CMD_PORT or c == '-P':
             return self.cmd_port()
@@ -235,7 +235,9 @@ class FTP:
 
 
     # sends the data pot number to the server
-    def cmd_port(self):
+    def cmd_port(self, port=None):
+        if port is None:
+            self.port_data = self.cmd_arg
         return self.send_cmd(CMD_PORT, self.port_data)
 
 
@@ -275,7 +277,7 @@ class FTP:
                     f.write(data)
                 print("File saved as %s\n" % file_name)
             except Exception as e:
-                print('Error: %s\n', e)
+                print('Error: %s\n' % e)
                 return False
 
     # prints the help menu
@@ -323,7 +325,7 @@ class FTP:
             self.close_data()
             return data
         except Exception as e:
-                print('Error: %s\n', e)
+                print('Error: %s\n' % e)
                 return ''
 
 

@@ -45,9 +45,9 @@ void init_fd_sets(fd_set *master, fd_set *read_fds, int server_fd);
 // core functionality
 void handle_new_client(fd_set *master, int server_fd, int *max_fd);
 void handle_recv_client(fd_set *master, int fd, char *port);
-void handle_send_client(int fd, const char *msg);
+void handle_send_client(int fd, const char *msg, long int len);
 void handle_send_code(int fd, const char *code, const char *desc);
-void handle_send_data(int fd, const char *port, const char *msg);
+void handle_send_data(int fd, const char *port, const char *msg, long int len);
 void server_loop(fd_set *master, fd_set *read_fds, int server_fd);
 // commands
 void handle_cmd(fd_set *master, int fd, char *port, char *command);

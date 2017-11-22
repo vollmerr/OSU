@@ -62,14 +62,14 @@ void handle_recv_client(fd_set *master, int fd, char *port) {
  *
  * @param {int*} fd       - client fd to send to  
  * @param {char*} msg     - message to send
+ * @param {int} len       - length of data
  */
-void handle_send_client(int fd, const char *msg) {
-  int sent = 0;
-  int len = strlen(msg);
+void handle_send_client(int fd, const char *msg, long int len) {
+  long int sent = 0;
   print_debug("SENDING: %s", msg);
   // while not all sent
   while (sent <= len) {
-    printf("sending packet %d / %d to fd %d\n", (sent / MAX_DATA) + 1,
+    printf("sending packet %ld / %ld to fd %d\n", (sent / MAX_DATA) + 1,
            (len / MAX_DATA) + 1, fd);
     // send MAX_DATA worth of bytes
     send(fd, msg + sent, MIN(len, MAX_DATA), 0);
@@ -94,8 +94,8 @@ void handle_send_code(int fd, const char *code, const char *msg) {
   sprintf(buffer, "%s %s", code, msg);
   printf("Sending '%s' to fd %d\n", buffer, fd);
   // send code reponse to client
-  handle_send_client(fd, buffer);
-}
+  handle_send_client(fd, buffer, strlen(buffer));
+} 
 
 /**
  * Handles sending data (string format) to
@@ -105,8 +105,9 @@ void handle_send_code(int fd, const char *code, const char *msg) {
  * @param {int*} fd       - client fd to send to
  * @param {char*} port    - clients port to connect to
  * @param {char*} msg     - message to send
+ * @param {int} len       - length of message
  */
-void handle_send_data(int fd, const char *port, const char *msg) {
+void handle_send_data(int fd, const char *port, const char *msg, long int len) {
   int sockfd;
   struct addrinfo hints, *servinfo, *p;
   int rv;
@@ -158,7 +159,7 @@ void handle_send_data(int fd, const char *port, const char *msg) {
   // free our addr info
   freeaddrinfo(servinfo);
   // send the data to the client
-  handle_send_client(sockfd, msg);
+  handle_send_client(sockfd, msg, len);
   close(sockfd);
 }
 

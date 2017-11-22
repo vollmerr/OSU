@@ -3,8 +3,13 @@
 
 Author: Ryan Vollmer
 
-Desc: Basic FTP client / server, allows retrieving text files and printing 
+Desc: Basic FTP client / server, allows retrieving files and printing 
 the servers wroking directory. Server supports up to 10 clients at once.
+
+
+## Extra Features:
+### Retrieve (-g or RETR command) any file type (binary)
+- tested with 43 MB .mp3 and 3 KB .jpg
 
 
 ## Usage
@@ -48,6 +53,8 @@ SHORT   LONG    ARG         DESC
 - ftp client (file only) -> ftp://gaia.cs.umass.edu/pub/kurose/ftpserver.c
 - get client address from fd -> https://stackoverflow.com/questions/20472072/c-socket-get-ip-address-from-filedescriptor-returned-from-accept
 - get host name form ip address -> https://www.gta.ufrj.br/ensino/eel878/sockets/gethostbynameman.html
+- stat usage -> https://stackoverflow.com/questions/3138600/correct-use-of-stat-on-c
+
 
 ### Python / client:
 - ftp client -> https://github.com/python/cpython/blob/master/Lib/ftplib.py

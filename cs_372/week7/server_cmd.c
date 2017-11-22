@@ -73,7 +73,7 @@ void handle_cmd_pwd(int fd, const char *port) {
   sprintf(len, "%zu", strlen(data));
   handle_send_code(fd, CODE_OK, len);
   // send data
-  handle_send_data(fd, port, data);
+  handle_send_data(fd, port, data, strlen(data));
 }
 
 /**
@@ -85,39 +85,51 @@ void handle_cmd_pwd(int fd, const char *port) {
  */
 void handle_cmd_retr(int fd, const char *port, const char *file_name) {
   FILE *fp;
-  struct stat info;
+  struct stat *info;
+  long int size;
   char *data;
   char len[MAX_BUFFER] = "";
   // check if file exists, get info about it
-  if (stat(file_name, &info) != 0) {
+  info = malloc(sizeof(struct stat));
+  if (stat(file_name, info) != 0) {
     handle_send_code(fd, CODE_NOT_FOUND, "File not found.");
     return;
   }
+  size = info->st_size;
+  printf("SIZE::::::::, %zd", size);
+  free(info);
+  printf("SIZE::::::::, %zd", size);
   // allocate some space to store the file
-  data = malloc(info.st_size);
+  data = malloc(size);
   if (data == NULL) {
     handle_send_code(fd, CODE_INT_ERR, "Failed to allocate memory.");
+    free(data);
     return;
   }
   // open the file
   fp = fopen(file_name, "rb");
   if (fp == NULL) {
     handle_send_code(fd, CODE_INT_ERR, "Failed to open file.");
+    free(data);
     return;
   }
+  printf("SIZE: %zd, ", size);
   // read the file
-  if (fread(data, info.st_size, 1, fp) != 1) {
-    handle_send_code(fd, CODE_INT_ERR, "Failed to open file.");
+  if (fread(data, size, 1, fp) != 1) {
+    handle_send_code(fd, CODE_INT_ERR, "Failed to read file.");
+    free(data);
     fclose(fp);
     return;
   }
+  printf("SIZE: %zd, ", size);
   // close file
   fclose(fp);
   // send ok with length of data
-  sprintf(len, "%zu", strlen(data));
+  sprintf(len, "%ld", size);
   handle_send_code(fd, CODE_OK, len);
   // send data
-  handle_send_data(fd, port, data);
+  handle_send_data(fd, port, data, size);
+  free(data);
 }
 
 /**
