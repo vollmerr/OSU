@@ -35,27 +35,28 @@
 #define CODE_NOT_FOUND "404"
 #define CODE_INT_ERR "500"
 
-#define __DEBUG__ 0
+// #define __DEBUG__ 1
 
 // initalization
-void init_server(int *server_fd, char *port);
-void init_server_info(struct addrinfo **ai, char *port);
+void init_server(int *server_fd, const char *port);
+void init_server_info(struct addrinfo **ai, const char *port);
 int init_server_socket(struct addrinfo *ai);
 void init_fd_sets(fd_set *master, fd_set *read_fds, int server_fd);
 // core functionality
-void server_loop(fd_set *master, fd_set *read_fds, int server_fd);
 void handle_new_client(fd_set *master, int server_fd, int *max_fd);
 void handle_recv_client(fd_set *master, int fd, char *port);
-void handle_send_client(int fd, char *msg);
-void handle_send_code(int fd, char *code, char *desc);
-void handle_send_data(int fd, char *port, char *msg);
+void handle_send_client(int fd, const char *msg);
+void handle_send_code(int fd, const char *code, const char *desc);
+void handle_send_data(int fd, const char *port, const char *msg);
+void server_loop(fd_set *master, fd_set *read_fds, int server_fd);
 // commands
 void handle_cmd(fd_set *master, int fd, char *port, char *command);
-void handle_cmd_pwd(int fd, char *port);
-void handle_cmd_retr(int fd, char *port, char *file_name);
-void handle_cmd_port(int fd, char *port, char *data);    
+void handle_cmd_pwd(int fd, const char *port);
+void handle_cmd_retr(int fd, const char *port, const char *file_name);
+void handle_cmd_port(int fd, char *port, const char *data);    
 void handle_cmd_quit(fd_set *master, int fd);
 void handle_cmd_unknown(int fd);
 // util
 void print_debug(const char *format, ...);
+void print_clear();
 char *trim(char *s);

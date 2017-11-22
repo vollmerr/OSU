@@ -24,6 +24,14 @@ void print_debug(const char *format, ...) {
 }
 
 /**
+ * Clears the screeen and sets the cursor in top left
+ */
+void print_clear() {
+  printf("\33[2J\33[;f"); // escape code for resetting line
+  fflush(stdout);
+}
+
+/**
  * Removes newline characters
  */
 char *trim(char *s) {

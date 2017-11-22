@@ -7,11 +7,35 @@
 #include "server.h"
 
 /**
+ * Initalizes the server socket
+ *
+ * @param {int} server_fd     - file desc of server socket
+ */
+void init_server(int *server_fd, const char *port) {
+  struct addrinfo *ai = NULL;
+  char host[MAX_HOST_NAME];
+  // init the server addr info
+  init_server_info(&ai, port);
+  // create new file desc
+  *server_fd = init_server_socket(ai);
+  // free address info
+  freeaddrinfo(ai);
+  // listen for new connections
+  if (listen(*server_fd, MAX_CLIENTS) < 0) {
+    perror("Failed to listen");
+    exit(ERR_LISTEN);
+  }
+  // indicate the server is listening...
+  gethostname(host, MAX_HOST_NAME);
+  printf("Listening at\t\t%s:%s\n\n", host, port);
+}
+
+/**
  * Initalizes the server socket information
  *
  * @param {addrinfo**} ai    - pointer to address info to fill out
  */
-void init_server_info(struct addrinfo **ai, char *port) {
+void init_server_info(struct addrinfo **ai, const char *port) {
   struct addrinfo hints;
   int r;
   // fill address info
@@ -60,30 +84,6 @@ int init_server_socket(struct addrinfo *ai) {
     exit(ERR_BIND);
   }
   return fd;
-}
-
-/**
- * Initalizes the server socket
- *
- * @param {int} server_fd     - file desc of server socket
- */
-void init_server(int *server_fd, char *port) {
-  struct addrinfo *ai = NULL;
-  char host[MAX_HOST_NAME];
-  // init the server addr info
-  init_server_info(&ai, port);
-  // create new file desc
-  *server_fd = init_server_socket(ai);
-  // free address info
-  freeaddrinfo(ai);
-  // listen for new connections
-  if (listen(*server_fd, MAX_CLIENTS) < 0) {
-    perror("Failed to listen");
-    exit(ERR_LISTEN);
-  }
-  // indicate the server is listening...
-  gethostname(host, MAX_HOST_NAME);
-  printf("Listening at\t\t%s:%s\n\n", host, port);
 }
 
 /**

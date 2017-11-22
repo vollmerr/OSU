@@ -53,7 +53,6 @@ void handle_recv_client(fd_set *master, int fd, char *port) {
     // set command as quit to close connection
     strcpy(cmd, CMD_QUIT);
   }
-  printf("about to handle... cmd: %s\n", cmd);
   // handle the command user sent
   handle_cmd(master, fd, port, cmd);
 }
@@ -61,10 +60,10 @@ void handle_recv_client(fd_set *master, int fd, char *port) {
 /**
  * Handles sending data to a client
  *
- * @param {int*} fd       - client fd to send to
+ * @param {int*} fd       - client fd to send to  
  * @param {char*} msg     - message to send
  */
-void handle_send_client(int fd, char *msg) {
+void handle_send_client(int fd, const char *msg) {
   int sent = 0;
   int len = strlen(msg);
   print_debug("SENDING: %s", msg);
@@ -77,17 +76,37 @@ void handle_send_client(int fd, char *msg) {
     // increment position to send next time
     sent += MAX_DATA;
   }
+  printf("\n");
 }
 
-void handle_send_code(int fd, char *code, char *desc) {
+/**
+ * Handles sending a code and message.
+ * Message will be text on errors and
+ * length of data on success.
+ * 
+ * @param {int*} fd       - client fd to send to
+ * @param {char*} code    - code to send   
+ * @param {char*} msg     - message to send
+ */
+void handle_send_code(int fd, const char *code, const char *msg) {
   char buffer[MAX_DATA];
-  // concat code infront of desc
-  sprintf(buffer, "%s %s", code, desc);
+  // concat code infront of msg
+  sprintf(buffer, "%s %s", code, msg);
+  printf("Sending '%s' to fd %d\n", buffer, fd);
   // send code reponse to client
   handle_send_client(fd, buffer);
 }
 
-void handle_send_data(int fd, char *port, char *msg) {
+/**
+ * Handles sending data (string format) to
+ * a client. Opens a new TCP connection, connecting
+ * to the clients data port.
+ * 
+ * @param {int*} fd       - client fd to send to
+ * @param {char*} port    - clients port to connect to
+ * @param {char*} msg     - message to send
+ */
+void handle_send_data(int fd, const char *port, const char *msg) {
   int sockfd;
   struct addrinfo hints, *servinfo, *p;
   int rv;
@@ -116,12 +135,12 @@ void handle_send_data(int fd, char *port, char *msg) {
   // loop through all the results and connect to the first we can
   for (p = servinfo; p != NULL; p = p->ai_next) {
     if ((sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {
-      perror("client: socket");
+      perror("socket");
       continue;
     }
     // connnect to client
     if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
-      perror("client: connect");
+      perror("connect");
       close(sockfd);
       continue;
     }
@@ -129,13 +148,13 @@ void handle_send_data(int fd, char *port, char *msg) {
   }
   // make sure we actually have a socket
   if (p == NULL) {
-    fprintf(stderr, "client: failed to connect\n");
+    fprintf(stderr, "Failed to connect to client\n");
     exit(2);
   }
 
   inet_ntop(p->ai_family, &(((struct sockaddr_in *)p)->sin_addr), s,
             sizeof s);
-  printf("client: connecting to %s\n", s);
+  printf("Connecting to %s\n", he->h_name);
   // free our addr info
   freeaddrinfo(servinfo);
   // send the data to the client

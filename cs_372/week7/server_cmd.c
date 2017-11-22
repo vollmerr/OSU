@@ -7,18 +7,51 @@
 #include "server.h"
 
 /**
+ * Handles calling the correct command
+ * cmd format:     "<cmd> [arg]"
+ *
+ * @param {fd_set*} master  - master set of file desc
+ * @param {int} fd          - file desc of client issuing command
+ * @param {char*} port      - port to send data to
+ * @param {char*} cmd       - command to call
+ */
+void handle_cmd(fd_set *master, int fd, char *port, char *command) {
+  char *cmd;
+  char *arg;
+  char delim[] = " \t\r\n\v\f";
+  // get command
+  cmd = strtok(command, delim);
+  // get additional arg (ex filename)
+  if (command != NULL) {
+    arg = strtok(NULL, delim);
+  }
+  // match command and take action on it
+  if (!strcmp(cmd, CMD_PWD)) {  // PWD
+    handle_cmd_pwd(fd, port);
+  } else if (!strcmp(cmd, CMD_RETR)) {  // RETR
+    handle_cmd_retr(fd, port, arg);
+  } else if (!strcmp(cmd, CMD_PORT)) {  // PORT
+    handle_cmd_port(fd, port, arg);
+  } else if (!strcmp(cmd, CMD_QUIT)) {  // QUIT
+    handle_cmd_quit(master, fd);
+  } else {
+    handle_cmd_unknown(fd);  // unknown
+  }
+}
+
+/**
  * Handles listsing the current directory contents
  *
  * @param {int} fd      - file desc of client issuing command
  * @param {char*} port      - port to send data to
  */
-void handle_cmd_pwd(int fd, char *port) {
+void handle_cmd_pwd(int fd, const char *port) {
   DIR *dp;
   struct dirent *ep;
   char data[MAX_BUFFER] = "";
   char len[MAX_BUFFER] = "";
   // if data port not set, err
-  if (!strcmp(port,"")) {
+  if (!strcmp(port, "")) {
     handle_send_code(fd, CODE_INT_ERR, "Data port not set.");
     return;
   }
@@ -50,10 +83,10 @@ void handle_cmd_pwd(int fd, char *port) {
  * @param {char*} port        - port to send data to
  * @param {char*} file_name   - name of file to send
  */
-void handle_cmd_retr(int fd, char *port, char *file_name) {
+void handle_cmd_retr(int fd, const char *port, const char *file_name) {
   FILE *fp;
   struct stat info;
-  char *data; 
+  char *data;
   char len[MAX_BUFFER] = "";
   // check if file exists, get info about it
   if (stat(file_name, &info) != 0) {
@@ -91,10 +124,10 @@ void handle_cmd_retr(int fd, char *port, char *file_name) {
  * Handles setting the clients data port
  *
  * @param {int} fd                - client fd to get data from
- * @param {cahr*} port            - clients port to fill
+ * @param {char*} port            - clients port to fill
  * @param {char*} data            - data to fill port with
  */
-void handle_cmd_port(int fd, char *port, char *data) {
+void handle_cmd_port(int fd, char *port, const char *data) {
   strcpy(port, data);
   handle_send_code(fd, CODE_OK, "0");
 }
@@ -120,39 +153,4 @@ void handle_cmd_quit(fd_set *master, int fd) {
  */
 void handle_cmd_unknown(int fd) {
   handle_send_code(fd, CODE_BAD_REQ, "Unknown command...");
-}
-
-/**
- * Handles calling the correct command
- * cmd format:     "<cmd> [arg]"
- *
- * @param {fd_set*} master  - master set of file desc
- * @param {int} fd          - file desc of client issuing command
- * @param {char*} port      - port to send data to
- * @param {char*} cmd       - command to call
- */
-void handle_cmd(fd_set *master, int fd, char *port, char *command) {
-  char *cmd;
-  char *arg;
-  char delim[] = " \t\r\n\v\f";
-  // get command
-  cmd = strtok(command, delim);
-  // get additional arg (ex filename)
-  if (command != NULL) {
-    arg = strtok(NULL, delim);
-  }
-  printf("handle_cmd: port: '%s', command: '%s', cmd: '%s', arg: %s\n ", port,
-         command, cmd, arg);
-  // match command and take action on it
-  if (!strcmp(cmd, CMD_PWD)) {  // PWD
-    handle_cmd_pwd(fd, port);
-  } else if (!strcmp(cmd, CMD_RETR)) {  // RETR
-    handle_cmd_retr(fd, port, arg);
-  } else if (!strcmp(cmd, CMD_PORT)) {  // PORT
-    handle_cmd_port(fd, port, arg);
-  } else if (!strcmp(cmd, CMD_QUIT)) {  // QUIT
-    handle_cmd_quit(master, fd);
-  } else {
-    handle_cmd_unknown(fd);  // unknown
-  }
 }
