@@ -14,7 +14,7 @@ the servers wroking directory. Server supports up to 10 clients at once.
 - Server allows up to 10 concurrent users
 (tested with 4 connected clients)
 
-- PORT command allows client to change data port to be changed
+- PORT command allows client to change data port
 
 
 ## Usage
@@ -26,7 +26,7 @@ make server
 
 Run the server
 ```
-./server PORTNUM
+./server PORT_NUM
 ```
 
 Run the client(s)
