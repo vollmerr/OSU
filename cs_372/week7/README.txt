@@ -8,8 +8,13 @@ the servers wroking directory. Server supports up to 10 clients at once.
 
 
 ## Extra Features:
-### Retrieve (-g or RETR command) any file type (binary)
-- tested with 43 MB .mp3 and 3 KB .jpg
+- Retrieve (-g or RETR command) any file type (binary)
+(tested with 43 MB .mp3, 3 KB .jpg, and text files)
+
+- Server allows up to 10 concurrent users
+(tested with 4 connected clients)
+
+- PORT command allows client to change data port to be changed
 
 
 ## Usage
@@ -26,9 +31,10 @@ Run the server
 
 Run the client(s)
 ```
-python ./client.py [-h] [-n NAME] [-p PORT] [-d DATA] [-c CMD] [-a ARG]
+python ./client.py [-h] [-n SERVER_NAME] [-p PORT_NUM] [-d DATA_PORT] [-c CMD] [-a ARG]
 ```
-(You will be prompted for any missing inputs)
+* You will be prompted for any missing inputs
+* CMD must be in long format if passed through the cli (see below)
 
 
 ## Available Commands
@@ -36,7 +42,7 @@ SHORT   LONG    ARG         DESC
 
 -p      PORT    portnum     sets the data port number     
 -l      PWD                 prints the working directory of the server
--f      RETR    filename    retrieves a copy of file
+-g      RETR    filename    retrieves a copy of file
 -q      QUIT                quits the client
 -h      HELP                prints the help menu
 
@@ -54,7 +60,6 @@ SHORT   LONG    ARG         DESC
 - get client address from fd -> https://stackoverflow.com/questions/20472072/c-socket-get-ip-address-from-filedescriptor-returned-from-accept
 - get host name form ip address -> https://www.gta.ufrj.br/ensino/eel878/sockets/gethostbynameman.html
 - stat usage -> https://stackoverflow.com/questions/3138600/correct-use-of-stat-on-c
-
 
 ### Python / client:
 - ftp client -> https://github.com/python/cpython/blob/master/Lib/ftplib.py

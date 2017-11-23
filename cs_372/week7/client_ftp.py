@@ -70,7 +70,7 @@ class FTP:
         # send the server the data port
         self.cmd_port(port)
         # if they passed in a command, set it, otherwise get it when needed
-        self.cmd = cmd
+        self.cmd = None if cmd is None else cmd.upper()
         self.cmd_arg = arg
         
 

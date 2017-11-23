@@ -19,6 +19,7 @@
 #define CMD_QUIT "QUIT"  // quit...
 
 #define SIZE_CODE 4  // 3 + '\0'
+#define SIZE_PORT 6
 #define MAX_HOST_NAME 255
 #define MAX_DATA 256
 #define MAX_CLIENTS 10
@@ -44,16 +45,16 @@ int init_server_socket(struct addrinfo *ai);
 void init_fd_sets(fd_set *master, fd_set *read_fds, int server_fd);
 // core functionality
 void handle_new_client(fd_set *master, int server_fd, int *max_fd);
-void handle_recv_client(fd_set *master, int fd, char *port);
+void handle_recv_client(fd_set *master, int fd, char **client_ports);
 void handle_send_client(int fd, const char *msg, long int len);
 void handle_send_code(int fd, const char *code, const char *desc);
 void handle_send_data(int fd, const char *port, const char *msg, long int len);
 void server_loop(fd_set *master, fd_set *read_fds, int server_fd);
 // commands
-void handle_cmd(fd_set *master, int fd, char *port, char *command);
-void handle_cmd_pwd(int fd, const char *port);
-void handle_cmd_retr(int fd, const char *port, const char *file_name);
-void handle_cmd_port(int fd, char *port, const char *data);    
+void handle_cmd(fd_set *master, int fd, char **client_ports, char *command);
+void handle_cmd_pwd(int fd, const char *client_port);
+void handle_cmd_retr(int fd, const char *client_port, const char *file_name);
+void handle_cmd_port(int fd, char **client_ports, const char *data);    
 void handle_cmd_quit(fd_set *master, int fd);
 void handle_cmd_unknown(int fd);
 // util

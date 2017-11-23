@@ -14,10 +14,12 @@
  * @param {int*} max_fd       - highest fd in master set
  */
 void handle_new_client(fd_set *master, int server_fd, int *max_fd) {
+  print_debug("handle_new_client: '%d' - '%d'", server_fd, *max_fd);
   int fd;
   socklen_t addr_len;
   struct sockaddr client_addr;
-  char clientIP[INET_ADDRSTRLEN];
+  char clientIP[NI_MAXHOST];
+  char clientPort[NI_MAXSERV];
   // accept the new connection
   addr_len = sizeof(client_addr);
   if ((fd = accept(server_fd, &client_addr, &addr_len)) < 0) {
@@ -29,11 +31,13 @@ void handle_new_client(fd_set *master, int server_fd, int *max_fd) {
     if (fd > *max_fd) {
       *max_fd = fd;
     }
-    // print message indicating new connection
-    printf("New connection from %s on fd %d\n",
-           inet_ntop(AF_INET, &(((struct sockaddr_in *)&client_addr)->sin_addr),
-                     clientIP, INET_ADDRSTRLEN),
-           fd);
+    if (getnameinfo(&client_addr, addr_len, clientIP, INET_ADDRSTRLEN,
+                    clientPort, INET_ADDRSTRLEN,
+                    NI_NUMERICHOST | NI_NUMERICSERV)) {
+      perror("Failed to client information");
+    } else {
+      printf("New connection from %s:%s on fd %d\n", clientIP, clientPort, fd);
+    }
   }
 }
 
@@ -42,11 +46,12 @@ void handle_new_client(fd_set *master, int server_fd, int *max_fd) {
  * Assumes length of message will be under MAX_DATA size
  * due to only being a command sent.
  *
- * @param {fd_set*} master    - master set of file desc
- * @param {int*} fd           - client fd to get data from
- * @param {char*} port        - client data port
+ * @param {fd_set*} master        - master set of file desc
+ * @param {int*} fd               - client fd to get data from
+ * @param {char**} client_ports   - list of client data ports
  */
-void handle_recv_client(fd_set *master, int fd, char *port) {
+void handle_recv_client(fd_set *master, int fd, char **client_ports) {
+  print_debug("handle_recv_client: '%d'", fd);
   char cmd[MAX_DATA] = "";
   // get data from client
   if (recv(fd, cmd, MAX_DATA, 0) <= 0) {
@@ -54,22 +59,22 @@ void handle_recv_client(fd_set *master, int fd, char *port) {
     strcpy(cmd, CMD_QUIT);
   }
   // handle the command user sent
-  handle_cmd(master, fd, port, cmd);
+  handle_cmd(master, fd, client_ports, cmd);
 }
 
 /**
  * Handles sending data to a client
  *
- * @param {int*} fd       - client fd to send to  
+ * @param {int*} fd       - client fd to send to
  * @param {char*} msg     - message to send
  * @param {int} len       - length of data
  */
 void handle_send_client(int fd, const char *msg, long int len) {
+  print_debug("handle_send_client: '%d' - '%s' - '%ld'", fd, msg, len);
   long int sent = 0;
-  print_debug("SENDING: %s", msg);
   // while not all sent
   while (sent <= len) {
-    printf("sending packet %ld / %ld to fd %d\n", (sent / MAX_DATA) + 1,
+    printf("Sent:\t\t%ld / %ld to fd %d\n", (sent / MAX_DATA) + 1,
            (len / MAX_DATA) + 1, fd);
     // send MAX_DATA worth of bytes
     send(fd, msg + sent, MIN(len, MAX_DATA), 0);
@@ -83,31 +88,33 @@ void handle_send_client(int fd, const char *msg, long int len) {
  * Handles sending a code and message.
  * Message will be text on errors and
  * length of data on success.
- * 
+ *
  * @param {int*} fd       - client fd to send to
- * @param {char*} code    - code to send   
+ * @param {char*} code    - code to send
  * @param {char*} msg     - message to send
  */
 void handle_send_code(int fd, const char *code, const char *msg) {
+  print_debug("handle_send_code: '%d' - '%s' - '%s'", fd, code, msg);
   char buffer[MAX_DATA];
   // concat code infront of msg
   sprintf(buffer, "%s %s", code, msg);
-  printf("Sending '%s' to fd %d\n", buffer, fd);
+  printf("Sending:\t'%s' to fd %d\n", buffer, fd);
   // send code reponse to client
   handle_send_client(fd, buffer, strlen(buffer));
-} 
+}
 
 /**
  * Handles sending data (string format) to
  * a client. Opens a new TCP connection, connecting
  * to the clients data port.
- * 
+ *
  * @param {int*} fd       - client fd to send to
  * @param {char*} port    - clients port to connect to
  * @param {char*} msg     - message to send
  * @param {int} len       - length of message
  */
 void handle_send_data(int fd, const char *port, const char *msg, long int len) {
+  print_debug("handle_send_data: '%d' - '%s' - '%s' - %ld", fd, port, msg, len);
   int sockfd;
   struct addrinfo hints, *servinfo, *p;
   int rv;
@@ -153,9 +160,8 @@ void handle_send_data(int fd, const char *port, const char *msg, long int len) {
     exit(2);
   }
 
-  inet_ntop(p->ai_family, &(((struct sockaddr_in *)p)->sin_addr), s,
-            sizeof s);
-  printf("Connecting to %s\n", he->h_name);
+  inet_ntop(p->ai_family, &(((struct sockaddr_in *)p)->sin_addr), s, sizeof s);
+  printf("Connecting to %s:%s on fd %d\n", he->h_name, port, sockfd);
   // free our addr info
   freeaddrinfo(servinfo);
   // send the data to the client
@@ -171,9 +177,10 @@ void handle_send_data(int fd, const char *port, const char *msg, long int len) {
  * @param {int} server_fd     - file desc of server socket
  */
 void server_loop(fd_set *master, fd_set *read_fds, int server_fd) {
+  print_debug("server_loop: '%d'", server_fd);
   int i;
   int max_fd = server_fd;
-  char port[MAX_DATA] = "";
+  char *client_ports[MAX_CLIENTS];
   // loop through connections forever
   while (1) {
     // copy fd set
@@ -193,7 +200,7 @@ void server_loop(fd_set *master, fd_set *read_fds, int server_fd) {
           handle_new_client(master, server_fd, &max_fd);
         } else {
           // data coming from existing client
-          handle_recv_client(master, i, port);
+          handle_recv_client(master, i, client_ports);
         }
       }
     }
