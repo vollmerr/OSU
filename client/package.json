@@ -1,14 +1,12 @@
 {
-  "name": "osu",
+  "name": "client",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:3001",
   "dependencies": {
-    "mysql": "2.15.0",
     "react": "16.2.0",
     "react-dom": "16.2.0",
-    "react-router-dom": "4.2.2",
-    "react-scripts": "1.0.17",
-    "styled-components": "2.4.0"
+    "react-scripts": "1.0.17"
   },
   "scripts": {
     "start": "react-scripts start",
