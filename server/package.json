@@ -2,18 +2,21 @@
   "name": "osu",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": "8.9.4"
+  },
   "scripts": {
     "start": "set PORT=3001&&nodemon bin/www"
   },
   "dependencies": {
-    "body-parser": "~1.18.2",
-    "cookie-parser": "~1.4.3",
-    "debug": "~2.6.9",
-    "express": "~4.15.5",
-    "jade": "~1.11.0",
-    "morgan": "~1.9.0",
+    "body-parser": "1.18.2",
+    "cookie-parser": "1.4.3",
+    "debug": "2.6.9",
+    "express": "4.15.5",
+    "jade": "1.11.0",
+    "morgan": "1.9.0",
     "mysql": "2.15.0",
     "nodemon": "1.14.10",
-    "serve-favicon": "~2.4.5"
+    "serve-favicon": "2.4.5"
   }
 }
