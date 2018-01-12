@@ -1,13 +1,15 @@
 {
     "name": "osu",
     "engines": {
-      "node": "8.9.4"
+        "node": "8.9.4"
     },
     "scripts": {
         "start": "node server/bin/www",
         "build:client": "cd client && npm install --only=dev && npm install && npm run build && cd ../",
         "build:server": "cd server && npm install --only=dev && npm install && cd ../",
-        "heroku-prebuild": "npm i -g knex",
-        "heroku-postbuild": "knex migrate:latest && npm run build:client && npm run build:server"
+        "heroku-postbuild": "npm run build:client && npm run build:server"
+    },
+    "dependencies": {
+        "knex": "0.14.2"
     }
 }
