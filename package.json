@@ -7,7 +7,7 @@
         "start": "node server/bin/www",
         "build:client": "cd client && npm install --only=dev && npm install && npm run build && cd ../",
         "build:server": "cd server && npm install --only=dev && npm install && cd ../",
-        "migrations": "knex migrate:latest",
+        "migrations": "./server/node_modules/knex migrate:latest",
         "heroku-postbuild": "npm run migrations && npm run build:client && npm run build:server"
     }
 }
