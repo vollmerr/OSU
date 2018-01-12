@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { CommandBar } from 'office-ui-fabric-react/lib/CommandBar';
-import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 import {
   Selection,
   DetailsList,
@@ -10,7 +9,6 @@ import {
 import Loading from 'components/Loading';
 
 import Wrapper from './Wrapper';
-import Content from './Content';
 
 
 const columns = [
@@ -62,18 +60,21 @@ class App extends Component {
 
   // gets list of nav items
   getNavItems = () => {
+    const { isLoading, selectedItem } = this.state;
+
     return [
       {
         key: 'new',
         name: 'New Random',
         onClick: this.newRandomUser,
+        disabled: isLoading,
         iconProps: { iconName: 'Add' },
       },
       {
         key: 'delete',
         name: 'Delete Selected',
         onClick: this.deleteUser,
-        disabled: isNaN(this.state.selectedItem.id),
+        disabled: isNaN(selectedItem.id) || isLoading,
         iconProps: { iconName: 'Delete' },
       },
     ];
@@ -149,7 +150,6 @@ class App extends Component {
     const {
       users,
       isLoading,
-      selectedItem,
     } = this.state;
 
     const commandProps = {
@@ -166,20 +166,19 @@ class App extends Component {
 
     return (
       <Wrapper>
-        {
-          isLoading ?
-            <Loading /> :
-            <Content>
-              <CommandBar {...commandProps} />
-
-              <h1>Test Users</h1>
-              {
-                users.length ?
-                  <DetailsList {...listProps} /> :
-                  <div>No test users.....</div>
-              }
-            </Content>
-        }
+          <CommandBar {...commandProps} />
+          {
+            isLoading ?
+              <Loading /> :
+              <div>
+                <h1>Test Users</h1>
+                {
+                  users.length ?
+                    <DetailsList {...listProps} /> :
+                    <div>No test users.....</div>
+                }
+              </div>
+          }
       </Wrapper>
     );
   }

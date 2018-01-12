@@ -6,7 +6,7 @@ import {
 
 
 const Loading = styled(Spinner) `
-    align-self: center;
+    margin: auto;
 `;
 
 Loading.defaultProps = {

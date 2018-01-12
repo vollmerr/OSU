@@ -1,4 +1,4 @@
-const knex = require('knex')(require('./knexfile'));
+const knex = require('knex')(require('../knexfile'));
 
 
 // gets all users
@@ -13,9 +13,7 @@ const createUser = ({ username, password }) => (
 
 // deletes a user by id
 const deleteUser = (id) => (
-    knex('user')
-        .where('id', id)
-        .del()
+    knex('user').where('id', id).del()
 );
 
 
