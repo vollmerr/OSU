@@ -3,6 +3,6 @@ module.exports = {
     connection: {
       user: 'root',
       password: 'password',
-      database: 'osu',
+      database: 'mysql://bec70745933b8f:888e8e74@us-cdbr-iron-east-05.cleardb.net/heroku_13d5a4c30c88dc5?reconnect=true',
     },
   };
