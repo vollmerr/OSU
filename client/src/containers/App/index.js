@@ -6,7 +6,7 @@ import {
   SelectionMode,
 } from 'office-ui-fabric-react/lib/DetailsList';
 
-import Loading from 'components/Loading';
+import Loading from '../../components/Loading';
 
 import Wrapper from './Wrapper';
 
