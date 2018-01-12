@@ -1,8 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import App from './containers/App';
 import registerServiceWorker from './registerServiceWorker';
+import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
+import { initializeIcons } from '@uifabric/icons';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+// Register icons and pull the fonts from the default SharePoint cdn:
+initializeIcons();
+
+ReactDOM.render(
+    <Fabric>
+        <App />
+    </Fabric>,
+    document.getElementById('root')
+);
+
 registerServiceWorker();
