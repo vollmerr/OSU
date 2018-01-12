@@ -7,6 +7,7 @@ import {
 } from 'office-ui-fabric-react/lib/DetailsList';
 
 import Loading from '../../components/Loading';
+import * as api from '../../api/users';
 
 import Wrapper from './Wrapper';
 
@@ -83,22 +84,15 @@ class App extends Component {
   // gets list of users from api
   getUsers = async () => {
     this.startRequest();
-    await fetch('/users')
-      .then(res => res.json())
-      .then(users => (
-        this.setState({ users })
-      ));
+    const users = await api.getUsers();
+    this.setState({ users });
     this.endRequest();
   }
 
   // uses api to create a new random user
   newRandomUser = async () => {
-    const options = {
-      method: 'post',
-    };
-
     this.startRequest();
-    await fetch('/users/create', options);
+    await api.newRandomUser();
     await this.getUsers();
     this.endRequest();
   }
@@ -106,12 +100,9 @@ class App extends Component {
   // uses api to delete the selected user
   deleteUser = async () => {
     const id = this.state.selectedItem.id;
-    const options = {
-      method: 'post',
-    };
 
     this.startRequest();
-    await fetch(`/users/${id}/delete`, options);
+    await api.deteteUser(id);
     await this.getUsers();
     this.handleClearSelection();
     this.endRequest();
