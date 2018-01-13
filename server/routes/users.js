@@ -6,6 +6,7 @@ const faker = require('faker');
 /* GET - get all users */
 router.get('/', async (req, res, next) => {
   const users = await store.getUsers();
+  console.log('got users... ', users)
   res.json(users);
 });
 
@@ -25,7 +26,7 @@ router.post('/create', async (req, res, next) => {
 /* POST - delete user by id */
 router.post('/:id/delete', async (req, res, next) => {
   const id = req.params.id;
-  console.log("about to del...", id)
+  
   await store.deleteUser(id);
   res.sendStatus(204);
 });
