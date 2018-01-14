@@ -1,10 +1,10 @@
-const pool = require('./pool');
+const con = require('./connect');
 
 
 // calls database - handles opening and closing connection
 const query = (query) => (
     new Promise((resolve, reject) => {
-        return pool.query(query, (err, result) => {
+        return con.query(query, (err, result) => {  
             if (err) {
                 return reject(err);
             }

@@ -1,3 +1,11 @@
 const store = require('./index');
 
-store.dropTableUsers(); 
+
+(async () => {
+    try {
+        const result = await store.dropTableUsers();
+        console.log('rollback completed', result);
+    } catch (e) {
+        console.error(e);
+    }
+})();
