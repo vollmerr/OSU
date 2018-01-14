@@ -20,16 +20,21 @@ const query = (query) => (
     new Promise((resolve, reject) => {
         const con = mysql.createConnection(connections[process.env.NODE_ENV]);
         con.connect();
-        return con.query(query, (err, result) => (
-            err ? reject(err) : resolve(result)
-        ));
+        return con.query(query, (err, result) => {
+            if (err) {
+                con.close();
+                reject(err);
+            } 
+            con.close();
+            resolve(result);
+        });
     })
 );
 
 // get all users
 const getUsers = () => (
     query('select * from users')
-);  
+);
 
 // create a new user
 const createUser = ({ username, password }) => (

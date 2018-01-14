@@ -6,7 +6,6 @@ const faker = require('faker');
 /* GET - get all users */
 router.get('/', async (req, res, next) => {
   const users = await store.getUsers();
-  console.log('got users... ', users)
   res.json(users);
 });
 
