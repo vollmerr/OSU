@@ -19,14 +19,18 @@ const connections = {
 const query = (query) => (
     new Promise((resolve, reject) => {
         const con = mysql.createConnection(connections[process.env.NODE_ENV]);
-        con.connect();
-        return con.query(query, (err, result) => {
+        try {
+            con.connect();
+            con.query(query, (err, result) => {
+                con.end();
+                if (err) {
+                    reject(err);
+                } 
+                resolve(result);
+            });
+        } catch (e) {
             con.end();
-            if (err) {
-                reject(err);
-            } 
-            resolve(result);
-        });
+        }
     })
 );
 
