@@ -7,6 +7,7 @@ import {
 } from 'office-ui-fabric-react/lib/DetailsList';
 
 import Loading from '../../components/Loading';
+import GitHubLogo from '../../components/GitHubLogo';
 import * as api from '../../api/users';
 
 import Wrapper from './Wrapper';
@@ -151,6 +152,7 @@ class App extends Component {
 
     return (
       <Wrapper>
+          <GitHubLogo />
           <CommandBar {...commandProps} />
           {
             isLoading ?
