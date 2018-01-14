@@ -1,1 +1,1 @@
-web: node ./server/store/migrations && node ./server/bin/www
+web: node ./server/bin/www

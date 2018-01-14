@@ -6,7 +6,9 @@
     "node": "8.9.4"
   },
   "scripts": {
-    "start": "set NODE_ENV=development&&set PORT=3001&&nodemon bin/www"
+    "start": "set NODE_ENV=development&&set PORT=3001&&nodemon bin/www",
+    "migrate": "node ./store/migrate",
+    "rollback": "node ./store/rollback"
   },
   "dependencies": {
     "body-parser": "1.18.2",
