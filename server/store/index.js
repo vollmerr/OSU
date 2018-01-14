@@ -22,14 +22,14 @@ const query = (query) => (
         try {
             con.connect();
             con.query(query, (err, result) => {
-                con.destory();
+                con.destroy();
                 if (err) {
                     reject(err);
                 } 
                 resolve(result);
             });
         } catch (e) {
-            con.destory();
+            con.destroy();
         }
     })
 );
