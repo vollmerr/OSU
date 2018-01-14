@@ -33,7 +33,7 @@ const getUsers = () => (
 
 // create a new user
 const createUser = ({ username, password }) => (
-    query(`insert into users (username, password) values (${username}, ${password})`)
+    query(`insert into users set username=${username}, password=${password}`)
 );
 
 // deletes a user by id
