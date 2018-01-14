@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './containers/App';
-import registerServiceWorker from './registerServiceWorker';
+// import registerServiceWorker from './registerServiceWorker';
 import { Fabric } from 'office-ui-fabric-react/lib/Fabric';
 import { initializeIcons } from '@uifabric/icons';
 
@@ -15,4 +15,4 @@ ReactDOM.render(
     document.getElementById('root')
 );
 
-registerServiceWorker();
+// registerServiceWorker();

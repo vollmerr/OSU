@@ -8,8 +8,5 @@
         "build:client": "cd client && npm install --only=dev && npm install && npm run build && cd ../",
         "build:server": "cd server && npm install --only=dev && npm install && cd ../",
         "heroku-postbuild": "npm run build:client && npm run build:server"
-    },
-    "dependencies": {
-        "knex": "0.14.2"
     }
 }
