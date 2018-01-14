@@ -1,37 +1,30 @@
-const mysql = require('mysql');
+const pool = require('./pool');
 
-const connections = {
-    development: {
-        user: 'root',
-        password: 'password',
-        host: 'localhost',
-        database: 'osu',
-    },
-    production: {
-        user: 'bec70745933b8f',
-        password: '888e8e74',
-        host: 'us-cdbr-iron-east-05.cleardb.net',
-        database: 'heroku_13d5a4c30c88dc5',
-    }
-};
 
 // calls database - handles opening and closing connection
 const query = (query) => (
     new Promise((resolve, reject) => {
-        const con = mysql.createConnection(connections[process.env.NODE_ENV]);
-        try {
-            con.connect();
-            con.query(query, (err, result) => {
-                con.destroy();
-                if (err) {
-                    reject(err);
-                } 
-                resolve(result);
-            });
-        } catch (e) {
-            con.destroy();
-        }
+        return pool.query(query, (err, result) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(result);
+        });
     })
+);
+
+// create users table
+const createTableUsers = () => (
+    query(`create table users(
+        id int primary key auto_increment,
+        username varchar(255) not null,
+        password varchar(255) not null        
+    )`)
+);
+
+// drop users table
+const dropTableUsers = () => (
+    query('drop table if exists users')
 );
 
 // get all users
@@ -51,6 +44,8 @@ const deleteUser = (id) => (
 
 
 module.exports = {
+    createTableUsers,
+    dropTableUsers,
     getUsers,
     createUser,
     deleteUser,
