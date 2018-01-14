@@ -21,11 +21,10 @@ const query = (query) => (
         const con = mysql.createConnection(connections[process.env.NODE_ENV]);
         con.connect();
         return con.query(query, (err, result) => {
+            con.end();
             if (err) {
-                con.close();
                 reject(err);
             } 
-            con.close();
             resolve(result);
         });
     })
