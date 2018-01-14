@@ -16,12 +16,12 @@ router.get('/', async (req, res, next) => {
 
 /* POST - create new random user */
 router.post('/create', async (req, res, next) => {
-  const user = {
-    username: faker.internet.userName(),
-    password: faker.internet.password(),
-  };
-
   try {
+    const user = {
+      username: faker.internet.userName(),
+      password: faker.internet.password(),
+    };
+
     await store.createUser(user);
     res.sendStatus(200);
   } catch (err) {
@@ -32,9 +32,8 @@ router.post('/create', async (req, res, next) => {
 
 /* POST - delete user by id */
 router.post('/:id/delete', async (req, res, next) => {
-  const id = req.params.id;
-
   try {
+    const id = req.params.id;
     await store.deleteUser(id);
     res.sendStatus(204);
   } catch (err) {

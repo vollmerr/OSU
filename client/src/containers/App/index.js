@@ -32,12 +32,6 @@ const columns = [
     name: 'Password',
     minWidth: 150,
   },
-  {
-    key: 'created_at',
-    fieldName: 'created_at',
-    name: 'Created At',
-    minWidth: 150,
-  },
 ];
 
 
