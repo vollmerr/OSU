@@ -22,9 +22,7 @@ class Equipment extends Component {
       equipment: [],
     };
 
-    this.values = {
-      [C.EQUIPMENT.NAME]: null,
-    };
+    this.values = {};
   }
 
   componentDidMount() {

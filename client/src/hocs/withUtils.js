@@ -10,6 +10,7 @@ const withUtils = (C) => class extends React.Component {
             isLoading: 0,
             isEditing: false,
             selectedItem: {},
+            formValues: {},
         };
         // keeps track of equipment
         this.selection = new Selection({
@@ -18,7 +19,7 @@ const withUtils = (C) => class extends React.Component {
     }
 
     // increment api call in progress
-    startLoading = () => {        
+    startLoading = () => {
         this.handleClearSelection();
         this.setState({
             isCreating: false,
@@ -49,6 +50,10 @@ const withUtils = (C) => class extends React.Component {
 
     stopCreating = () => {
         this.setState({ isCreating: false });
+    }
+
+    updateForm = (key) => (value) => {
+      this.setState({ formValues: { ...this.state.formValues, [key]: value } });
     }
 
     // handles selecting an item from the list
@@ -83,8 +88,13 @@ const withUtils = (C) => class extends React.Component {
             start: this.startEditing,
             stop: this.stopEditing,
         };
-        
+
+        const form = {
+          update: this.updateForm,
+        };
+
         const props = {
+            form,
             creating,
             loading,
             editing,

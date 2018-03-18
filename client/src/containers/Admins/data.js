@@ -23,9 +23,15 @@ export const admin = {
     ariaLabel: 'Last name of the admin',
     minWidth: 60,
   },
-  [ADMIN.ROLE]: {
-    label: 'Role',
-    name: ADMIN.ROLE,
+  [ADMIN.ROLE_ID]: {
+    label: 'Role ID',
+    name: ADMIN.ROLE_ID,
+    ariaLabel: 'ID of role of the admin',
+    minWidth: 20,
+  },
+  [ADMIN.ROLE_NAME]: {
+    label: 'Role Name',
+    name: ADMIN.ROLE_NAME,
     ariaLabel: 'Role of the admin',
     minWidth: 60,
   },

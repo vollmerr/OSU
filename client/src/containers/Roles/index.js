@@ -22,9 +22,7 @@ class Roles extends Component {
       roles: [],
     };
 
-    this.values = {
-      [C.ROLE.NAME]: null,
-    };
+    this.values = {};
   }
 
   componentDidMount() {
