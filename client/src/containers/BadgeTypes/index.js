@@ -140,7 +140,7 @@ class BadgeTypes extends Component {
     const editProps = {
       name: {
         label: data.badgeType[C.BADGE_TYPE.TYPE].label,
-        value: selectedItem[C.BADGE_TYPE.TYPE],
+        defaultValue: selectedItem[C.BADGE_TYPE.TYPE],
         onChanged: form.update(C.BADGE_TYPE.TYPE),
       },
       save: {

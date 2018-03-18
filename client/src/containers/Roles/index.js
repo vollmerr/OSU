@@ -111,7 +111,7 @@ class Roles extends Component {
       ...formValues,
       id: selectedItem.id,
     };
-    await api.role.delete(values);
+    await api.role.edit(values);
     await this.getRoles();
     loading.stop();
   }
@@ -141,7 +141,7 @@ class Roles extends Component {
     const editProps = {
       name: {
         label: data.role[C.ROLE.NAME].label,
-        value: selectedItem[C.ROLE.NAME],
+        defaultValue: selectedItem[C.ROLE.NAME],
         onChanged: form.update(C.ROLE.NAME),
       },
       save: {

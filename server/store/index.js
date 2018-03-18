@@ -105,7 +105,7 @@ const admin = buildStore({
   ),
 });
 
-
+// order of exports matter for migrate / rollback!
 module.exports = {
   con,
   equipment,

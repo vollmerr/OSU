@@ -141,7 +141,7 @@ class Locations extends Component {
     const editProps = {
       name: {
         label: data.location[C.LOCATION.NAME].label,
-        value: selectedItem[C.LOCATION.NAME],
+        defaultValue: selectedItem[C.LOCATION.NAME],
         onChanged: form.update(C.LOCATION.NAME),
       },
       save: {

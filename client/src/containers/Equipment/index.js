@@ -140,7 +140,7 @@ class Equipment extends Component {
     const editProps = {
       name: {
         label: data.equipment[C.EQUIPMENT.NAME].label,
-        value: selectedItem[C.EQUIPMENT.NAME],
+        defaultValue: selectedItem[C.EQUIPMENT.NAME],
         onChanged: form.update(C.EQUIPMENT.NAME),
       },
       save: {

@@ -45,7 +45,7 @@ class Campus extends Component {
         onClick: isCreating ? creating.stop : creating.start,
         disabled: isLoading,
         iconProps: { iconName: 'Add' },
-        checked : isCreating,
+        checked: isCreating,
       },
       {
         key: 'newRandom',
@@ -141,7 +141,7 @@ class Campus extends Component {
     const editProps = {
       name: {
         label: data.campus[C.CAMPUS.NAME].label,
-        value: selectedItem[C.CAMPUS.NAME],
+        defaultValue: selectedItem[C.CAMPUS.NAME],
         onChanged: form.update(C.CAMPUS.NAME),
       },
       save: {
