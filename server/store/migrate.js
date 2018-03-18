@@ -3,8 +3,10 @@ const store = require('./index');
 
 (async () => {
     try {
-        const result = await store.equipment.createTableEquipment();
-        console.log('migrations completed', result);
+        await store.equipment.create();
+        await store.role.create();
+        await store.admin.create();
+        console.log('migrations completed');
     } catch (e) {
         console.error(e);
     } finally {

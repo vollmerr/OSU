@@ -6,8 +6,10 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const compression = require('compression')
 
-const index = require('./routes/index');
+const role = require('./routes/role');
+const admin = require('./routes/admin');
 const equipment = require('./routes/equipment');
+const index = require('./routes/index');
 
 const app = express();
 
@@ -20,6 +22,8 @@ app.use(cookieParser());
 app.use(compression())
 app.use(express.static(path.join(__dirname, '../client/build')));
 
+app.use('/role', role);
+app.use('/admin', admin);
 app.use('/equipment', equipment);
 app.use('/', index);
 

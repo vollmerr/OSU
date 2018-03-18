@@ -45,7 +45,7 @@ export const BADGE_TYPES = {
 //     LAST_NAME: 'firstName',
 // };
 
-export const ROLES = {
-    ID: 'id',
-    TYPE: 'type',
-};
+// export const ROLES = {
+//     ID: 'id',
+//     NAME: 'name',
+// };
