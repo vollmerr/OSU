@@ -7,6 +7,8 @@ const bodyParser = require('body-parser');
 const compression = require('compression')
 
 const role = require('./routes/role');
+const location = require('./routes/location');
+const badgeType = require('./routes/badgeType');
 const admin = require('./routes/admin');
 const equipment = require('./routes/equipment');
 const index = require('./routes/index');
@@ -23,6 +25,8 @@ app.use(compression())
 app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.use('/role', role);
+app.use('/location', location);
+app.use('/badgeType', badgeType);
 app.use('/admin', admin);
 app.use('/equipment', equipment);
 app.use('/', index);

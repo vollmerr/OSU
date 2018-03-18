@@ -5,10 +5,10 @@ const faker = require('faker');
 const C = require('../store/constants');
 
 
-/* GET - get all role */
+/* GET - get all badgeType */
 router.get('/', async (req, res, next) => {
     try {
-        const roles = await store.role.get();
+        const roles = await store.badgeType.get();
         res.json(roles);
     } catch (err) {
         res.status(500).json(err);
@@ -16,24 +16,25 @@ router.get('/', async (req, res, next) => {
 });
 
 
-/* POST - create new role */
+/* POST - create new badgeType */
 router.post('/', async (req, res, next) => {
     try {
-        await store.role.insert(req.body);
+        await store.badgeType.insert(req.body);
         res.sendStatus(200);
     } catch (err) {
         res.status(500).json(err);
     }
 });
 
-/* POST - create new random role */
+/* POST - create new random badgeType */
 router.post('/random', async (req, res, next) => {
     try {
-        // const roleIds = await store.roles.get();
+        console.log('about to get vals')
         const values = {
-            [C.ROLE.NAME]: faker.name.jobDescriptor(),
+            [C.BADGE_TYPE.TYPE]: faker.lorem.word(),
         };
-        await store.role.insert(values);
+        console.log('intering ,', values)
+        await store.badgeType.insert(values);
         res.sendStatus(200);
     } catch (err) {
         res.status(500).json(err);
@@ -44,7 +45,7 @@ router.post('/random', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
-        await store.role.delete(id);
+        await store.badgeType.delete(id);
         res.sendStatus(204);
     } catch (err) {
         res.status(500).json(err);
@@ -56,7 +57,7 @@ router.put('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
         const body = req.body;
-        await store.role.edit({ ...body, id });
+        await store.badgeType.edit({ ...body, id });
         res.sendStatus(204);
     } catch (err) {
         res.status(500).json(err);

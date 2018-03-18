@@ -54,12 +54,27 @@ const equipment = buildStore({
   `,
 });
 
-
 const role = buildStore({
   name: 'role',
   structure: `
     ${C.ROLE.ID} int primary key auto_increment,
     ${C.ROLE.NAME} varchar(255) not null
+  `,
+});
+
+const location = buildStore({
+  name: 'location',
+  structure: `
+    ${C.LOCATION.ID} int primary key auto_increment,
+    ${C.LOCATION.NAME} varchar(255) not null
+  `,
+});
+
+const badgeType = buildStore({
+  name: 'badgeType',
+  structure: `
+    ${C.BADGE_TYPE.ID} int primary key auto_increment,
+    ${C.BADGE_TYPE.TYPE} varchar(255) not null
   `,
 });
 
@@ -86,5 +101,7 @@ module.exports = {
   con,
   equipment,
   role,
+  location,
+  badgeType,
   admin,
 };

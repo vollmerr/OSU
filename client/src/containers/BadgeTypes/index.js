@@ -8,23 +8,23 @@ import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 
 import Loading from '../../components/Loading';
-import * as api from '../../api/equipment';
+import * as api from '../../api/badgeType';
 import withUtils from '../../hocs/withUtils';
 
 import * as data from './data';
 import * as C from './constants';
 
 
-class Equipment extends Component {
+class BadgeTypes extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      equipment: [],
+      badgeTypes: [],
     };
   }
 
   componentDidMount() {
-    this.getEquipment();
+    this.getBadgeTypes();
   }
 
   // gets list of nav items
@@ -49,14 +49,14 @@ class Equipment extends Component {
       {
         key: 'newRandom',
         name: 'New Random',
-        onClick: this.createRandomEquipment,
+        onClick: this.createRandomBadgeType,
         disabled: isLoading,
         iconProps: { iconName: 'Add' },
       },
       {
         key: 'delete',
         name: 'Delete Selected',
-        onClick: this.deleteEquipment,
+        onClick: this.deleteBadgeType,
         disabled: isNaN(selectedItem.id) || isLoading,
         iconProps: { iconName: 'Delete' },
       },
@@ -70,48 +70,48 @@ class Equipment extends Component {
     ];
   }
 
-  // gets list of equipment from api
-  getEquipment = async () => {
+  // gets list of badgeTypes from api
+  getBadgeTypes = async () => {
     const { loading } = this.props;
     loading.start();
-    const equipment = await api.getEquipment();
-    this.setState({ equipment });
+    const badgeTypes = await api.getBadgeTypes();
+    this.setState({ badgeTypes });
     loading.stop();
   }
 
-  createEquipment = async () => {
+  createBadgeType = async () => {
     const { loading, formValues } = this.props;
     loading.start();
-    await api.createEquipment(formValues);
-    await this.getEquipment();
+    await api.createBadgeType(formValues);
+    await this.getBadgeTypes();
     loading.stop();
   }
 
-  createRandomEquipment = async () => {
+  createRandomBadgeType = async () => {
     const { loading } = this.props;
     loading.start();
-    await api.createRandomEquipment();
-    await this.getEquipment();
+    await api.createRandomBadgeType();
+    await this.getBadgeTypes();
     loading.stop();
   }
 
-  deleteEquipment = async () => {
+  deleteBadgeType = async () => {
     const { loading, selectedItem } = this.props;
     loading.start();
-    await api.deleteEquipment(selectedItem.id);
-    await this.getEquipment();
+    await api.deleteBadgeType(selectedItem.id);
+    await this.getBadgeTypes();
     loading.stop();
   }
 
-  editEquipment = async () => {
+  editBadgeType = async () => {
     const { loading, selectedItem, formValues } = this.props;
     loading.start();
     const values = {
       ...formValues,
       id: selectedItem.id,
     };
-    await api.editEquipment(values);
-    await this.getEquipment();
+    await api.editBadgeType(values);
+    await this.getBadgeTypes();
     loading.stop();
   }
 
@@ -130,7 +130,7 @@ class Equipment extends Component {
     }
 
     const {
-      equipment,
+      badgeTypes,
     } = this.state;
 
     const commandProps = {
@@ -139,21 +139,21 @@ class Equipment extends Component {
 
     const editProps = {
       name: {
-        label: data.equipment[C.EQUIPMENT.NAME].label,
-        value: selectedItem[C.EQUIPMENT.NAME],
-        onChanged: form.update(C.EQUIPMENT.NAME),
+        label: data.badgeType[C.BADGE_TYPE.TYPE].label,
+        value: selectedItem[C.BADGE_TYPE.TYPE],
+        onChanged: form.update(C.BADGE_TYPE.TYPE),
       },
       save: {
         text: 'Save',
         primary: true,
-        onClick: isEditing ? this.editEquipment : this.createEquipment,
+        onClick: isEditing ? this.editBadgeType : this.createBadgeType,
       }
     }
 
     const listProps = {
       selection,
       columns: data.columns,
-      items: equipment,
+      items: badgeTypes,
       selectionMode: SelectionMode.single,
       selectionPreservedOnEmptyClick: true,
     };
@@ -172,11 +172,11 @@ class Equipment extends Component {
           isLoading ?
             <Loading /> :
             <div>
-              <h1>Equipment</h1>
+              <h1>Badge Types</h1>
               {
-                equipment.length ?
+                badgeTypes.length ?
                   <DetailsList {...listProps} /> :
-                  <div>No Equipment.....</div>
+                  <div>No Badge Types.....</div>
               }
             </div>
         }
@@ -186,4 +186,4 @@ class Equipment extends Component {
 }
 
 
-export default withUtils(Equipment);
+export default withUtils(BadgeTypes);

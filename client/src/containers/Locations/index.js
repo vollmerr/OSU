@@ -8,23 +8,23 @@ import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 
 import Loading from '../../components/Loading';
-import * as api from '../../api/equipment';
+import * as api from '../../api/location';
 import withUtils from '../../hocs/withUtils';
 
 import * as data from './data';
 import * as C from './constants';
 
 
-class Equipment extends Component {
+class Locations extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      equipment: [],
+      locations: [],
     };
   }
 
   componentDidMount() {
-    this.getEquipment();
+    this.getLocations();
   }
 
   // gets list of nav items
@@ -45,18 +45,19 @@ class Equipment extends Component {
         onClick: isCreating ? creating.stop : creating.start,
         disabled: isLoading,
         iconProps: { iconName: 'Add' },
+        checked : isCreating,
       },
       {
         key: 'newRandom',
         name: 'New Random',
-        onClick: this.createRandomEquipment,
+        onClick: this.createRandomLocation,
         disabled: isLoading,
         iconProps: { iconName: 'Add' },
       },
       {
         key: 'delete',
         name: 'Delete Selected',
-        onClick: this.deleteEquipment,
+        onClick: this.deleteLocation,
         disabled: isNaN(selectedItem.id) || isLoading,
         iconProps: { iconName: 'Delete' },
       },
@@ -70,48 +71,48 @@ class Equipment extends Component {
     ];
   }
 
-  // gets list of equipment from api
-  getEquipment = async () => {
+  // gets list of locations from api
+  getLocations = async () => {
     const { loading } = this.props;
     loading.start();
-    const equipment = await api.getEquipment();
-    this.setState({ equipment });
+    const locations = await api.getLocations();
+    this.setState({ locations });
     loading.stop();
   }
 
-  createEquipment = async () => {
+  createLocation = async () => {
     const { loading, formValues } = this.props;
     loading.start();
-    await api.createEquipment(formValues);
-    await this.getEquipment();
+    await api.createLocation(formValues);
+    await this.getLocations();
     loading.stop();
   }
 
-  createRandomEquipment = async () => {
+  createRandomLocation = async () => {
     const { loading } = this.props;
     loading.start();
-    await api.createRandomEquipment();
-    await this.getEquipment();
+    await api.createRandomLocation();
+    await this.getLocations();
     loading.stop();
   }
 
-  deleteEquipment = async () => {
+  deleteLocation = async () => {
     const { loading, selectedItem } = this.props;
     loading.start();
-    await api.deleteEquipment(selectedItem.id);
-    await this.getEquipment();
+    await api.deleteLocation(selectedItem.id);
+    await this.getLocations();
     loading.stop();
   }
 
-  editEquipment = async () => {
+  editLocation = async () => {
     const { loading, selectedItem, formValues } = this.props;
     loading.start();
     const values = {
       ...formValues,
       id: selectedItem.id,
     };
-    await api.editEquipment(values);
-    await this.getEquipment();
+    await api.editLocation(values);
+    await this.getLocations();
     loading.stop();
   }
 
@@ -130,7 +131,7 @@ class Equipment extends Component {
     }
 
     const {
-      equipment,
+      locations,
     } = this.state;
 
     const commandProps = {
@@ -139,21 +140,21 @@ class Equipment extends Component {
 
     const editProps = {
       name: {
-        label: data.equipment[C.EQUIPMENT.NAME].label,
-        value: selectedItem[C.EQUIPMENT.NAME],
-        onChanged: form.update(C.EQUIPMENT.NAME),
+        label: data.location[C.LOCATION.NAME].label,
+        value: selectedItem[C.LOCATION.NAME],
+        onChanged: form.update(C.LOCATION.NAME),
       },
       save: {
         text: 'Save',
         primary: true,
-        onClick: isEditing ? this.editEquipment : this.createEquipment,
+        onClick: isEditing ? this.editLocation : this.createLocation,
       }
     }
 
     const listProps = {
       selection,
       columns: data.columns,
-      items: equipment,
+      items: locations,
       selectionMode: SelectionMode.single,
       selectionPreservedOnEmptyClick: true,
     };
@@ -172,11 +173,11 @@ class Equipment extends Component {
           isLoading ?
             <Loading /> :
             <div>
-              <h1>Equipment</h1>
+              <h1>Locations</h1>
               {
-                equipment.length ?
+                locations.length ?
                   <DetailsList {...listProps} /> :
-                  <div>No Equipment.....</div>
+                  <div>No Locations.....</div>
               }
             </div>
         }
@@ -186,4 +187,4 @@ class Equipment extends Component {
 }
 
 
-export default withUtils(Equipment);
+export default withUtils(Locations);

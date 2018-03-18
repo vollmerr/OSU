@@ -21,8 +21,6 @@ class Roles extends Component {
     this.state = {
       roles: [],
     };
-
-    this.values = {};
   }
 
   componentDidMount() {
@@ -47,6 +45,7 @@ class Roles extends Component {
         onClick: isCreating ? creating.stop : creating.start,
         disabled: isLoading,
         iconProps: { iconName: 'Add' },
+        checked : isCreating,
       },
       {
         key: 'newRandom',
@@ -82,13 +81,9 @@ class Roles extends Component {
   }
 
   createRole = async () => {
-    const { loading } = this.props;
+    const { loading, formValues } = this.props;
     loading.start();
-    const values = Object.keys(this.values).reduce((x, k) => ({
-      ...x,
-      [k]: this.values[k].value,
-    }), {});
-    await api.createRole(values);
+    await api.createRole(formValues);
     await this.getRoles();
     loading.stop();
   }
@@ -110,12 +105,12 @@ class Roles extends Component {
   }
 
   editRole = async () => {
-    const { loading, selectedItem } = this.props;
+    const { loading, selectedItem, formValues } = this.props;
     loading.start();
-    const values = Object.keys(this.values).reduce((x, k) => ({
-      ...x,
-      [k]: this.values[k].value,
-    }), { id: selectedItem.id });
+    const values = {
+      ...formValues,
+      id: selectedItem.id,
+    };
     await api.editRole(values);
     await this.getRoles();
     loading.stop();
@@ -123,6 +118,7 @@ class Roles extends Component {
 
   render() {
     const {
+      form,
       selection,
       isCreating,
       isLoading,
@@ -144,9 +140,9 @@ class Roles extends Component {
 
     const editProps = {
       name: {
-        componentRef: (x) => { this.values[C.ROLE.NAME] = x; },
         label: data.role[C.ROLE.NAME].label,
         value: selectedItem[C.ROLE.NAME],
+        onChanged: form.update(C.ROLE.NAME),
       },
       save: {
         text: 'Save',

@@ -32,7 +32,7 @@ router.post('/random', async (req, res, next) => {
         const values = {
             [C.EQUIPMENT.NAME]: faker.commerce.product(),
         };
-        const item = await store.equipment.insert(values);
+        await store.equipment.insert(values);
         res.sendStatus(200);
     } catch (err) {
         res.status(500).json(err);

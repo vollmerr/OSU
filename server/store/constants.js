@@ -7,6 +7,14 @@ module.exports = {
         ID: 'id',
         NAME: 'name',
     },
+    BADGE_TYPE: {
+        ID: 'id',
+        TYPE: 'type',
+    },
+    LOCATION: {
+        ID: 'id',
+        NAME: 'name',
+    },
     ADMIN: {
         ID: 'id',
         ROLE_ID: 'roleId',

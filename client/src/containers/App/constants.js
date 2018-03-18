@@ -19,17 +19,17 @@ export const CAMPUS = {
     NAME: 'name',
 };
 
-export const LOCATION = {
-    ID: 'id',
-    NAME: 'name',
-};
+// export const LOCATION = {
+//     ID: 'id',
+//     NAME: 'name',
+// };
 
 // CAMPUS_LOCATION relational
 
-export const BADGE_TYPES = {
-    ID: 'id',
-    TYPE: 'type',
-};
+// export const BADGE_TYPES = {
+//     ID: 'id',
+//     TYPE: 'type',
+// };
 
 // export const EQUIPMENT = {
 //     ID: 'id',

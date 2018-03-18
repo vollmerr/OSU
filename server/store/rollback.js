@@ -6,6 +6,8 @@ const store = require('./index');
         await store.equipment.drop();
         await store.admin.drop();
         await store.role.drop();
+        await store.location.drop();
+        await store.badgeType.drop();
         console.log('rollback completed');
     } catch (e) {
         console.error(e);
