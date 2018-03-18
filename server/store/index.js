@@ -62,6 +62,15 @@ const role = buildStore({
   `,
 });
 
+const campus = buildStore({
+  name: 'campus',
+  structure: `
+    ${C.CAMPUS.ID} int primary key auto_increment,
+    ${C.CAMPUS.NAME} varchar(255) not null
+  `,
+});
+
+
 const location = buildStore({
   name: 'location',
   structure: `
@@ -101,6 +110,7 @@ module.exports = {
   con,
   equipment,
   role,
+  campus,
   location,
   badgeType,
   admin,

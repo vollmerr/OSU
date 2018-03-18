@@ -1,8 +1,9 @@
 import Equipment from '../Equipment';
-import Admins from '../Admins';
-import Roles from '../Roles';
+import Campus from '../Campus';
 import Locations from '../Locations';
 import BadgeTypes from '../BadgeTypes';
+import Roles from '../Roles';
+import Admins from '../Admins';
 
 
 const routes = {
@@ -13,12 +14,12 @@ const routes = {
     exact: true,
     component: Equipment,
   },
-  roles: {
-    path: '/roles',
-    text: 'Roles',
-    key: 'roles',
+  campus: {
+    path: '/campus',
+    text: 'Campus',
+    key: 'campus',
     exact: true,
-    component: Roles,
+    component: Campus,
   },
   location: {
     path: '/locations',
@@ -33,6 +34,13 @@ const routes = {
     key: 'badgeTypes',
     exact: true,
     component: BadgeTypes,
+  },
+  roles: {
+    path: '/roles',
+    text: 'Roles',
+    key: 'roles',
+    exact: true,
+    component: Roles,
   },
   admin: {
     path: '/admins',

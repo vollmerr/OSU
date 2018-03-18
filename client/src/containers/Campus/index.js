@@ -15,16 +15,16 @@ import * as data from './data';
 import * as C from './constants';
 
 
-class Roles extends Component {
+class Campus extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      roles: [],
+      campus: [],
     };
   }
 
   componentDidMount() {
-    this.getRoles();
+    this.getCampus();
   }
 
   // gets list of nav items
@@ -50,14 +50,14 @@ class Roles extends Component {
       {
         key: 'newRandom',
         name: 'New Random',
-        onClick: this.createRandomRole,
+        onClick: this.createRandomCampus,
         disabled: isLoading,
         iconProps: { iconName: 'Add' },
       },
       {
         key: 'delete',
         name: 'Delete Selected',
-        onClick: this.deleteRole,
+        onClick: this.deleteCampus,
         disabled: isNaN(selectedItem.id) || isLoading,
         iconProps: { iconName: 'Delete' },
       },
@@ -71,48 +71,48 @@ class Roles extends Component {
     ];
   }
 
-  // gets list of roles from api
-  getRoles = async () => {
+  // gets list of campus from api
+  getCampus = async () => {
     const { loading } = this.props;
     loading.start();
-    const roles = await api.role.get();
-    this.setState({ roles });
+    const campus = await api.campus.get();
+    this.setState({ campus });
     loading.stop();
   }
 
-  createRole = async () => {
+  createCampus = async () => {
     const { loading, formValues } = this.props;
     loading.start();
-    await api.role.create(formValues);
-    await this.getRoles();
+    await api.campus.create(formValues);
+    await this.getCampus();
     loading.stop();
   }
 
-  createRandomRole = async () => {
+  createRandomCampus = async () => {
     const { loading } = this.props;
     loading.start();
-    await api.role.createRandom();
-    await this.getRoles();
+    await api.campus.createRandom();
+    await this.getCampus();
     loading.stop();
   }
 
-  deleteRole = async () => {
+  deleteCampus = async () => {
     const { loading, selectedItem } = this.props;
     loading.start();
-    await api.role.delete(selectedItem.id);
-    await this.getRoles();
+    await api.campus.delete(selectedItem.id);
+    await this.getCampus();
     loading.stop();
   }
 
-  editRole = async () => {
+  editCampus = async () => {
     const { loading, selectedItem, formValues } = this.props;
     loading.start();
     const values = {
       ...formValues,
       id: selectedItem.id,
     };
-    await api.role.delete(values);
-    await this.getRoles();
+    await api.campus.edit(values);
+    await this.getCampus();
     loading.stop();
   }
 
@@ -131,7 +131,7 @@ class Roles extends Component {
     }
 
     const {
-      roles,
+      campus,
     } = this.state;
 
     const commandProps = {
@@ -140,21 +140,21 @@ class Roles extends Component {
 
     const editProps = {
       name: {
-        label: data.role[C.ROLE.NAME].label,
-        value: selectedItem[C.ROLE.NAME],
-        onChanged: form.update(C.ROLE.NAME),
+        label: data.campus[C.CAMPUS.NAME].label,
+        value: selectedItem[C.CAMPUS.NAME],
+        onChanged: form.update(C.CAMPUS.NAME),
       },
       save: {
         text: 'Save',
         primary: true,
-        onClick: isEditing ? this.editRole : this.createRole,
+        onClick: isEditing ? this.editCampus : this.createCampus,
       }
     }
 
     const listProps = {
       selection,
       columns: data.columns,
-      items: roles,
+      items: campus,
       selectionMode: SelectionMode.single,
       selectionPreservedOnEmptyClick: true,
     };
@@ -173,11 +173,11 @@ class Roles extends Component {
           isLoading ?
             <Loading /> :
             <div>
-              <h1>Roles</h1>
+              <h1>Campus</h1>
               {
-                roles.length ?
+                campus.length ?
                   <DetailsList {...listProps} /> :
-                  <div>No Roles.....</div>
+                  <div>No Campus.....</div>
               }
             </div>
         }
@@ -187,4 +187,4 @@ class Roles extends Component {
 }
 
 
-export default withUtils(Roles);
+export default withUtils(Campus);

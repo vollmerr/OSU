@@ -8,7 +8,7 @@ import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 
 import Loading from '../../components/Loading';
-import * as api from '../../api/equipment';
+import api from '../../api';
 import withUtils from '../../hocs/withUtils';
 
 import * as data from './data';
@@ -74,7 +74,7 @@ class Equipment extends Component {
   getEquipment = async () => {
     const { loading } = this.props;
     loading.start();
-    const equipment = await api.getEquipment();
+    const equipment = await api.equipment.get();
     this.setState({ equipment });
     loading.stop();
   }
@@ -82,7 +82,7 @@ class Equipment extends Component {
   createEquipment = async () => {
     const { loading, formValues } = this.props;
     loading.start();
-    await api.createEquipment(formValues);
+    await api.equipment.create(formValues);
     await this.getEquipment();
     loading.stop();
   }
@@ -90,7 +90,7 @@ class Equipment extends Component {
   createRandomEquipment = async () => {
     const { loading } = this.props;
     loading.start();
-    await api.createRandomEquipment();
+    await api.equipment.createRandom();
     await this.getEquipment();
     loading.stop();
   }
@@ -98,7 +98,7 @@ class Equipment extends Component {
   deleteEquipment = async () => {
     const { loading, selectedItem } = this.props;
     loading.start();
-    await api.deleteEquipment(selectedItem.id);
+    await api.equipment.delete(selectedItem.id);
     await this.getEquipment();
     loading.stop();
   }
@@ -110,7 +110,7 @@ class Equipment extends Component {
       ...formValues,
       id: selectedItem.id,
     };
-    await api.editEquipment(values);
+    await api.equipment.edit(values);
     await this.getEquipment();
     loading.stop();
   }

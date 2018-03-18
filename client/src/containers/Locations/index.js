@@ -8,7 +8,7 @@ import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 
 import Loading from '../../components/Loading';
-import * as api from '../../api/location';
+import api from '../../api';
 import withUtils from '../../hocs/withUtils';
 
 import * as data from './data';
@@ -75,7 +75,7 @@ class Locations extends Component {
   getLocations = async () => {
     const { loading } = this.props;
     loading.start();
-    const locations = await api.getLocations();
+    const locations = await api.location.get();
     this.setState({ locations });
     loading.stop();
   }
@@ -83,7 +83,7 @@ class Locations extends Component {
   createLocation = async () => {
     const { loading, formValues } = this.props;
     loading.start();
-    await api.createLocation(formValues);
+    await api.location.create(formValues);
     await this.getLocations();
     loading.stop();
   }
@@ -91,7 +91,7 @@ class Locations extends Component {
   createRandomLocation = async () => {
     const { loading } = this.props;
     loading.start();
-    await api.createRandomLocation();
+    await api.location.createRandom();
     await this.getLocations();
     loading.stop();
   }
@@ -99,7 +99,7 @@ class Locations extends Component {
   deleteLocation = async () => {
     const { loading, selectedItem } = this.props;
     loading.start();
-    await api.deleteLocation(selectedItem.id);
+    await api.location.delete(selectedItem.id);
     await this.getLocations();
     loading.stop();
   }
@@ -111,7 +111,7 @@ class Locations extends Component {
       ...formValues,
       id: selectedItem.id,
     };
-    await api.editLocation(values);
+    await api.location.edit(values);
     await this.getLocations();
     loading.stop();
   }

@@ -8,7 +8,7 @@ import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 
 import Loading from '../../components/Loading';
-import * as api from '../../api/badgeType';
+import api from '../../api';
 import withUtils from '../../hocs/withUtils';
 
 import * as data from './data';
@@ -74,7 +74,7 @@ class BadgeTypes extends Component {
   getBadgeTypes = async () => {
     const { loading } = this.props;
     loading.start();
-    const badgeTypes = await api.getBadgeTypes();
+    const badgeTypes = await api.badgeType.get();
     this.setState({ badgeTypes });
     loading.stop();
   }
@@ -82,7 +82,7 @@ class BadgeTypes extends Component {
   createBadgeType = async () => {
     const { loading, formValues } = this.props;
     loading.start();
-    await api.createBadgeType(formValues);
+    await api.badgeType.create(formValues);
     await this.getBadgeTypes();
     loading.stop();
   }
@@ -90,7 +90,7 @@ class BadgeTypes extends Component {
   createRandomBadgeType = async () => {
     const { loading } = this.props;
     loading.start();
-    await api.createRandomBadgeType();
+    await api.badgeType.createRandom();
     await this.getBadgeTypes();
     loading.stop();
   }
@@ -98,7 +98,7 @@ class BadgeTypes extends Component {
   deleteBadgeType = async () => {
     const { loading, selectedItem } = this.props;
     loading.start();
-    await api.deleteBadgeType(selectedItem.id);
+    await api.badgeType.delete(selectedItem.id);
     await this.getBadgeTypes();
     loading.stop();
   }
@@ -110,7 +110,7 @@ class BadgeTypes extends Component {
       ...formValues,
       id: selectedItem.id,
     };
-    await api.editBadgeType(values);
+    await api.badgeType.edit(values);
     await this.getBadgeTypes();
     loading.stop();
   }

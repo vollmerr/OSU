@@ -14,10 +14,10 @@ export const VISITORS = {
     LAST_NAME: 'firstName',
 };
 
-export const CAMPUS = {
-    ID: 'id',
-    NAME: 'name',
-};
+// export const CAMPUS = {
+//     ID: 'id',
+//     NAME: 'name',
+// };
 
 // export const LOCATION = {
 //     ID: 'id',

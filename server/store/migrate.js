@@ -1,17 +1,14 @@
 const store = require('./index');
 
 
-(async () => {
-    try {
-        await store.equipment.create();
-        await store.role.create();
-        await store.location.create();
-        await store.badgeType.create();
-        await store.admin.create();
-        console.log('migrations completed');
-    } catch (e) {
-        console.error(e);
-    } finally {
-        store.con.end();
-    }
-})();
+try {
+    const { con, ...rest } = store;
+    Object.keys(rest).forEach(async (api) => {
+        await store[api].create();
+    });
+    console.log('migrations completed');
+} catch (e) {
+    console.error(e);
+} finally {
+    store.con.end();
+}

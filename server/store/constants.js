@@ -11,6 +11,10 @@ module.exports = {
         ID: 'id',
         TYPE: 'type',
     },
+    CAMPUS: {
+        ID: 'id',
+        NAME: 'name',
+    },
     LOCATION: {
         ID: 'id',
         NAME: 'name',

@@ -9,8 +9,7 @@ import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 import { Dropdown } from 'office-ui-fabric-react/lib/Dropdown';
 
 import Loading from '../../components/Loading';
-import * as roleApi from '../../api/role';
-import * as api from '../../api/admin';
+import api from '../../api';
 import withUtils from '../../hocs/withUtils';
 import * as ROLES_C from '../Roles/constants';
 
@@ -79,7 +78,7 @@ class Admins extends Component {
   getRoles = async () => {
     const { loading } = this.props;
     loading.start();
-    const result = await roleApi.getRoles();
+    const result = await api.role.get();
     const roles = result.map((x) => ({
       key: x[ROLES_C.ROLE.ID],
       text: x[ROLES_C.ROLE.NAME],
@@ -92,7 +91,7 @@ class Admins extends Component {
   getAdmins = async () => {
     const { loading } = this.props;
     loading.start();
-    const admins = await api.getAdmins();
+    const admins = await api.admin.get();
     this.setState({ admins });
     loading.stop();
   }
@@ -100,7 +99,7 @@ class Admins extends Component {
   createAdmin = async () => {
     const { loading, formValues } = this.props;
     loading.start();
-    await api.createAdmin(formValues);
+    await api.admin.create(formValues);
     await this.getAdmins();
     loading.stop();
   }
@@ -108,7 +107,7 @@ class Admins extends Component {
   createRandomAdmin = async () => {
     const { loading } = this.props;
     loading.start();
-    await api.createRandomAdmin();
+    await api.admin.createRandom();
     await this.getAdmins();
     loading.stop();
   }
@@ -116,7 +115,7 @@ class Admins extends Component {
   deleteAdmin = async () => {
     const { loading, selectedItem } = this.props;
     loading.start();
-    await api.deleteAdmin(selectedItem.id);
+    await api.admin.delete(selectedItem.id);
     await this.getAdmins();
     loading.stop();
   }
@@ -128,7 +127,7 @@ class Admins extends Component {
       ...formValues,
       id: selectedItem.id,
     };
-    await api.editAdmin(values);
+    await api.admin.delete(values);
     await this.getAdmins();
     loading.stop();
   }
