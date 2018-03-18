@@ -15,8 +15,8 @@ const query = (query) => (
   })
 );
 
-
-const buildStore = ({ name, structure }) => ({
+// base for building a generic store
+const buildStore = ({ name, structure, ...rest }) => ({
   // create table
   create: () => (
     query(`create table ${name}(${structure})`)
@@ -41,6 +41,8 @@ const buildStore = ({ name, structure }) => ({
   edit: ({ id, ...rest }) => (
     query(`update ${name} set ${Object.keys(rest).map(x => `${x} = '${rest[x]}'`).join(', ')} where id=${id}`)
   ),
+  // extend for custom overrides (ex custom 'get')
+  ...rest,
 });
 
 
@@ -70,6 +72,13 @@ const admin = buildStore({
     ${C.ADMIN.ROLE_ID} int not null,
     foreign key fk_roleId(${C.ADMIN.ROLE_ID}) references role(${C.ROLE.ID})
   `,
+  get: () => (
+    query(`
+      select admin.${C.ADMIN.ID}, ${C.ADMIN.FIRST_NAME}, ${C.ADMIN.LAST_NAME}, ${C.ROLE.NAME} as roleName, role.${C.ROLE.ID} as roleId
+      from admin 
+      inner join role on ${C.ADMIN.ROLE_ID}=role.${C.ROLE.ID}
+    `)
+  ),
 });
 
 

@@ -5,7 +5,7 @@ const faker = require('faker');
 const C = require('../store/constants');
 
 
-/* GET - get all equipment */
+/* GET - get all admin */
 router.get('/', async (req, res, next) => {
     try {
         const admins = await store.admin.get();
@@ -16,25 +16,24 @@ router.get('/', async (req, res, next) => {
 });
 
 
-// /* POST - create new equipment */
-// router.post('/', async (req, res, next) => {
-//     try {
-//         await store.equipment.insert(req.body);
-//         res.sendStatus(200);
-//     } catch (err) {
-//         res.status(500).json(err);
-//     }
-// });
+/* POST - create new admin */
+router.post('/', async (req, res, next) => {
+    try {
+        await store.admin.insert(req.body);
+        res.sendStatus(200);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
 
-/* POST - create new random equipment */
+/* POST - create new random admin */
 router.post('/random', async (req, res, next) => {
     try {
-        // const roleIds = await store.roles.get();
-
+        const roles = await store.role.get();
         const values = {
             [C.ADMIN.FIRST_NAME]: faker.name.firstName(),
             [C.ADMIN.LAST_NAME]: faker.name.lastName(),
-            [C.ADMIN.ROLE_ID]: 1, // TODO: lookup available role ids, get random one
+            [C.ADMIN.ROLE_ID]: faker.random.objectElement(roles)[C.ROLE.ID],
         };
         const item = await store.admin.insert(values);
         res.sendStatus(200);
@@ -43,28 +42,28 @@ router.post('/random', async (req, res, next) => {
     }
 });
 
-// /* DELETE - delete equipment by id */
-// router.delete('/:id', async (req, res, next) => {
-//     try {
-//         const id = req.params.id;
-//         await store.equipment.delete(id);
-//         res.sendStatus(204);
-//     } catch (err) {
-//         res.status(500).json(err);
-//     }
-// });
+/* DELETE - delete admin by id */
+router.delete('/:id', async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        await store.admin.delete(id);
+        res.sendStatus(204);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
 
-// /* PUT - edit equipment by id */
-// router.put('/:id', async (req, res, next) => {
-//     try {
-//         const id = req.params.id;
-//         const body = req.body;
-//         await store.equipment.edit({ ...body, id });
-//         res.sendStatus(204);
-//     } catch (err) {
-//         res.status(500).json(err);
-//     }
-// });
+/* PUT - edit admin by id */
+router.put('/:id', async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const body = req.body;
+        await store.admin.edit({ ...body, id });
+        res.sendStatus(204);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
 
 
 module.exports = router;
