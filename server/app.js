@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const compression = require('compression')
 
 const index = require('./routes/index');
-const users = require('./routes/users');
+const equipment = require('./routes/equipment');
 
 const app = express();
 
@@ -20,7 +20,7 @@ app.use(cookieParser());
 app.use(compression())
 app.use(express.static(path.join(__dirname, '../client/build')));
 
-app.use('/users', users);
+app.use('/equipment', equipment);
 app.use('/', index);
 
 // catch 404 and forward to error handler

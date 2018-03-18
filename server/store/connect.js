@@ -1,11 +1,12 @@
 const mysql = require('mysql');
 
+
 const connections = {
     development: {
         user: 'root',
         password: 'password',
         host: 'localhost',
-        database: 'osu',
+        database: 'final',
     },
     production: {
         user: 'bec70745933b8f',
@@ -16,5 +17,6 @@ const connections = {
 };
 
 const con = mysql.createConnection(connections[process.env.NODE_ENV || 'development']);
+
 
 module.exports = con;

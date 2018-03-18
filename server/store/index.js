@@ -3,50 +3,50 @@ const con = require('./connect');
 
 // calls database - handles opening and closing connection
 const query = (query) => (
-    new Promise((resolve, reject) => {
-        return con.query(query, (err, result) => {  
-            if (err) {
-                return reject(err);
-            }
-            return resolve(result);
-        });
-    })
+  new Promise((resolve, reject) => {
+    return con.query(query, (err, result) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(result);
+    });
+  })
 );
 
-// create users table
-const createTableUsers = () => (
-    query(`create table users(
+
+// EQUIPMENT
+const equipment = {
+  // create table
+  createTableEquipment: () => (
+    query(`create table equipment(
         id int primary key auto_increment,
-        username varchar(255) not null,
-        password varchar(255) not null
+        name varchar(255) not null
     )`)
-);
-
-// drop users table
-const dropTableUsers = () => (
-    query('drop table if exists users')
-);
-
-// get all users
-const getUsers = () => (
-    query('select * from users')
-);
-
-// create a new user
-const createUser = ({ username, password }) => (
-    query(`insert into users (username, password) values ("${username}", "${password}")`)
-);
-
-// deletes a user by id
-const deleteUser = (id) => (
-    query(`delete from users where id=${id}`)
-);
+  ),
+  // drop table
+  dropTableEquipment: () => (
+    query('drop table if exists equipment')
+  ),
+  // get all
+  getEquipment: () => (
+    query('select * from equipment')
+  ),
+  // create a equipment
+  createEquipment: ({ name }) => (
+    query(`insert into equipment (name) values ("${name}")`)
+  ),
+  // deletes a equipment by id
+  deleteEquipment: (id) => (
+    query(`delete from equipment where id=${id}`)
+  ),
+  // edits a equipment by id
+  editEquipment: ({ id, ...rest }) => (
+    query(`update equipment set ${Object.keys(rest).map(x => `${x} = '${rest[x]}'`).join(', ')} where id=${id}`)
+  ),
+};
 
 
 module.exports = {
-    createTableUsers,
-    dropTableUsers,
-    getUsers,
-    createUser,
-    deleteUser,
+  con,
+  equipment,
 };

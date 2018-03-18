@@ -6,7 +6,7 @@ import {
 
 
 const Loading = styled(Spinner) `
-    margin: auto;
+    margin-top: 30%;
 `;
 
 Loading.defaultProps = {
