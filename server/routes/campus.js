@@ -8,7 +8,7 @@ const C = require('../store/constants');
 /* GET - get all campus */
 router.get('/', async (req, res, next) => {
     try {
-        const campus = await store.campus.get();
+        const campus = await store.campus.get({});
         res.json(campus);
     } catch (err) {
         res.status(500).json(err);
@@ -29,7 +29,6 @@ router.post('/', async (req, res, next) => {
 /* POST - create new random campus */
 router.post('/random', async (req, res, next) => {
     try {
-        const roles = await store.role.get();
         const values = {
             [C.CAMPUS.NAME]: faker.address.county(),
         };
@@ -44,7 +43,7 @@ router.post('/random', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
-        await store.campus.delete(id);
+        await store.campus.delete({ id });
         res.sendStatus(204);
     } catch (err) {
         res.status(500).json(err);

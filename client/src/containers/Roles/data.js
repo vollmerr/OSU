@@ -12,7 +12,7 @@ export const role = {
     maxWidth: 40,
   },
   [ROLE.NAME]: {
-    label: 'Name',
+    label: 'Role Name',
     name: ROLE.NAME,
     ariaLabel: 'Name of the role',
     minWidth: 150,

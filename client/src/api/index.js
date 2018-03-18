@@ -19,7 +19,9 @@ export default {
   equipment: buildRoutes({ base: 'equipment' }),
   campus: buildRoutes({ base: 'campus' }),
   location: buildRoutes({ base: 'location' }),
+  campusLocation: buildRoutes({ base: 'campusLocation' }),
   badgeType: buildRoutes({ base: 'badgeType' }),
   role: buildRoutes({ base: 'role' }),
   admin: buildRoutes({ base: 'admin' }),
+  visitor: buildRoutes({ base: 'visitor' }),
 }

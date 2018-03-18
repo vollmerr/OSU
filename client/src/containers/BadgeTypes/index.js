@@ -7,6 +7,7 @@ import { CommandBar } from 'office-ui-fabric-react/lib/CommandBar';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 
+import ErrorMessage from '../../components/ErrorMessage';
 import Loading from '../../components/Loading';
 import api from '../../api';
 import withUtils from '../../hocs/withUtils';
@@ -96,10 +97,15 @@ class BadgeTypes extends Component {
   }
 
   deleteBadgeType = async () => {
-    const { loading, selectedItem } = this.props;
+    const { loading, selectedItem, error } = this.props;
     loading.start();
-    await api.badgeType.delete(selectedItem.id);
-    await this.getBadgeTypes();
+    const response = await api.badgeType.delete(selectedItem.id);
+    if (response.status === 500) {
+      const message = await response.json();
+      error.setError(message.sqlMessage);
+    } else {
+      await this.getBadgeTypes();
+    }
     loading.stop();
   }
 
@@ -118,12 +124,18 @@ class BadgeTypes extends Component {
   render() {
     const {
       form,
+      error,
       selection,
       isCreating,
       isLoading,
       isEditing,
       selectedItem,
+      errorMessage,
     } = this.props;
+
+    if (errorMessage) {
+      return <ErrorMessage message={errorMessage} onClick={error.clear} />;
+    }
 
     if (isLoading) {
       return <Loading />;

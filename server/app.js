@@ -9,8 +9,11 @@ const compression = require('compression')
 const role = require('./routes/role');
 const campus = require('./routes/campus');
 const location = require('./routes/location');
+const campusLocation = require('./routes/campusLocation');
 const badgeType = require('./routes/badgeType');
 const admin = require('./routes/admin');
+const visit = require('./routes/visit');
+const visitor = require('./routes/visitor');
 const equipment = require('./routes/equipment');
 const index = require('./routes/index');
 
@@ -28,8 +31,11 @@ app.use(express.static(path.join(__dirname, '../client/build')));
 app.use('/role', role);
 app.use('/campus', campus);
 app.use('/location', location);
+app.use('/campusLocation', campusLocation);
 app.use('/badgeType', badgeType);
 app.use('/admin', admin);
+app.use('/visit', visit);
+app.use('/visitor', visitor);
 app.use('/equipment', equipment);
 app.use('/', index);
 

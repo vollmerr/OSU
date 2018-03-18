@@ -8,7 +8,7 @@ const C = require('../store/constants');
 /* GET - get all location */
 router.get('/', async (req, res, next) => {
     try {
-        const locations = await store.location.get();
+        const locations = await store.location.get({});
         res.json(locations);
     } catch (err) {
         res.status(500).json(err);
@@ -29,7 +29,6 @@ router.post('/', async (req, res, next) => {
 /* POST - create new random location */
 router.post('/random', async (req, res, next) => {
     try {
-        const roles = await store.role.get();
         const values = {
             [C.LOCATION.NAME]: faker.address.secondaryAddress(),
         };
@@ -44,7 +43,7 @@ router.post('/random', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
-        await store.location.delete(id);
+        await store.location.delete({ id });
         res.sendStatus(204);
     } catch (err) {
         res.status(500).json(err);

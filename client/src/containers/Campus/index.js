@@ -7,6 +7,7 @@ import { CommandBar } from 'office-ui-fabric-react/lib/CommandBar';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 
+import ErrorMessage from '../../components/ErrorMessage';
 import Loading from '../../components/Loading';
 import api from '../../api';
 import withUtils from '../../hocs/withUtils';
@@ -97,10 +98,15 @@ class Campus extends Component {
   }
 
   deleteCampus = async () => {
-    const { loading, selectedItem } = this.props;
+    const { loading, selectedItem, error } = this.props;
     loading.start();
-    await api.campus.delete(selectedItem.id);
-    await this.getCampus();
+    const response = await api.campus.delete(selectedItem.id);
+    if (response.status === 500) {
+      const message = await response.json();
+      error.setError(message.sqlMessage);
+    } else {
+      await this.getCampus();
+    }
     loading.stop();
   }
 
@@ -119,12 +125,18 @@ class Campus extends Component {
   render() {
     const {
       form,
+      error,
       selection,
       isCreating,
       isLoading,
       isEditing,
       selectedItem,
+      errorMessage,
     } = this.props;
+
+    if (errorMessage) {
+      return <ErrorMessage message={errorMessage} onClick={error.clear} />;
+    }
 
     if (isLoading) {
       return <Loading />;

@@ -8,7 +8,7 @@ const C = require('../store/constants');
 /* GET - get all equipment */
 router.get('/', async (req, res, next) => {
     try {
-        const items = await store.equipment.get();
+        const items = await store.equipment.get({});
         res.json(items);
     } catch (err) {
         res.status(500).json(err);
@@ -43,7 +43,7 @@ router.post('/random', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
-        await store.equipment.delete(id);
+        await store.equipment.delete({ id });
         res.sendStatus(204);
     } catch (err) {
         res.status(500).json(err);

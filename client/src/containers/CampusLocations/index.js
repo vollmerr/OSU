@@ -6,30 +6,27 @@ import {
 import { CommandBar } from 'office-ui-fabric-react/lib/CommandBar';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
-import { Dropdown } from 'office-ui-fabric-react/lib/Dropdown';
 
 import ErrorMessage from '../../components/ErrorMessage';
 import Loading from '../../components/Loading';
 import api from '../../api';
 import withUtils from '../../hocs/withUtils';
-import * as ROLES_C from '../Roles/constants';
 
 import * as data from './data';
 import * as C from './constants';
 
 
-class Admins extends Component {
+class CampusLocations extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      roles: [],
-      admins: [],
+      error: null,
+      campusLocations: [],
     };
   }
 
-  async componentDidMount() {
-    await this.getRoles();
-    await this.getAdmins();
+  componentDidMount() {
+    this.getCampusLocations();
   }
 
   // gets list of nav items
@@ -41,7 +38,7 @@ class Admins extends Component {
       isEditing,
       isLoading,
       selectedItem,
-      } = this.props;
+    } = this.props;
 
     return [
       {
@@ -50,18 +47,19 @@ class Admins extends Component {
         onClick: isCreating ? creating.stop : creating.start,
         disabled: isLoading,
         iconProps: { iconName: 'Add' },
+        checked: isCreating,
       },
       {
         key: 'newRandom',
         name: 'New Random',
-        onClick: this.createRandomAdmin,
+        onClick: this.createRandomCampusLocation,
         disabled: isLoading,
         iconProps: { iconName: 'Add' },
       },
       {
         key: 'delete',
         name: 'Delete Selected',
-        onClick: this.deleteAdmin,
+        onClick: this.deleteCampusLocation,
         disabled: isNaN(selectedItem.id) || isLoading,
         iconProps: { iconName: 'Delete' },
       },
@@ -75,66 +73,57 @@ class Admins extends Component {
     ];
   }
 
-  // gets list of roles from api
-  getRoles = async () => {
+  // gets list of campusLocations from api
+  getCampusLocations = async () => {
     const { loading } = this.props;
     loading.start();
-    const result = await api.role.get();
-    const roles = result.map((x) => ({
-      key: x[ROLES_C.ROLE.ID],
-      text: x[ROLES_C.ROLE.NAME],
-    }));
-    this.setState({ roles });
+    const campusLocations = await api.campusLocation.get();
+    this.setState({ campusLocations });
     loading.stop();
   }
 
-  // gets list of admin from api
-  getAdmins = async () => {
-    const { loading } = this.props;
-    loading.start();
-    const admins = await api.admin.get();
-    this.setState({ admins });
-    loading.stop();
-  }
-
-  createAdmin = async () => {
+  createCampusLocation = async () => {
     const { loading, formValues } = this.props;
     loading.start();
-    await api.admin.create(formValues);
-    await this.getAdmins();
+    await api.campusLocation.create(formValues);
+    await this.getCampusLocations();
     loading.stop();
   }
 
-  createRandomAdmin = async () => {
-    const { loading } = this.props;
+  createRandomCampusLocation = async () => {
+    const { loading, error } = this.props;
     loading.start();
-    await api.admin.createRandom();
-    await this.getAdmins();
-    loading.stop();
-  }
-
-  deleteAdmin = async () => {
-    const { loading, selectedItem, error } = this.props;
-    loading.start();
-    const response = await api.admin.delete(selectedItem.id);
-    if (response.status === 500) {
-      const message = await response.json();
-      error.setError(message.sqlMessage);
+    const response = await api.campusLocation.createRandom();
+    if (response.status === 400) {
+      error.setError(await response.json());
     } else {
-    await this.getAdmins();
+      await this.getCampusLocations();
     }
     loading.stop();
   }
 
-  editAdmin = async () => {
+  deleteCampusLocation = async () => {
+    const { loading, selectedItem, error } = this.props;
+    loading.start();
+    const response = await api.campusLocation.delete(selectedItem.id);
+    if (response.status === 500) {
+      const message = await response.json();
+      error.setError(message.sqlMessage);
+    } else {
+      await this.getCampusLocations();
+    }
+    loading.stop();
+  }
+
+  editCampusLocation = async () => {
     const { loading, selectedItem, formValues } = this.props;
     loading.start();
     const values = {
       ...formValues,
       id: selectedItem.id,
     };
-    await api.admin.delete(values);
-    await this.getAdmins();
+    await api.campusLocation.edit(values);
+    await this.getCampusLocations();
     loading.stop();
   }
 
@@ -159,8 +148,7 @@ class Admins extends Component {
     }
 
     const {
-      roles,
-      admins,
+      campusLocations,
     } = this.state;
 
     const commandProps = {
@@ -168,33 +156,27 @@ class Admins extends Component {
     };
 
     const editProps = {
-      firstName: {
-        label: data.admin[C.ADMIN.FIRST_NAME].label,
-        defaultValue: selectedItem[C.ADMIN.FIRST_NAME],
-        onChanged: form.update(C.ADMIN.FIRST_NAME),
+      campusName: {
+        label: data.campusLocation[C.CAMPUS_LOCATION.CAMPUS_NAME].label,
+        defaultValue: selectedItem[C.CAMPUS_LOCATION.CAMPUS_NAME],
+        onChanged: form.update(C.CAMPUS_LOCATION.CAMPUS_NAME),
       },
-      lastName: {
-        label: data.admin[C.ADMIN.LAST_NAME].label,
-        defaultValue: selectedItem[C.ADMIN.LAST_NAME],
-        onChanged: form.update(C.ADMIN.LAST_NAME),
-      },
-      role: {
-        label: data.admin[C.ADMIN.ROLE_NAME].label,
-        defaultSelectedKey: selectedItem[C.ADMIN.ROLE_ID],
-        options: roles,
-        onChanged: (x) => form.update(C.ADMIN.ROLE_ID)(x.key),
+      locationName: {
+        label: data.campusLocation[C.CAMPUS_LOCATION.LOCATION_NAME].label,
+        defaultValue: selectedItem[C.CAMPUS_LOCATION.LOCATION_NAME],
+        onChanged: form.update(C.CAMPUS_LOCATION.LOCATION_NAME),
       },
       save: {
         text: 'Save',
         primary: true,
-        onClick: isEditing ? this.editAdmin : this.createAdmin,
+        onClick: isEditing ? this.editCampusLocation : this.createCampusLocation,
       }
     }
 
     const listProps = {
       selection,
       columns: data.columns,
-      items: admins,
+      items: campusLocations,
       selectionMode: SelectionMode.single,
       selectionPreservedOnEmptyClick: true,
     };
@@ -205,9 +187,8 @@ class Admins extends Component {
         {
           (isEditing || isCreating) &&
           <div>
-            <TextField {...editProps.firstName} />
-            <TextField {...editProps.lastName} />
-            <Dropdown {...editProps.role} />
+            <TextField {...editProps.campusName} />
+            <TextField {...editProps.locationName} />
             <DefaultButton {...editProps.save} />
           </div>
         }
@@ -215,11 +196,11 @@ class Admins extends Component {
           isLoading ?
             <Loading /> :
             <div>
-              <h1>Admins</h1>
+              <h1>Campus-Locations</h1>
               {
-                admins.length ?
+                campusLocations.length ?
                   <DetailsList {...listProps} /> :
-                  <div>No Admins.....</div>
+                  <div>No Campus-Locations.....</div>
               }
             </div>
         }
@@ -229,4 +210,4 @@ class Admins extends Component {
 }
 
 
-export default withUtils(Admins);
+export default withUtils(CampusLocations);

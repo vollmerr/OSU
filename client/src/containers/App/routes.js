@@ -1,9 +1,11 @@
 import Equipment from '../Equipment';
 import Campus from '../Campus';
 import Locations from '../Locations';
+import CampusLocations from '../CampusLocations';
 import BadgeTypes from '../BadgeTypes';
 import Roles from '../Roles';
 import Admins from '../Admins';
+import Visitors from '../Visitors';
 
 
 const routes = {
@@ -21,12 +23,19 @@ const routes = {
     exact: true,
     component: Campus,
   },
-  location: {
+  locations: {
     path: '/locations',
     text: 'Locations',
     key: 'locations',
     exact: true,
     component: Locations,
+  },
+  campusLocations: {
+    path: '/campusLocations',
+    text: 'Campus-Locations',
+    key: 'campusLocations',
+    exact: true,
+    component: CampusLocations,
   },
   badgeTypes: {
     path: '/badgeTypes',
@@ -42,12 +51,19 @@ const routes = {
     exact: true,
     component: Roles,
   },
-  admin: {
+  admins: {
     path: '/admins',
     text: 'Admins',
     key: 'admins',
     exact: true,
     component: Admins,
+  },
+  visitors: {
+    path: '/visitors',
+    text: 'Visitors',
+    key: 'visitors',
+    exact: true,
+    component: Visitors,
   },
 };
 

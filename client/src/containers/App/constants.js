@@ -1,18 +1,18 @@
-export const VISITS = {
-    ID: 'id',
-    DATE: 'date',
-    // CAMPUS_ID: 'campusId',
-    // LOCATION_ID: 'location',
-    CAMPUS_LOCATION_ID: 'campusLocationId',
-};
+// export const VISIT = {
+//     ID: 'id',
+//     DATE: 'date',
+//     // CAMPUS_ID: 'campusId',
+//     // LOCATION_ID: 'location',
+//     CAMPUS_LOCATION_ID: 'campusLocationId',
+// };
 
-export const VISITORS = {
-    ID: 'id',
-    VISIT_ID: 'visitId',
-    BADGE_ID: 'badgeId',
-    FIRST_NAME: 'firstName',
-    LAST_NAME: 'firstName',
-};
+// export const VISITOR = {
+//     ID: 'id',
+//     VISIT_ID: 'visitId',
+//     BADGE_ID: 'badgeId',
+//     FIRST_NAME: 'firstName',
+//     LAST_NAME: 'firstName',
+// };
 
 // export const CAMPUS = {
 //     ID: 'id',
@@ -24,7 +24,7 @@ export const VISITORS = {
 //     NAME: 'name',
 // };
 
-// CAMPUS_LOCATION relational
+// ----- CAMPUS_LOCATION relational
 
 // export const BADGE_TYPES = {
 //     ID: 'id',
@@ -36,7 +36,7 @@ export const VISITORS = {
 //     NAME: 'name',
 // };
 
-// EQUIPMENT_VISITORS relational
+// ---- EQUIPMENT_VISITORS relational
 
 // export const ADMIN = {
 //     ID: 'id',

@@ -6,6 +6,7 @@ const withUtils = (C) => class extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      errorMessage: null,
       isCreating: false,
       isLoading: 0,
       isEditing: false,
@@ -16,6 +17,14 @@ const withUtils = (C) => class extends React.Component {
     this.selection = new Selection({
       onSelectionChanged: this.handleSelectionChange,
     });
+  }
+
+  setError = (errorMessage) => {
+    this.setState({ errorMessage });
+  }
+
+  clearError = () => {
+    this.setState({ errorMessage: null });
   }
 
   // increment api call in progress
@@ -79,6 +88,11 @@ const withUtils = (C) => class extends React.Component {
       stop: this.stopCreating,
     };
 
+    const error = {
+      setError: this.setError,
+      clear: this.clearError,
+    };
+
     const loading = {
       start: this.startLoading,
       stop: this.stopLoading,
@@ -95,6 +109,7 @@ const withUtils = (C) => class extends React.Component {
 
     const props = {
       form,
+      error,
       creating,
       loading,
       editing,

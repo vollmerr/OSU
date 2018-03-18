@@ -8,7 +8,7 @@ const C = require('../store/constants');
 /* GET - get all admin */
 router.get('/', async (req, res, next) => {
     try {
-        const admins = await store.admin.get();
+        const admins = await store.admin.get({});
         res.json(admins);
     } catch (err) {
         res.status(500).json(err);
@@ -29,7 +29,7 @@ router.post('/', async (req, res, next) => {
 /* POST - create new random admin */
 router.post('/random', async (req, res, next) => {
     try {
-        const roles = await store.role.get();
+        const roles = await store.role.get({});
         const values = {
             [C.ADMIN.FIRST_NAME]: faker.name.firstName(),
             [C.ADMIN.LAST_NAME]: faker.name.lastName(),
@@ -46,7 +46,7 @@ router.post('/random', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
-        await store.admin.delete(id);
+        await store.admin.delete({ id });
         res.sendStatus(204);
     } catch (err) {
         res.status(500).json(err);

@@ -8,7 +8,7 @@ const C = require('../store/constants');
 /* GET - get all role */
 router.get('/', async (req, res, next) => {
     try {
-        const roles = await store.role.get();
+        const roles = await store.role.get({});
         res.json(roles);
     } catch (err) {
         res.status(500).json(err);
@@ -29,7 +29,6 @@ router.post('/', async (req, res, next) => {
 /* POST - create new random role */
 router.post('/random', async (req, res, next) => {
     try {
-        // const roleIds = await store.roles.get();
         const values = {
             [C.ROLE.NAME]: faker.name.jobDescriptor(),
         };
@@ -44,7 +43,7 @@ router.post('/random', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
-        await store.role.delete(id);
+        await store.role.delete({ id });
         res.sendStatus(204);
     } catch (err) {
         res.status(500).json(err);

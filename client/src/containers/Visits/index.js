@@ -6,30 +6,25 @@ import {
 import { CommandBar } from 'office-ui-fabric-react/lib/CommandBar';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
-import { Dropdown } from 'office-ui-fabric-react/lib/Dropdown';
 
-import ErrorMessage from '../../components/ErrorMessage';
 import Loading from '../../components/Loading';
 import api from '../../api';
 import withUtils from '../../hocs/withUtils';
-import * as ROLES_C from '../Roles/constants';
 
 import * as data from './data';
 import * as C from './constants';
 
 
-class Admins extends Component {
+class Visits extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      roles: [],
-      admins: [],
+      visits: [],
     };
   }
 
-  async componentDidMount() {
-    await this.getRoles();
-    await this.getAdmins();
+  componentDidMount() {
+    this.getVisits();
   }
 
   // gets list of nav items
@@ -41,7 +36,7 @@ class Admins extends Component {
       isEditing,
       isLoading,
       selectedItem,
-      } = this.props;
+    } = this.props;
 
     return [
       {
@@ -50,18 +45,19 @@ class Admins extends Component {
         onClick: isCreating ? creating.stop : creating.start,
         disabled: isLoading,
         iconProps: { iconName: 'Add' },
+        checked: isCreating,
       },
       {
         key: 'newRandom',
         name: 'New Random',
-        onClick: this.createRandomAdmin,
+        onClick: this.createRandomVisit,
         disabled: isLoading,
         iconProps: { iconName: 'Add' },
       },
       {
         key: 'delete',
         name: 'Delete Selected',
-        onClick: this.deleteAdmin,
+        onClick: this.deleteVisit,
         disabled: isNaN(selectedItem.id) || isLoading,
         iconProps: { iconName: 'Delete' },
       },
@@ -75,92 +71,67 @@ class Admins extends Component {
     ];
   }
 
-  // gets list of roles from api
-  getRoles = async () => {
+  // gets list of visits from api
+  getVisits = async () => {
     const { loading } = this.props;
     loading.start();
-    const result = await api.role.get();
-    const roles = result.map((x) => ({
-      key: x[ROLES_C.ROLE.ID],
-      text: x[ROLES_C.ROLE.NAME],
-    }));
-    this.setState({ roles });
+    const visits = await api.visit.get();
+    this.setState({ visits });
     loading.stop();
   }
 
-  // gets list of admin from api
-  getAdmins = async () => {
-    const { loading } = this.props;
-    loading.start();
-    const admins = await api.admin.get();
-    this.setState({ admins });
-    loading.stop();
-  }
-
-  createAdmin = async () => {
+  createVisit = async () => {
     const { loading, formValues } = this.props;
     loading.start();
-    await api.admin.create(formValues);
-    await this.getAdmins();
+    await api.visit.create(formValues);
+    await this.getVisits();
     loading.stop();
   }
 
-  createRandomAdmin = async () => {
+  createRandomVisit = async () => {
     const { loading } = this.props;
     loading.start();
-    await api.admin.createRandom();
-    await this.getAdmins();
+    await api.visit.createRandom();
+    await this.getVisits();
     loading.stop();
   }
 
-  deleteAdmin = async () => {
-    const { loading, selectedItem, error } = this.props;
+  deleteVisit = async () => {
+    const { loading, selectedItem } = this.props;
     loading.start();
-    const response = await api.admin.delete(selectedItem.id);
-    if (response.status === 500) {
-      const message = await response.json();
-      error.setError(message.sqlMessage);
-    } else {
-    await this.getAdmins();
-    }
+    await api.visit.delete(selectedItem.id);
+    await this.getVisits();
     loading.stop();
   }
 
-  editAdmin = async () => {
+  editVisit = async () => {
     const { loading, selectedItem, formValues } = this.props;
     loading.start();
     const values = {
       ...formValues,
       id: selectedItem.id,
     };
-    await api.admin.delete(values);
-    await this.getAdmins();
+    await api.visit.edit(values);
+    await this.getVisits();
     loading.stop();
   }
 
   render() {
     const {
       form,
-      error,
       selection,
       isCreating,
       isLoading,
       isEditing,
       selectedItem,
-      errorMessage,
     } = this.props;
-
-    if (errorMessage) {
-      return <ErrorMessage message={errorMessage} onClick={error.clear} />;
-    }
 
     if (isLoading) {
       return <Loading />;
     }
 
     const {
-      roles,
-      admins,
+      visits,
     } = this.state;
 
     const commandProps = {
@@ -168,33 +139,22 @@ class Admins extends Component {
     };
 
     const editProps = {
-      firstName: {
-        label: data.admin[C.ADMIN.FIRST_NAME].label,
-        defaultValue: selectedItem[C.ADMIN.FIRST_NAME],
-        onChanged: form.update(C.ADMIN.FIRST_NAME),
-      },
-      lastName: {
-        label: data.admin[C.ADMIN.LAST_NAME].label,
-        defaultValue: selectedItem[C.ADMIN.LAST_NAME],
-        onChanged: form.update(C.ADMIN.LAST_NAME),
-      },
-      role: {
-        label: data.admin[C.ADMIN.ROLE_NAME].label,
-        defaultSelectedKey: selectedItem[C.ADMIN.ROLE_ID],
-        options: roles,
-        onChanged: (x) => form.update(C.ADMIN.ROLE_ID)(x.key),
+      name: {
+        label: data.visit[C.VISIT.FIRST_NAME].label,
+        defaultValue: selectedItem[C.VISIT.FIRST_NAME],
+        onChanged: form.update(C.VISIT.FIRST_NAME),
       },
       save: {
         text: 'Save',
         primary: true,
-        onClick: isEditing ? this.editAdmin : this.createAdmin,
+        onClick: isEditing ? this.editVisit : this.createVisit,
       }
     }
 
     const listProps = {
       selection,
       columns: data.columns,
-      items: admins,
+      items: visits,
       selectionMode: SelectionMode.single,
       selectionPreservedOnEmptyClick: true,
     };
@@ -205,9 +165,7 @@ class Admins extends Component {
         {
           (isEditing || isCreating) &&
           <div>
-            <TextField {...editProps.firstName} />
-            <TextField {...editProps.lastName} />
-            <Dropdown {...editProps.role} />
+            <TextField {...editProps.name} />
             <DefaultButton {...editProps.save} />
           </div>
         }
@@ -215,11 +173,11 @@ class Admins extends Component {
           isLoading ?
             <Loading /> :
             <div>
-              <h1>Admins</h1>
+              <h1>Visits</h1>
               {
-                admins.length ?
+                visits.length ?
                   <DetailsList {...listProps} /> :
-                  <div>No Admins.....</div>
+                  <div>No Visits.....</div>
               }
             </div>
         }
@@ -229,4 +187,4 @@ class Admins extends Component {
 }
 
 
-export default withUtils(Admins);
+export default withUtils(Visits);

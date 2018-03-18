@@ -5,57 +5,60 @@ const faker = require('faker');
 const C = require('../store/constants');
 
 
-/* GET - get all badgeType */
+/* GET - get all visit */
 router.get('/', async (req, res, next) => {
     try {
-        const roles = await store.badgeType.get({});
-        res.json(roles);
+        const visit = await store.visit.get({});
+        res.json(visit);
     } catch (err) {
         res.status(500).json(err);
     }
 });
 
-
-/* POST - create new badgeType */
+/* POST - create new visit */
 router.post('/', async (req, res, next) => {
     try {
-        await store.badgeType.insert(req.body);
+        await store.visit.insert(req.body);
         res.sendStatus(200);
     } catch (err) {
         res.status(500).json(err);
     }
 });
 
-/* POST - create new random badgeType */
+/* POST - create new random visit */
 router.post('/random', async (req, res, next) => {
     try {
+        // get list of campusLocaitons
+        const campusLocaitons = await store.campusLocation;
+
         const values = {
-            [C.BADGE_TYPE.TYPE]: faker.lorem.word(),
+            [C.VISIT.DATE]: faker.date.future(),
+            [C.VISIT.CAMPUS_LOCATION_ID]: faker.random.objectElement(campusLocaitons)[C.CAMPUS_LOCATION.ID],
         };
-        await store.badgeType.insert(values);
+        await store.visit.insert(values);
         res.sendStatus(200);
     } catch (err) {
         res.status(500).json(err);
     }
 });
 
-/* DELETE - delete role by id */
+/* DELETE - delete visit by id */
 router.delete('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
-        await store.badgeType.delete({ id });
+        await store.visit.delete({ id });
         res.sendStatus(204);
     } catch (err) {
         res.status(500).json(err);
     }
 });
 
-/* PUT - edit role by id */
+/* PUT - edit visit by id */
 router.put('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
         const body = req.body;
-        await store.badgeType.edit({ ...body, id });
+        await store.visit.edit({ ...body, id });
         res.sendStatus(204);
     } catch (err) {
         res.status(500).json(err);
