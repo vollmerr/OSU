@@ -125,6 +125,7 @@ class BadgeTypes extends Component {
     const {
       form,
       error,
+      title,
       selection,
       isCreating,
       isLoading,
@@ -176,6 +177,7 @@ class BadgeTypes extends Component {
         {
           (isEditing || isCreating) &&
           <div>
+            {title && <h3>{title}</h3>}
             <TextField {...editProps[C.BADGE_TYPE.TYPE]} />
             <DefaultButton {...editProps.save} />
           </div>

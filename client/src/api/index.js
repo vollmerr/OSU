@@ -20,8 +20,8 @@ export default {
   location: buildRoutes({ base: 'location' }),
   campusLocation: buildRoutes({ base: 'campusLocation' }),
   badgeType: buildRoutes({ base: 'badgeType' }),
-  role: buildRoutes({ base: 'role' }),
-  admin: buildRoutes({ base: 'admin' }),
+  role: buildRoutes({ base: 'role', get: ({ where='' }) => fetch(`/role?where=${JSON.stringify(where)}`).then(res => res.json()) }),
+  admin: buildRoutes({ base: 'admin', get: ({ where='' }) => fetch(`/admin?where=${JSON.stringify(where)}`).then(res => res.json()) }),
   visitor: buildRoutes({ base: 'visitor' }),
   visit: buildRoutes({ base: 'visit' }),
 }

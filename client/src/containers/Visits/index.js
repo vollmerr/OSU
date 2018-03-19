@@ -146,6 +146,7 @@ class Visits extends Component {
     const {
       form,
       error,
+      title,
       formValues,
       selection,
       isCreating,
@@ -206,6 +207,7 @@ class Visits extends Component {
         {
           (isEditing || isCreating) &&
           <div>
+            {title && <h3>{title}</h3>}
             <DatePicker {...editProps[C.VISIT.DATE]} />
             <Dropdown {...editProps[C.VISIT.CAMPUS_LOCATION_ID]} />
             <DefaultButton {...editProps.save} />

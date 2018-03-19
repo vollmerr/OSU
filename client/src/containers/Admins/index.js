@@ -37,9 +37,11 @@ class Admins extends Component {
     const {
       creating,
       editing,
+      filtering,
       isCreating,
       isEditing,
       isLoading,
+      isFiltering,
       selectedItem,
       } = this.props;
 
@@ -72,6 +74,12 @@ class Admins extends Component {
         disabled: isNaN(selectedItem.id) || isLoading,
         iconProps: { iconName: 'Edit' },
       },
+      {
+        key: 'filter',
+        name: 'Filters',
+        onClick: isFiltering ? filtering.stop : filtering.start,
+        iconProps: { iconName: 'Search' },
+      },
     ];
   }
 
@@ -92,7 +100,8 @@ class Admins extends Component {
   getAdmins = async () => {
     const { loading } = this.props;
     loading.start();
-    const admins = await api.admin.get({});
+    const where = this.state.filters;
+    const admins = await api.admin.get({ where });
     this.setState({ admins });
     loading.stop();
   }
@@ -138,14 +147,23 @@ class Admins extends Component {
     loading.stop();
   }
 
+  setFilters = async () => {
+    const { formValues, filtering } = this.props;
+    await this.setState({ filters: formValues });
+    await this.getAdmins();
+    filtering.stop();
+  }
+
   render() {
     const {
       form,
       error,
+      title,
       selection,
       isCreating,
       isLoading,
       isEditing,
+      isFiltering,
       selectedItem,
       errorMessage,
     } = this.props;
@@ -187,7 +205,7 @@ class Admins extends Component {
       save: {
         text: 'Save',
         primary: true,
-        onClick: isEditing ? this.editAdmin : this.createAdmin,
+        onClick: isEditing ? this.editAdmin : isFiltering ? this.setFilters : this.createAdmin,
       }
     }
 
@@ -203,8 +221,9 @@ class Admins extends Component {
       <div>
         <CommandBar {...commandProps} />
         {
-          (isEditing || isCreating) &&
+          (isEditing || isCreating || isFiltering) &&
           <div>
+            {title && <h3>{title}</h3>}
             <TextField {...editProps[C.ADMIN.FIRST_NAME]} />
             <TextField {...editProps[C.ADMIN.LAST_NAME]} />
             <Dropdown {...editProps[C.ADMIN.ROLE_NAME]} />

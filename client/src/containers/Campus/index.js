@@ -126,6 +126,7 @@ class Campus extends Component {
     const {
       form,
       error,
+      title,
       selection,
       isCreating,
       isLoading,
@@ -177,6 +178,7 @@ class Campus extends Component {
         {
           (isEditing || isCreating) &&
           <div>
+            {title && <h3>{title}</h3>}
             <TextField {...editProps[C.CAMPUS.NAME]} />
             <DefaultButton {...editProps.save} />
           </div>

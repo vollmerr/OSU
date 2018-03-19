@@ -33,9 +33,11 @@ class Roles extends Component {
     const {
       creating,
       editing,
+      filtering,
       isCreating,
       isEditing,
       isLoading,
+      isFiltering,
       selectedItem,
     } = this.props;
 
@@ -69,6 +71,12 @@ class Roles extends Component {
         disabled: isNaN(selectedItem.id) || isLoading,
         iconProps: { iconName: 'Edit' },
       },
+      {
+        key: 'filter',
+        name: 'Filters',
+        onClick: isFiltering ? filtering.stop : filtering.start,
+        iconProps: { iconName: 'Search' },
+      },
     ];
   }
 
@@ -76,7 +84,8 @@ class Roles extends Component {
   getRoles = async () => {
     const { loading } = this.props;
     loading.start();
-    const roles = await api.role.get({});
+    const where = this.state.filters;
+    const roles = await api.role.get({ where });
     this.setState({ roles });
     loading.stop();
   }
@@ -122,14 +131,23 @@ class Roles extends Component {
     loading.stop();
   }
 
+  setFilters = async () => {
+    const { formValues, filtering } = this.props;
+    await this.setState({ filters: formValues });
+    await this.getRoles();
+    filtering.stop();
+  }
+
   render() {
     const {
       form,
       error,
+      title,
       selection,
       isCreating,
       isLoading,
       isEditing,
+      isFiltering,
       selectedItem,
       errorMessage,
     } = this.props;
@@ -159,7 +177,7 @@ class Roles extends Component {
       save: {
         text: 'Save',
         primary: true,
-        onClick: isEditing ? this.editRole : this.createRole,
+        onClick: isEditing ? this.editRole : isFiltering ? this.setFilters : this.createRole,
       }
     }
 
@@ -175,8 +193,9 @@ class Roles extends Component {
       <div>
         <CommandBar {...commandProps} />
         {
-          (isEditing || isCreating) &&
+          (isEditing || isCreating || isFiltering) &&
           <div>
+            {title && <h3>{title}</h3>}
             <TextField {...editProps[C.ROLE.NAME]} />
             <DefaultButton {...editProps.save} />
           </div>

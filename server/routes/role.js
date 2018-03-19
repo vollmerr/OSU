@@ -8,7 +8,9 @@ const C = require('../store/constants');
 /* GET - get all role */
 router.get('/', async (req, res, next) => {
     try {
-        const roles = await store.role.get({});
+        const filters = JSON.parse(req.query.where);
+        const where = Object.keys(filters).map(x => `${x} LIKE "%${filters[x]}%"`).join(' and ');
+        const roles = await store.role.get({ where });
         res.json(roles);
     } catch (err) {
         res.status(500).json(err);

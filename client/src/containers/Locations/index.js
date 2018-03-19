@@ -126,6 +126,7 @@ class Locations extends Component {
     const {
       form,
       error,
+      title,
       selection,
       isCreating,
       isLoading,
@@ -177,6 +178,7 @@ class Locations extends Component {
         {
           (isEditing || isCreating) &&
           <div>
+            {title && <h3>{title}</h3>}
             <TextField {...editProps[C.LOCATION.NAME]} />
             <DefaultButton {...editProps.save} />
           </div>

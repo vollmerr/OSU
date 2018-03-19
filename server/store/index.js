@@ -26,8 +26,8 @@ const buildStore = ({ name, structure, ...rest }) => ({
     query(`drop table if exists ${name}`)
   ),
   // get all
-  get: ({ columns = '*' }) => (
-    query(`select ${columns} from ${name}`)
+  get: ({ columns = '*', where = '' }) => (
+    query(`select ${columns} from ${name} ${where && `where ${where}`}`)
   ),
   // create a single row
   insert: (values) => (
@@ -81,7 +81,7 @@ const campusLocation = buildStore({
     foreign key fk_locationId(${C.CAMPUS_LOCATION.LOCATION_ID}) references location(${C.LOCATION.ID}),
     constraint c_campusLocation unique (${C.CAMPUS_LOCATION.CAMPUS_ID}, ${C.CAMPUS_LOCATION.LOCATION_ID})
   `,
-  get: ({ where }) => (
+  get: () => (
     query(`
       select cl.${C.CAMPUS_LOCATION.ID}, cl.${C.CAMPUS_LOCATION.CAMPUS_ID}, cl.${C.CAMPUS_LOCATION.LOCATION_ID}, 
         c.${C.CAMPUS.NAME} as campusName, 
@@ -110,12 +110,13 @@ const admin = buildStore({
     ${C.ADMIN.ROLE_ID} int not null,
     foreign key fk_roleId(${C.ADMIN.ROLE_ID}) references role(${C.ROLE.ID})
   `,
-  get: () => (
+  get: ({ where = '' }) => (
     query(`
       select a.${C.ADMIN.ID}, a.${C.ADMIN.FIRST_NAME}, a.${C.ADMIN.LAST_NAME}, 
         r.${C.ROLE.NAME} as roleName, r.${C.ROLE.ID} as roleId
       from admin a
       inner join role r on r.${C.ROLE.ID}=a.${C.ADMIN.ROLE_ID}
+      ${where && `where ${where}`} 
     `)
   ),
 });

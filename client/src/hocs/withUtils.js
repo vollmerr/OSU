@@ -27,6 +27,10 @@ const withUtils = (C) => class extends React.Component {
     this.setState({ errorMessage: null });
   }
 
+  clearForm = () => {
+    this.setState({ formValues: '' });
+  }
+
   // increment api call in progress
   startLoading = () => {
     this.handleClearSelection();
@@ -45,20 +49,37 @@ const withUtils = (C) => class extends React.Component {
   }
 
   startEditing = () => {
-    this.setState({ isEditing: true, isCreating: false });
+    this.stopCreating();
+    this.stopFiltering();
+    this.setState({ isEditing: true, title: 'Edit' });
   }
 
   stopEditing = () => {
-    this.setState({ isEditing: false });
+    this.clearForm();
+    this.setState({ isEditing: false, title: null });
+  }
+
+  startFiltering = () => {
+    this.stopCreating();
+    this.stopEditing();
+    this.setState({ isFiltering: true, title: 'Filters' });
+  }
+
+  stopFiltering = () => {
+    this.clearForm();
+    this.setState({ isFiltering: false, title: null });
   }
 
   startCreating = () => {
     this.handleClearSelection();
-    this.setState({ isCreating: true, isEditing: false });
+    this.stopEditing();
+    this.stopFiltering();
+    this.setState({ isCreating: true, title: 'New' });
   }
 
   stopCreating = () => {
-    this.setState({ isCreating: false });
+    this.clearForm();
+    this.setState({ isCreating: false, title: null });
   }
 
   updateForm = (key) => (value) => {
@@ -103,6 +124,11 @@ const withUtils = (C) => class extends React.Component {
       stop: this.stopEditing,
     };
 
+    const filtering = {
+      start: this.startFiltering,
+      stop: this.stopFiltering,
+    }
+
     const form = {
       update: this.updateForm,
     };
@@ -113,6 +139,7 @@ const withUtils = (C) => class extends React.Component {
       creating,
       loading,
       editing,
+      filtering,
       selection: this.selection,
       ...this.state,
       ...this.props,

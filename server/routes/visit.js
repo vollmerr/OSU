@@ -8,7 +8,7 @@ const C = require('../store/constants');
 /* GET - get all visit */
 router.get('/', async (req, res, next) => {
     try {
-        const visit = await store.visit.get({});
+        const visit = await store.visit.get();
         res.json(visit);
     } catch (err) {
         res.status(500).json(err);

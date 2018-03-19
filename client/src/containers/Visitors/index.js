@@ -151,6 +151,7 @@ class Visitors extends Component {
   render() {
     const {
       form,
+      title,
       selection,
       isCreating,
       isLoading,
@@ -199,8 +200,8 @@ class Visitors extends Component {
         text: 'Save',
         primary: true,
         onClick: isEditing ? this.editVisitor : this.createVisitor,
-      }
-    }
+      },
+    };
 
     const listProps = {
       selection,
@@ -216,6 +217,7 @@ class Visitors extends Component {
         {
           (isEditing || isCreating) &&
           <div>
+            {title && <h3>{title}</h3>}
             <TextField {...editProps[C.VISITOR.FIRST_NAME]} />
             <TextField {...editProps[C.VISITOR.LAST_NAME]} />
             <Dropdown {...editProps[C.VISITOR.BADGE_TYPE]} />

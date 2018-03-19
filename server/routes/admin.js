@@ -8,7 +8,9 @@ const C = require('../store/constants');
 /* GET - get all admin */
 router.get('/', async (req, res, next) => {
     try {
-        const admins = await store.admin.get({});
+        const filters = JSON.parse(req.query.where);
+        const where = Object.keys(filters).map(x => `${x} LIKE "%${filters[x]}%"`).join(' and ');
+        const admins = await store.admin.get({ where });
         res.json(admins);
     } catch (err) {
         res.status(500).json(err);

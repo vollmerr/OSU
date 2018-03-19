@@ -4,7 +4,6 @@ import {
   SelectionMode,
 } from 'office-ui-fabric-react/lib/DetailsList';
 import { CommandBar } from 'office-ui-fabric-react/lib/CommandBar';
-import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
 import { Dropdown } from 'office-ui-fabric-react/lib/Dropdown';
 
@@ -177,6 +176,7 @@ class CampusLocations extends Component {
     const {
       form,
       error,
+      title,
       selection,
       isCreating,
       isLoading,
@@ -237,6 +237,7 @@ class CampusLocations extends Component {
         {
           (isEditing || isCreating) &&
           <div>
+            {title && <h3>{title}</h3>}
             <Dropdown {...editProps[C.CAMPUS_LOCATION.CAMPUS_NAME]} />
             <Dropdown {...editProps[C.CAMPUS_LOCATION.LOCATION_NAME]} />
             <DefaultButton {...editProps.save} />
