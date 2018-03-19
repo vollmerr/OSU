@@ -22,12 +22,26 @@ export const visit = {
     name: VISIT.CAMPUS_ID,
     ariaLabel: 'ID of the campus record',
     minWidth: 20,
+    maxWidth: 60,
+  },
+  [VISIT.CAMPUS_NAME]: {
+    label: 'Campus Name',
+    name: VISIT.CAMPUS_NAME,
+    ariaLabel: 'Name of the campus',
+    minWidth: 60,
   },
   [VISIT.LOCATION_ID]: {
     label: 'Location ID',
     name: VISIT.LOCATION_ID,
-    ariaLabel: 'ID of the location',
+    ariaLabel: 'ID of the location record',
     minWidth: 20,
+    maxWidth: 60,
+  },
+  [VISIT.LOCATION_NAME]: {
+    label: 'Location Name',
+    name: VISIT.LOCATION_NAME,
+    ariaLabel: 'Name of the location',
+    minWidth: 60,
   },
 };
 

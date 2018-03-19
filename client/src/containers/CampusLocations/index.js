@@ -6,11 +6,14 @@ import {
 import { CommandBar } from 'office-ui-fabric-react/lib/CommandBar';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
+import { Dropdown } from 'office-ui-fabric-react/lib/Dropdown';
 
 import ErrorMessage from '../../components/ErrorMessage';
 import Loading from '../../components/Loading';
 import api from '../../api';
 import withUtils from '../../hocs/withUtils';
+import * as C_C from '../Campus/constants';
+import * as L_C from '../Locations/constants';
 
 import * as data from './data';
 import * as C from './constants';
@@ -21,12 +24,16 @@ class CampusLocations extends Component {
     super(props);
     this.state = {
       error: null,
+      campus: [],
+      locations: [],
       campusLocations: [],
     };
   }
 
-  componentDidMount() {
-    this.getCampusLocations();
+  async componentDidMount() {
+    await this.getCampusLocations();
+    await this.getCampus();
+    await this.getLocations();
   }
 
   // gets list of nav items
@@ -73,20 +80,51 @@ class CampusLocations extends Component {
     ];
   }
 
+  // gets list of locations from api for dropdown
+  getCampus = async () => {
+    const { loading } = this.props;
+    loading.start();
+    const result = await api.campus.get({});
+    const campus = result.map((x) => ({
+      key: x[C_C.CAMPUS.ID],
+      text: x[C_C.CAMPUS.NAME],
+    }));
+    this.setState({ campus });
+    loading.stop();
+  }
+
+  // gets list of locations from api for dropdown
+  getLocations = async () => {
+    const { loading } = this.props;
+    loading.start();
+    const result = await api.location.get({});
+    const locations = result.map((x) => ({
+      key: x[L_C.LOCATION.ID],
+      text: x[L_C.LOCATION.NAME],
+    }));
+    this.setState({ locations });
+    loading.stop();
+  }
+
   // gets list of campusLocations from api
   getCampusLocations = async () => {
     const { loading } = this.props;
     loading.start();
-    const campusLocations = await api.campusLocation.get();
+    const campusLocations = await api.campusLocation.get({});
     this.setState({ campusLocations });
     loading.stop();
   }
 
   createCampusLocation = async () => {
-    const { loading, formValues } = this.props;
+    const { loading, formValues, error } = this.props;
     loading.start();
-    await api.campusLocation.create(formValues);
-    await this.getCampusLocations();
+    const response = await api.campusLocation.create(formValues);
+    if (response.status === 500) {
+      const message = await response.json();
+      error.setError(message.sqlMessage);
+    } else {
+      await this.getCampusLocations();
+    }
     loading.stop();
   }
 
@@ -96,6 +134,9 @@ class CampusLocations extends Component {
     const response = await api.campusLocation.createRandom();
     if (response.status === 400) {
       error.setError(await response.json());
+    } else if (response.status === 500) {
+      const message = await response.json();
+      error.setError(message.sqlMessage);
     } else {
       await this.getCampusLocations();
     }
@@ -116,14 +157,19 @@ class CampusLocations extends Component {
   }
 
   editCampusLocation = async () => {
-    const { loading, selectedItem, formValues } = this.props;
+    const { loading, selectedItem, formValues, error } = this.props;
     loading.start();
     const values = {
       ...formValues,
       id: selectedItem.id,
     };
-    await api.campusLocation.edit(values);
-    await this.getCampusLocations();
+    const response = await api.campusLocation.edit(values);
+    if (response.status === 500) {
+      const message = await response.json();
+      error.setError(message.sqlMessage);
+    } else {
+      await this.getCampusLocations();
+    }
     loading.stop();
   }
 
@@ -148,6 +194,8 @@ class CampusLocations extends Component {
     }
 
     const {
+      campus,
+      locations,
       campusLocations,
     } = this.state;
 
@@ -156,15 +204,17 @@ class CampusLocations extends Component {
     };
 
     const editProps = {
-      campusName: {
+      [C.CAMPUS_LOCATION.CAMPUS_NAME]: {
         label: data.campusLocation[C.CAMPUS_LOCATION.CAMPUS_NAME].label,
-        defaultValue: selectedItem[C.CAMPUS_LOCATION.CAMPUS_NAME],
-        onChanged: form.update(C.CAMPUS_LOCATION.CAMPUS_NAME),
+        defaultSelectedKey: selectedItem[C.CAMPUS_LOCATION.CAMPUS_ID],
+        options: campus,
+        onChanged: (x) => form.update(C.CAMPUS_LOCATION.CAMPUS_ID)(x.key),
       },
-      locationName: {
+      [C.CAMPUS_LOCATION.LOCATION_NAME]: {
         label: data.campusLocation[C.CAMPUS_LOCATION.LOCATION_NAME].label,
-        defaultValue: selectedItem[C.CAMPUS_LOCATION.LOCATION_NAME],
-        onChanged: form.update(C.CAMPUS_LOCATION.LOCATION_NAME),
+        defaultSelectedKey: selectedItem[C.CAMPUS_LOCATION.LOCATION_ID],
+        options: locations,
+        onChanged: (x) => form.update(C.CAMPUS_LOCATION.LOCATION_ID)(x.key),
       },
       save: {
         text: 'Save',
@@ -187,8 +237,8 @@ class CampusLocations extends Component {
         {
           (isEditing || isCreating) &&
           <div>
-            <TextField {...editProps.campusName} />
-            <TextField {...editProps.locationName} />
+            <Dropdown {...editProps[C.CAMPUS_LOCATION.CAMPUS_NAME]} />
+            <Dropdown {...editProps[C.CAMPUS_LOCATION.LOCATION_NAME]} />
             <DefaultButton {...editProps.save} />
           </div>
         }

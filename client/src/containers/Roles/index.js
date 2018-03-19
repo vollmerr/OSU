@@ -76,7 +76,7 @@ class Roles extends Component {
   getRoles = async () => {
     const { loading } = this.props;
     loading.start();
-    const roles = await api.role.get();
+    const roles = await api.role.get({});
     this.setState({ roles });
     loading.stop();
   }
@@ -151,7 +151,7 @@ class Roles extends Component {
     };
 
     const editProps = {
-      name: {
+      [C.ROLE.NAME]: {
         label: data.role[C.ROLE.NAME].label,
         defaultValue: selectedItem[C.ROLE.NAME],
         onChanged: form.update(C.ROLE.NAME),
@@ -177,7 +177,7 @@ class Roles extends Component {
         {
           (isEditing || isCreating) &&
           <div>
-            <TextField {...editProps.name} />
+            <TextField {...editProps[C.ROLE.NAME]} />
             <DefaultButton {...editProps.save} />
           </div>
         }

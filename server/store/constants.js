@@ -1,8 +1,4 @@
 module.exports = {
-    EQUIPMENT: {
-        ID: 'id',
-        NAME: 'name',
-    },
     ROLE: {
         ID: 'id',
         NAME: 'name',

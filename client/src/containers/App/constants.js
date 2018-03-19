@@ -31,12 +31,6 @@
 //     TYPE: 'type',
 // };
 
-// export const EQUIPMENT = {
-//     ID: 'id',
-//     NAME: 'name',
-// };
-
-// ---- EQUIPMENT_VISITORS relational
 
 // export const ADMIN = {
 //     ID: 'id',

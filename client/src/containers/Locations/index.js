@@ -76,7 +76,7 @@ class Locations extends Component {
   getLocations = async () => {
     const { loading } = this.props;
     loading.start();
-    const locations = await api.location.get();
+    const locations = await api.location.get({});
     this.setState({ locations });
     loading.stop();
   }
@@ -151,7 +151,7 @@ class Locations extends Component {
     };
 
     const editProps = {
-      name: {
+      [C.LOCATION.NAME]: {
         label: data.location[C.LOCATION.NAME].label,
         defaultValue: selectedItem[C.LOCATION.NAME],
         onChanged: form.update(C.LOCATION.NAME),
@@ -177,7 +177,7 @@ class Locations extends Component {
         {
           (isEditing || isCreating) &&
           <div>
-            <TextField {...editProps.name} />
+            <TextField {...editProps[C.LOCATION.NAME]} />
             <DefaultButton {...editProps.save} />
           </div>
         }

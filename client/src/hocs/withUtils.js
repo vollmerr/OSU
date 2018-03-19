@@ -13,7 +13,7 @@ const withUtils = (C) => class extends React.Component {
       selectedItem: {},
       formValues: {},
     };
-    // keeps track of equipment
+    // keeps track of selected item in list
     this.selection = new Selection({
       onSelectionChanged: this.handleSelectionChange,
     });

@@ -75,7 +75,7 @@ class BadgeTypes extends Component {
   getBadgeTypes = async () => {
     const { loading } = this.props;
     loading.start();
-    const badgeTypes = await api.badgeType.get();
+    const badgeTypes = await api.badgeType.get({});
     this.setState({ badgeTypes });
     loading.stop();
   }
@@ -150,7 +150,7 @@ class BadgeTypes extends Component {
     };
 
     const editProps = {
-      name: {
+      [C.BADGE_TYPE.TYPE]: {
         label: data.badgeType[C.BADGE_TYPE.TYPE].label,
         defaultValue: selectedItem[C.BADGE_TYPE.TYPE],
         onChanged: form.update(C.BADGE_TYPE.TYPE),
@@ -176,7 +176,7 @@ class BadgeTypes extends Component {
         {
           (isEditing || isCreating) &&
           <div>
-            <TextField {...editProps.name} />
+            <TextField {...editProps[C.BADGE_TYPE.TYPE]} />
             <DefaultButton {...editProps.save} />
           </div>
         }

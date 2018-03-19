@@ -76,7 +76,7 @@ class Campus extends Component {
   getCampus = async () => {
     const { loading } = this.props;
     loading.start();
-    const campus = await api.campus.get();
+    const campus = await api.campus.get({});
     this.setState({ campus });
     loading.stop();
   }
@@ -151,7 +151,7 @@ class Campus extends Component {
     };
 
     const editProps = {
-      name: {
+      [C.CAMPUS.NAME]: {
         label: data.campus[C.CAMPUS.NAME].label,
         defaultValue: selectedItem[C.CAMPUS.NAME],
         onChanged: form.update(C.CAMPUS.NAME),
@@ -177,7 +177,7 @@ class Campus extends Component {
         {
           (isEditing || isCreating) &&
           <div>
-            <TextField {...editProps.name} />
+            <TextField {...editProps[C.CAMPUS.NAME]} />
             <DefaultButton {...editProps.save} />
           </div>
         }

@@ -26,7 +26,7 @@ const buildStore = ({ name, structure, ...rest }) => ({
     query(`drop table if exists ${name}`)
   ),
   // get all
-  get: ({ columns='*' }) => (
+  get: ({ columns = '*' }) => (
     query(`select ${columns} from ${name}`)
   ),
   // create a single row
@@ -34,7 +34,7 @@ const buildStore = ({ name, structure, ...rest }) => ({
     query(`insert into ${name} (${Object.keys(values).join(', ')}) values ("${Object.values(values).join('", "')}")`)
   ),
   // deletes a row by id
-  delete: ({ id} ) => (
+  delete: ({ id }) => (
     query(`delete from ${name} where id=${id}`)
   ),
   // edit a row by id
@@ -45,14 +45,6 @@ const buildStore = ({ name, structure, ...rest }) => ({
   ...rest,
 });
 
-
-const equipment = buildStore({
-  name: 'equipment',
-  structure: `
-    ${C.EQUIPMENT.ID} int primary key auto_increment,
-    ${C.EQUIPMENT.NAME} varchar(255) not null
-  `,
-});
 
 const role = buildStore({
   name: 'role',
@@ -91,8 +83,10 @@ const campusLocation = buildStore({
   `,
   get: ({ where }) => (
     query(`
-      select cL.${C.CAMPUS_LOCATION.ID}, cL.${C.CAMPUS_LOCATION.CAMPUS_ID}, cL.${C.CAMPUS_LOCATION.LOCATION_ID}, c.${C.CAMPUS.NAME} as campusName, l.${C.LOCATION.NAME} as locationName 
-      from campusLocation cL 
+      select cl.${C.CAMPUS_LOCATION.ID}, cl.${C.CAMPUS_LOCATION.CAMPUS_ID}, cl.${C.CAMPUS_LOCATION.LOCATION_ID}, 
+        c.${C.CAMPUS.NAME} as campusName, 
+        l.${C.LOCATION.NAME} as locationName 
+      from campusLocation cl 
       inner join campus c on c.${C.CAMPUS.ID}=cL.${C.CAMPUS_LOCATION.CAMPUS_ID}
       inner join location l on l.${C.LOCATION.ID}=cL.${C.CAMPUS_LOCATION.LOCATION_ID}
     `)
@@ -118,9 +112,10 @@ const admin = buildStore({
   `,
   get: () => (
     query(`
-      select admin.${C.ADMIN.ID}, ${C.ADMIN.FIRST_NAME}, ${C.ADMIN.LAST_NAME}, ${C.ROLE.NAME} as roleName, role.${C.ROLE.ID} as roleId
-      from admin 
-      inner join role on ${C.ADMIN.ROLE_ID}=role.${C.ROLE.ID}
+      select a.${C.ADMIN.ID}, a.${C.ADMIN.FIRST_NAME}, a.${C.ADMIN.LAST_NAME}, 
+        r.${C.ROLE.NAME} as roleName, r.${C.ROLE.ID} as roleId
+      from admin a
+      inner join role r on r.${C.ROLE.ID}=a.${C.ADMIN.ROLE_ID}
     `)
   ),
 });
@@ -133,13 +128,18 @@ const visit = buildStore({
     ${C.VISIT.CAMPUS_LOCATION_ID} int not null,
     foreign key fk_campusLocationId(${C.VISIT.CAMPUS_LOCATION_ID}) references campusLocation(${C.CAMPUS_LOCATION.ID})
   `,
-  // get: () => (
-  //   query(`
-  //     select admin.${C.ADMIN.ID}, ${C.ADMIN.FIRST_NAME}, ${C.ADMIN.LAST_NAME}, ${C.ROLE.NAME} as roleName, role.${C.ROLE.ID} as roleId
-  //     from admin 
-  //     inner join role on ${C.ADMIN.ROLE_ID}=role.${C.ROLE.ID}
-  //   `)
-  // ),
+  get: () => (
+    query(`
+      select v.${C.VISIT.ID}, v.${C.VISIT.DATE}, 
+        cl.${C.CAMPUS_LOCATION.ID} as campusLocationId, cl.${C.CAMPUS_LOCATION.CAMPUS_ID}, cl.${C.CAMPUS_LOCATION.LOCATION_ID},
+        c.${C.CAMPUS.NAME} as campusName,
+        l.${C.LOCATION.NAME} as locationName
+      from visit v 
+      inner join campusLocation cl on cl.${C.CAMPUS_LOCATION.ID}=v.${C.VISIT.CAMPUS_LOCATION_ID}
+      inner join campus c on c.${C.CAMPUS.ID}=cl.${C.CAMPUS_LOCATION.CAMPUS_ID}
+      inner join location l on l.${C.LOCATION.ID}=cl.${C.CAMPUS_LOCATION.LOCATION_ID}
+    `)
+  ),
 });
 
 const visitor = buildStore({
@@ -156,15 +156,17 @@ const visitor = buildStore({
   get: () => (
     query(`
       select v.${C.VISITOR.ID}, ${C.VISITOR.FIRST_NAME}, ${C.VISITOR.LAST_NAME}, 
-        b.${C.BADGE_TYPE.ID} as badgeId, b.${C.BADGE_TYPE.NAME} as badgeName, 
-        vi.${C.VISIT.ID} as visitId, vi.${C.VISIT.DATE} as visitDate,
-
+        b.${C.BADGE_TYPE.ID} as badgeId, b.${C.BADGE_TYPE.TYPE} as badgeType, 
+        t.${C.VISIT.ID} as visitId, t.${C.VISIT.DATE} as visitDate,
+        cl.${C.CAMPUS_LOCATION.ID} as campusLocationId,
+        c.${C.CAMPUS.ID} as campusId, c.${C.CAMPUS.NAME} as campusName,
+        l.${C.LOCATION.ID} as locationId, l.${C.LOCATION.NAME} as locationName
       from visitor v 
       inner join badgeType b on b.${C.BADGE_TYPE.ID}=v.${C.VISITOR.BADGE_ID}
       inner join visit t on t.${C.VISIT.ID}=v.${C.VISITOR.VISIT_ID}
-      inner join campusLocation cl on cl.${C.CAMPUS_LOCATION.ID}=v.${C.VISIT.CAMPUS_LOCATION_ID}
+      inner join campusLocation cl on cl.${C.CAMPUS_LOCATION.ID}=t.${C.VISIT.CAMPUS_LOCATION_ID}
       inner join campus c on c.${C.CAMPUS.ID}=cl.${C.CAMPUS_LOCATION.CAMPUS_ID} 
-      inner join location l on l.${C.LOCATION.ID}=cl.${C.CAMPUS_LOCATION.LOCATION_ID} 
+      inner join location l on l.${C.LOCATION.ID}=cl.${C.CAMPUS_LOCATION.LOCATION_ID}
     `)
   ),
 });
@@ -172,7 +174,6 @@ const visitor = buildStore({
 // order of exports matter for migrate / rollback!
 module.exports = {
   con,
-  equipment,
   role,
   campus,
   location,

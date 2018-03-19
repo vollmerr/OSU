@@ -4,12 +4,15 @@ import {
   SelectionMode,
 } from 'office-ui-fabric-react/lib/DetailsList';
 import { CommandBar } from 'office-ui-fabric-react/lib/CommandBar';
-import { TextField } from 'office-ui-fabric-react/lib/TextField';
 import { DefaultButton } from 'office-ui-fabric-react/lib/Button';
+import { DatePicker } from 'office-ui-fabric-react';
+import { Dropdown } from 'office-ui-fabric-react/lib/Dropdown';
 
+import ErrorMessage from '../../components/ErrorMessage';
 import Loading from '../../components/Loading';
 import api from '../../api';
 import withUtils from '../../hocs/withUtils';
+import * as CL_C from '../CampusLocations/constants';
 
 import * as data from './data';
 import * as C from './constants';
@@ -20,11 +23,13 @@ class Visits extends Component {
     super(props);
     this.state = {
       visits: [],
+      campusLocations: [],
     };
   }
 
-  componentDidMount() {
-    this.getVisits();
+  async componentDidMount() {
+    await this.getVisits();
+    await this.getCampusLocations();
   }
 
   // gets list of nav items
@@ -64,11 +69,27 @@ class Visits extends Component {
       {
         key: 'edit',
         name: 'Edit Selected',
-        onClick: isEditing ? editing.stop : editing.start,
+        onClick: (x) => {
+          this.setState({ campusSelected: isEditing });
+          return isEditing ? editing.stop(x) : editing.start(x);
+        },
         disabled: isNaN(selectedItem.id) || isLoading,
         iconProps: { iconName: 'Edit' },
       },
     ];
+  }
+
+  // gets list of locations from api for dropdown
+  getCampusLocations = async () => {
+    const { loading } = this.props;
+    loading.start();
+    const result = await api.campusLocation.get({});
+    const campusLocations = result.map((x) => ({
+      key: x[CL_C.CAMPUS_LOCATION.ID],
+      text: `${x[CL_C.CAMPUS_LOCATION.CAMPUS_NAME]} - ${x[CL_C.CAMPUS_LOCATION.LOCATION_NAME]}`,
+    }));
+    this.setState({ campusLocations });
+    loading.stop();
   }
 
   // gets list of visits from api
@@ -97,10 +118,15 @@ class Visits extends Component {
   }
 
   deleteVisit = async () => {
-    const { loading, selectedItem } = this.props;
+    const { loading, selectedItem, error } = this.props;
     loading.start();
-    await api.visit.delete(selectedItem.id);
-    await this.getVisits();
+    const response = await api.visit.delete(selectedItem.id);
+    if (response.status === 500) {
+      const message = await response.json();
+      error.setError(message.sqlMessage);
+    } else {
+      await this.getVisits();
+    }
     loading.stop();
   }
 
@@ -119,12 +145,19 @@ class Visits extends Component {
   render() {
     const {
       form,
+      error,
+      formValues,
       selection,
       isCreating,
       isLoading,
       isEditing,
       selectedItem,
+      errorMessage,
     } = this.props;
+
+    if (errorMessage) {
+      return <ErrorMessage message={errorMessage} onClick={error.clear} />;
+    }
 
     if (isLoading) {
       return <Loading />;
@@ -132,6 +165,7 @@ class Visits extends Component {
 
     const {
       visits,
+      campusLocations,
     } = this.state;
 
     const commandProps = {
@@ -139,10 +173,17 @@ class Visits extends Component {
     };
 
     const editProps = {
-      name: {
-        label: data.visit[C.VISIT.FIRST_NAME].label,
-        defaultValue: selectedItem[C.VISIT.FIRST_NAME],
-        onChanged: form.update(C.VISIT.FIRST_NAME),
+      [C.VISIT.DATE]: {
+        label: data.visit[C.VISIT.DATE].label,
+        defaultValue: selectedItem[C.VISIT.DATE],
+        value: formValues[C.VISIT.DATE],
+        onSelectDate: form.update(C.VISIT.DATE),
+      },
+      [C.VISIT.CAMPUS_LOCATION_ID]: {
+        label: 'Campus - Location',
+        defaultSelectedKey: selectedItem[C.VISIT.CAMPUS_LOCATION_ID],
+        options: campusLocations,
+        onChanged: (x) => form.update(C.VISIT.CAMPUS_LOCATION_ID)(x.key),
       },
       save: {
         text: 'Save',
@@ -165,7 +206,8 @@ class Visits extends Component {
         {
           (isEditing || isCreating) &&
           <div>
-            <TextField {...editProps.name} />
+            <DatePicker {...editProps[C.VISIT.DATE]} />
+            <Dropdown {...editProps[C.VISIT.CAMPUS_LOCATION_ID]} />
             <DefaultButton {...editProps.save} />
           </div>
         }

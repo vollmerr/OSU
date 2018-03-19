@@ -75,11 +75,11 @@ class Admins extends Component {
     ];
   }
 
-  // gets list of roles from api
+  // gets list of roles from api for dropdown
   getRoles = async () => {
     const { loading } = this.props;
     loading.start();
-    const result = await api.role.get();
+    const result = await api.role.get({});
     const roles = result.map((x) => ({
       key: x[ROLES_C.ROLE.ID],
       text: x[ROLES_C.ROLE.NAME],
@@ -92,7 +92,7 @@ class Admins extends Component {
   getAdmins = async () => {
     const { loading } = this.props;
     loading.start();
-    const admins = await api.admin.get();
+    const admins = await api.admin.get({});
     this.setState({ admins });
     loading.stop();
   }
@@ -133,7 +133,7 @@ class Admins extends Component {
       ...formValues,
       id: selectedItem.id,
     };
-    await api.admin.delete(values);
+    await api.admin.edit(values);
     await this.getAdmins();
     loading.stop();
   }
@@ -168,17 +168,17 @@ class Admins extends Component {
     };
 
     const editProps = {
-      firstName: {
+      [C.ADMIN.FIRST_NAME]: {
         label: data.admin[C.ADMIN.FIRST_NAME].label,
         defaultValue: selectedItem[C.ADMIN.FIRST_NAME],
         onChanged: form.update(C.ADMIN.FIRST_NAME),
       },
-      lastName: {
+      [C.ADMIN.LAST_NAME]: {
         label: data.admin[C.ADMIN.LAST_NAME].label,
         defaultValue: selectedItem[C.ADMIN.LAST_NAME],
         onChanged: form.update(C.ADMIN.LAST_NAME),
       },
-      role: {
+      [C.ADMIN.ROLE_NAME]: {
         label: data.admin[C.ADMIN.ROLE_NAME].label,
         defaultSelectedKey: selectedItem[C.ADMIN.ROLE_ID],
         options: roles,
@@ -205,9 +205,9 @@ class Admins extends Component {
         {
           (isEditing || isCreating) &&
           <div>
-            <TextField {...editProps.firstName} />
-            <TextField {...editProps.lastName} />
-            <Dropdown {...editProps.role} />
+            <TextField {...editProps[C.ADMIN.FIRST_NAME]} />
+            <TextField {...editProps[C.ADMIN.LAST_NAME]} />
+            <Dropdown {...editProps[C.ADMIN.ROLE_NAME]} />
             <DefaultButton {...editProps.save} />
           </div>
         }

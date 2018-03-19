@@ -14,7 +14,6 @@ const badgeType = require('./routes/badgeType');
 const admin = require('./routes/admin');
 const visit = require('./routes/visit');
 const visitor = require('./routes/visitor');
-const equipment = require('./routes/equipment');
 const index = require('./routes/index');
 
 const app = express();
@@ -36,7 +35,6 @@ app.use('/badgeType', badgeType);
 app.use('/admin', admin);
 app.use('/visit', visit);
 app.use('/visitor', visitor);
-app.use('/equipment', equipment);
 app.use('/', index);
 
 // catch 404 and forward to error handler

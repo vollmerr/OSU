@@ -16,7 +16,6 @@ const buildRoutes = ({ base, ...rest }) => ({
 
 
 export default {
-  equipment: buildRoutes({ base: 'equipment' }),
   campus: buildRoutes({ base: 'campus' }),
   location: buildRoutes({ base: 'location' }),
   campusLocation: buildRoutes({ base: 'campusLocation' }),
@@ -24,4 +23,5 @@ export default {
   role: buildRoutes({ base: 'role' }),
   admin: buildRoutes({ base: 'admin' }),
   visitor: buildRoutes({ base: 'visitor' }),
+  visit: buildRoutes({ base: 'visit' }),
 }
