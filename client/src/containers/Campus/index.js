@@ -112,14 +112,16 @@ class Campus extends Component {
 
   editCampus = async () => {
     const { loading, selectedItem, formValues } = this.props;
-    loading.start();
-    const values = {
-      ...formValues,
-      id: selectedItem.id,
-    };
-    await api.campus.edit(values);
-    await this.getCampus();
-    loading.stop();
+    if (Object.values(formValues).length) {
+      loading.start();
+      const values = {
+        ...formValues,
+        id: selectedItem.id,
+      };
+      await api.campus.edit(values);
+      await this.getCampus();
+      loading.stop();
+    }
   }
 
   render() {

@@ -137,14 +137,16 @@ class Admins extends Component {
 
   editAdmin = async () => {
     const { loading, selectedItem, formValues } = this.props;
-    loading.start();
-    const values = {
-      ...formValues,
-      id: selectedItem.id,
-    };
-    await api.admin.edit(values);
-    await this.getAdmins();
-    loading.stop();
+    if (Object.values(formValues).length) {
+      loading.start();
+      const values = {
+        ...formValues,
+        id: selectedItem.id,
+      };
+      await api.admin.edit(values);
+      await this.getAdmins();
+      loading.stop();
+    }
   }
 
   setFilters = async () => {

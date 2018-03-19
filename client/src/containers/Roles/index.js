@@ -121,14 +121,16 @@ class Roles extends Component {
 
   editRole = async () => {
     const { loading, selectedItem, formValues } = this.props;
-    loading.start();
-    const values = {
-      ...formValues,
-      id: selectedItem.id,
-    };
-    await api.role.edit(values);
-    await this.getRoles();
-    loading.stop();
+    if (Object.values(formValues).length) {
+      loading.start();
+      const values = {
+        ...formValues,
+        id: selectedItem.id,
+      };
+      await api.role.edit(values);
+      await this.getRoles();
+      loading.stop();
+    }
   }
 
   setFilters = async () => {

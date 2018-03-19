@@ -157,19 +157,21 @@ class CampusLocations extends Component {
 
   editCampusLocation = async () => {
     const { loading, selectedItem, formValues, error } = this.props;
-    loading.start();
-    const values = {
-      ...formValues,
-      id: selectedItem.id,
-    };
-    const response = await api.campusLocation.edit(values);
-    if (response.status === 500) {
-      const message = await response.json();
-      error.setError(message.sqlMessage);
-    } else {
-      await this.getCampusLocations();
+    if (Object.values(formValues).length) {
+      loading.start();
+      const values = {
+        ...formValues,
+        id: selectedItem.id,
+      };
+      const response = await api.campusLocation.edit(values);
+      if (response.status === 500) {
+        const message = await response.json();
+        error.setError(message.sqlMessage);
+      } else {
+        await this.getCampusLocations();
+      }
+      loading.stop();
     }
-    loading.stop();
   }
 
   render() {

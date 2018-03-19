@@ -132,14 +132,16 @@ class Visits extends Component {
 
   editVisit = async () => {
     const { loading, selectedItem, formValues } = this.props;
-    loading.start();
-    const values = {
-      ...formValues,
-      id: selectedItem.id,
-    };
-    await api.visit.edit(values);
-    await this.getVisits();
-    loading.stop();
+    if (Object.values(formValues).length) {
+      loading.start();
+      const values = {
+        ...formValues,
+        id: selectedItem.id,
+      };
+      await api.visit.edit(values);
+      await this.getVisits();
+      loading.stop();
+    }
   }
 
   render() {

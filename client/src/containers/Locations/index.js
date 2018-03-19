@@ -112,14 +112,16 @@ class Locations extends Component {
 
   editLocation = async () => {
     const { loading, selectedItem, formValues } = this.props;
-    loading.start();
-    const values = {
-      ...formValues,
-      id: selectedItem.id,
-    };
-    await api.location.edit(values);
-    await this.getLocations();
-    loading.stop();
+    if (Object.values(formValues).length) {
+      loading.start();
+      const values = {
+        ...formValues,
+        id: selectedItem.id,
+      };
+      await api.location.edit(values);
+      await this.getLocations();
+      loading.stop();
+    }
   }
 
   render() {
