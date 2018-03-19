@@ -16,7 +16,7 @@ const connections = {
     } 
 };
 
-const con = mysql.createConnection(connections[process.env.NODE_ENV || 'development']);
+const pool = mysql.createPool(connections[process.env.NODE_ENV || 'development']);
 
 
-module.exports = con;
+module.exports = pool;

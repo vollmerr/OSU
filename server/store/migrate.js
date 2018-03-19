@@ -10,5 +10,5 @@ try {
 } catch (e) {
     console.error(e);
 } finally {
-    store.con.end();
+    store.pool.end();
 }

@@ -1,4 +1,4 @@
-const con = require('./connect');
+const pool = require('./connect');
 
 const C = require('./constants');
 
@@ -6,11 +6,14 @@ const C = require('./constants');
 // calls database - handles opening and closing connection
 const query = (query) => (
   new Promise((resolve, reject) => {
-    return con.query(query, (err, result) => {
-      if (err) {
-        return reject(err);
-      }
-      return resolve(result);
+    pool.getConnection((err, con) => {
+      con.query(query, (err, result) => {
+        con.release();
+        if (err) {
+          reject(err);
+        }
+        resolve(result);
+      });
     });
   })
 );
@@ -174,7 +177,7 @@ const visitor = buildStore({
 
 // order of exports matter for migrate / rollback!
 module.exports = {
-  con,
+  pool,
   role,
   campus,
   location,
