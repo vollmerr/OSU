@@ -5,7 +5,7 @@ import { HashRouter } from 'react-router-dom';
 import { initializeIcons } from '@uifabric/icons';
 
 import App from './containers/App';
-import registerServiceWorker from './registerServiceWorker';
+// import registerServiceWorker from './registerServiceWorker';
 
 // Register icons and pull the fonts from the default SharePoint cdn:
 initializeIcons();
@@ -19,4 +19,4 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-registerServiceWorker();
+// registerServiceWorker();
