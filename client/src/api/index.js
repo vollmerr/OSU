@@ -14,7 +14,6 @@ const buildRoutes = ({ base, ...rest }) => ({
   ...rest,
 });
 
-
 export default {
   campus: buildRoutes({ base: 'campus' }),
   location: buildRoutes({ base: 'location' }),
