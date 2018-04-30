@@ -120,7 +120,6 @@ test.serial(`show the boat in a ${type} by id`, async (t) => {
 test.serial(`edit a ${type} by id`, async (t) => {
     const body = {
         [Slip.schema.arrivalDate]: new Date().toISOString(),
-        [Slip.schema.currentBoat]: '123',
         [Slip.schema.number]: 1,
     };
     // get slip before update
