@@ -7,8 +7,8 @@
   "scripts": {
     "start": "node app.js",
     "start:dev": "nodemon npm start",
-    "test": "ava -v -s tests/*.test.js",
-    "test:watch": "ava -w -v -s tests/*.test.js"
+    "test": "ava -v -s -T=5s tests/*.test.js",
+    "test:watch": "ava -w -v -s -T=5s tests/*.test.js"
   },
   "author": "Ryan Vollmer",
   "cloud-repo-tools": {
