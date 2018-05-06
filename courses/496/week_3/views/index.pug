@@ -1,8 +1,69 @@
 extends layout
 
 block content
-  h1= title
-  button(class=`login__button`) Login
+  div.row.align-items-center
+    div.col
+      div.row
+        div.col
+          h1 Google OAuth2 Example
+          p This is an example of using server flow with Google's OAuth2, using Node.js without an OAuth library.
+
+      div(hidden)#is-logged-in.row
+          div.col
+            div#info.text-left Loading...
+            a#logout.btn.btn-outline-danger(href=`/`) Logout
+
+      div(hidden)#not-logged-in.row
+        div.col
+          a#login.btn.btn-outline-primary(href=oAuthUrl) Login
   
-  script(src=`http://wzrd.in/standalone/uuid%2Fv4@latest`)
-  script(src=`/javascripts/login.js`)
+  script.
+    const exp = localStorage.getItem('exp');
+    const token = localStorage.getItem('access_token');
+    const state = localStorage.getItem('state');
+    
+    //- set logout button to clear local data
+    document.getElementById('logout').addEventListener('click', () => {
+      localStorage.removeItem('access_token');
+      document.getElementById('is-logged-in').hidden = true;
+      showLogin();
+    });
+
+    const showLogout = () => {
+      //- get user details
+      const url = `https://www.googleapis.com/plus/v1/people/me`;
+      const options = {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      };
+      fetch(url, options)
+        .then(res => res.json())
+        .then((user) => {
+          document.getElementById('info').innerHTML = `
+            <ul class='list-group list-group-flush'>
+              <li class='list-group-item'><b>First Name</b>: ${user.name.familyName}</li>
+              <li class='list-group-item'><b>Last Name</b>: ${user.name.givenName}</li>
+              <li class='list-group-item'><b>Google Plus Account</b>: ${user.url}</li>
+              <li class='list-group-item'><b>state</b>: ${state}</li>
+            </ul>
+          `;
+        })
+        .catch((err) => window.location = `/404/error=${err}`);
+      document.getElementById('is-logged-in').hidden = false;
+    }
+
+    const showLogin = () => {
+      //- set the new state
+      localStorage.setItem('state', '#{oAuthUrl}'.match(/state=([^&]*)/)[1]);
+      document.getElementById('not-logged-in').hidden = false;
+    }
+
+    //- has a token, state, and not expired
+    if (token && state && exp > new Date()) {
+      showLogout();
+    } else {
+      showLogin();
+    }
+
+    

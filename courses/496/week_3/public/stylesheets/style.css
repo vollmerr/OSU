@@ -1,13 +1,13 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; }
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  min-height: 100vh; }
+  body > div {
+    min-height: 100vh; }
 
-a {
-  color: #00B7FF; }
-
-.login__button {
-  background: white;
-  padding: 15px 20px;
-  color: #333; }
+#info {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; }
 
 /*# sourceMappingURL=style.css.map */

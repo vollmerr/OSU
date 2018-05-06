@@ -1,6 +1,10 @@
 extends layout
 
 block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}
+  div.row.align-items-center
+    div.col
+      h1= message
+      h2= error.status
+      pre #{error.stack}
+
+      a.btn.btn-outline-primary(href='/') Home
