@@ -3,33 +3,37 @@ const fetch = require('node-fetch');
 const formurlencoded = require('form-urlencoded');
 const uuid = require('uuid/v4');
 
+const ds = require('./connect');
 const { auth } = require('./config');
 
 
 const Auth = () => {
-    const states = {};
-    
-    const setState = () => {
-        const id = uuid();
-        states[id] = 1;
-        return id;
+    const setState = async () => {
+        const state = uuid();
+        const key = ds.key(['state', state]);
+        await ds.insert({ data: 1, key });
+        return state;
     };
 
-    const getState = (x) => states[x];
+    const getState = async ({ state }) => {
+        console.log('geting: ', state)
+        const key = ds.key(['state', state]);
+        return ds.get(key);
+    };
 
-    const getAuthUrl = () => `${auth.urls.auth}`
+    const getAuthUrl = async () => `${auth.urls.auth}`
         + `?response_type=${auth.response}`
         + `&client_id=${auth.client.id}`
         + `&redirect_uri=${auth.urls.redirect}`
         + `&scope=${auth.scope}`
-        + `&state=${setState()}`;
+        + `&state=${await setState()}`;
 
     const getTokenUrl = ({ code }) => `${auth.urls.token}`
         + `?code=${code}`
         + `&client_id=${auth.client.id}`
         + `&client_secret=${auth.client.secret}`
         + `&redirect_uri=${auth.urls.redirect}`
-        + `&grant_type=${auth.grantType}`
+        + `&grant_type=${auth.grantType}`;
 
     const getToken = async ({ code }) => {
         const url = getTokenUrl({ code });
