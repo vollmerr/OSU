@@ -16,7 +16,6 @@ const Auth = () => {
     };
 
     const getState = async ({ state }) => {
-        console.log('geting: ', state)
         const key = ds.key(['state', state]);
         return ds.get(key);
     };
