@@ -65,14 +65,16 @@ exports.readOne = async (id) => {
 };
 
 exports.update = async (id, values) => {
-  const visit = await exports.read(id);
+  const visit = await exports.readOne(id);
   const key = ds.key([kind, id]);
   const data = {
     ...visit,
-    ...values,
-    updatedAt: date.now(),
+    attributes: {
+      ...visit.attributes,
+      ...values,
+      updatedAt: date.now(),
+    },
   };
-
   await ds.update({ key, data });
   return data;
 };

@@ -26,7 +26,7 @@ router.put('/:id', validate(Visit.validation.update), async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   await Visit.delete(req.params.id);
-  res.status(204);
+  res.sendStatus(204);
 });
 
 module.exports = router;

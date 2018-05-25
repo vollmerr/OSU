@@ -16,6 +16,11 @@ app.use(morgan('common'));
 app.use('/animals', require('./routes/Animal'));
 app.use('/visits', require('./routes/Visit'));
 
+// health check / noop route
+app.get('/status', (req, res) => {
+  res.sendStatus(200);
+})
+
 // Redirect root to /animals
 app.get('/', (req, res) => {
   res.redirect('/animals');
