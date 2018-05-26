@@ -35,7 +35,7 @@ exports.validation = {
 };
 
 // create new visit
-exports.create = async (values) => {
+exports.create = async (ownerId, values) => {
   const id = uuid();
   const link = `${nconf.get('APP_URL')}/visits/${id}`;
   const data = {
@@ -43,6 +43,7 @@ exports.create = async (values) => {
     id,
     attributes: {
       ...values,
+      ownerId,
       createdAt: date.now(),
       updatedAt: date.now(),
     },
@@ -65,33 +66,44 @@ exports.create = async (values) => {
 };
 
 // get all visits
-exports.read = async () => {
-  const query = ds.createQuery(kind);
+exports.read = async (ownerId) => {
+  const query = ds.createQuery(kind).filter('attributes.ownerId', '=', ownerId);
   const [visits] = await ds.runQuery(query);
+
   return visits;
 };
 
 // get a visit by id
-exports.readOne = async (id) => {
+exports.readOne = async (ownerId, id) => {
   const key = ds.key([kind, id]);
   const [visit] = await ds.get(key);
+
+  if (!visit || visit.attributes.ownerId !== ownerId) {
+    return null;
+  }
+
   return visit;
 };
 
 // get a visit by animalId
-exports.findByAnimalId = async (animalId) => {
+exports.findByAnimalId = async (ownerId, animalId) => {
   const query = ds
     .createQuery(kind)
-    .filter('attributes.animalId', '=', animalId);
+    .filter('attributes.animalId', '=', animalId)
+    .filter('attributes.ownerId', '=', ownerId);
   const [visits] = await ds.runQuery(query);
+
   return visits;
 };
 
-
 // helper function for retrieving the visit and applying updates to it
-exports.applyUpdates = async (id, mutator) => {
-  const visit = await exports.readOne(id);
+exports.applyUpdates = async (ownerId, id, mutator) => {
+  const visit = await exports.readOne(ownerId, id);
   const key = ds.key([kind, id]);
+
+  if (!visit) {
+    return null;
+  }
 
   // mutate animal based off function passed in to apply updates
   mutator(visit);
@@ -102,32 +114,43 @@ exports.applyUpdates = async (id, mutator) => {
 };
 
 // update attributes
-exports.update = async (id, values) => {
+exports.update = async (ownerId, id, values) => {
   const mutator = (data) => {
     data.attributes = { ...data.attributes, ...values };
   };
 
-  return exports.applyUpdates(id, mutator);
+  return exports.applyUpdates(ownerId, id, mutator);
 };
 
 // update animal relationship
-exports.updateAnimal = async (id, animalId) => {
+exports.updateAnimal = async (ownerId, id, animalId) => {
   const mutator = (data) => {
     data.relationships.animal.data.id = animalId;
   };
 
-  return exports.applyUpdates(id, mutator);
+  return exports.applyUpdates(ownerId, id, mutator);
 };
 
 // delete all visits that have animalId
-exports.deleteByAnimalId = async (animalId) => {
-  const visits = await exports.findByAnimalId(animalId);
+exports.deleteByAnimalId = async (ownerId, animalId) => {
+  const visits = await exports.findByAnimalId(ownerId, animalId);
+
+  if (!visits) {
+    return null;
+  }
+
   const keys = visits.map((x) => ds.key([kind, x.id]));
   return ds.delete(keys);
 };
 
 // delete visit by id
-exports.delete = async (id) => {
+exports.delete = async (ownerId, id) => {
+  const visit = exports.readOne(ownerId, id);
+
+  if (!visit) {
+    return null;
+  }
+
   const key = ds.key([kind, id]);
   return ds.delete(key);
 };

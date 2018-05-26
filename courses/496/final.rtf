@@ -1,33 +1,64 @@
 {\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf200
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww17180\viewh22020\viewkind0
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red255\green255\blue255;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0\c99216;\cssrgb\c100000\c100000\c100000;}
+\margl1440\margr1440\vieww17520\viewh22020\viewkind1
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \f0\fs24 \cf0 Ryan Vollmer\
 CS 496 - Final\
-\
 
-\fs48 Animal\
+\fs36 \
+Overview
+\fs48 \
+
+\fs36 	
+\b\fs28 Links
+\b0\fs36 \
+
+\fs24 		- Github - {\field{\*\fldinst{HYPERLINK "https://github.com/vollmerr/OSU/tree/master/courses/496/final"}}{\fldrslt https://github.com/vollmerr/OSU/tree/master/courses/496/final}}\
+		- API - {\field{\*\fldinst{HYPERLINK "https://vollmerr-final.appspot.com/"}}{\fldrslt \cf2 \cb3 \expnd0\expndtw0\kerning0
+https://vollmerr-final.appspot.com/}}
+\fs36 \
+	
+\b\fs28 About
+\b0\fs24 \
+		- Node.js Cloud API managing Animals and their Visits (to the vet). \
+		- Uses passport.js with Google\'92s oAuth2 strategy for user authentication.\
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 		- All routes have restricted access to only animals and visits associated to \
+			the given user (ex. Cannot view or delete animal if not listed as \
+			owner, even if know correct id)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\fs36 \cf0 \
+Animal Entity
+\fs48 \
 
 \fs24 	
-\fs36 Schema\
-		
-\fs24 id			string		primary key\
-		name			string\
-		age			string (not number due to cannot figure out how to make number when using postman)\
-		type			string\
-		visits			array of Visit ids\
-		ownerFirstName	string\
-		ownerLastName	string\
-		createdAt		datetime\
-		updatedAt		datetime
-\fs36 \
+\b\fs28 Schema
+\b0\fs36 \
 
-\fs24 \
+\b 		
+\b0\fs24 id			string			primary key\
+		name			string\
+		age			string (not number due to limitations of postman)\
+		type			string\
+		weight			string (not number due to limitations of postman)\
+		visits			array of Visit ids	\
+		ownerId		string			(users google account id)\
+		createdAt		datetime\
+		updatedAt		datetime\
+\
 	
-\fs36 Routes\
+\b\fs28 Relationships
+\b0\fs36 \
+
+\fs24 		Has a One Animal - Many Visits relationship\
+\
+	
+\b\fs28 Routes
+\b0\fs36 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \fs24 \cf0 		- POST /animals		\
@@ -36,13 +67,14 @@ CS 496 - Final\
 				- name - string, required\
 				- age - string, required\
 				- type - string, required\
-				- ownerFirstName - string, required\
-				- ownerLastName - string, required\
+				- weight - string, required\
 			- response 201 (Created)\
 				- type - \'91animal\'92\
 				- id - new uuid of animal generated\
-				- attributes - object containing attributes related to animal, including ones passed in body\
-				- relationships - object containing relationships, including visits\
+				- attributes - object containing attributes \
+					related to animal, including ones passed in body\
+				- relationships - object containing relationships, \
+					including visits\
 				- links - object containing links related to the animal\
 \
 		- GET /animals \
@@ -56,7 +88,8 @@ CS 496 - Final\
 				- type - \'91Animal\'92\
 				- id - uuid of animal\
 				- attributes - object containing attributes related to animal\
-				- relationships - object containing relationships, including visits\
+				- relationships - object containing relationships, \
+					including visits\
 				- links - object containing links related to the animal\
 \
 		- PUT /animals/\{animalId\}\
@@ -65,13 +98,12 @@ CS 496 - Final\
 				- name - string\
 				- age - string\
 				- type - string\
-				- ownerFirstName - string\
-				- ownerLastName - string\
+				- weight - string\
 			- response 200 (OK)\
 				- type - \'91animal\'92\
 				- id - uuid of animal\
-				- attributes - object containing attributes related to animal, including updated ones passed in body\
-				- relationships - object containing relationships, including visits\
+				- attributes - object containing attributes related to animal, 					including updated ones passed in body\
+				- relationships - object containing relationships, including 					visits\
 				- links - object containing links related to the animal\
 \
 		- DELETE /animals/\{animalId\}\
@@ -79,25 +111,38 @@ CS 496 - Final\
 			- deletes any visits related to animal\
 			- response 204 (No Content)\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \
 
-\fs48 Visit\
+\fs36 \cf0 \
+\
+\
+\
+Visit Entity
+\fs48 \
 	
-\fs36 Schema\
+\b\fs28 Schema
+\b0\fs36 \
 		
 \fs24 id			string		primary key\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 \cf0 		startDate		datetime\
 		endDate		datetime\
 		reason		string\
-		animalId		string\
+		animalId		string		\
+		ownerId		string		(users google account id)\
 		createdAt		datetime\
 		updatedAt		datetime\
 \
+	
+\b\fs28 Relationships
+\b0\fs36 \
+
+\fs24 		Has a One Animal - Many Visits relationship\
+\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\fs36 \cf0 	Routes
-\fs24 \
+\fs36 \cf0 	
+\b\fs28 Routes
+\b0\fs24 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 \cf0 		- POST /visits		\
 			- creates a new visit			\
@@ -110,8 +155,8 @@ CS 496 - Final\
 			- response 201 (Created)\
 				- type - \'91Visit\'92\
 				- id - new uuid of visit generated\
-				- attributes - object containing attributes related to visit, including ones passed in body\
-				- relationships - object containing relationships, including the animal\
+				- attributes - object containing attributes related to visit, 					including ones passed in body\
+				- relationships - object containing relationships, including the 					animal\
 				- links - object containing links related to the visit\
 \
 		- GET /visits \
@@ -125,7 +170,7 @@ CS 496 - Final\
 				- type - \'91Visit\'92\
 				- id - uuid of visit\
 				- attributes - object containing attributes related to visit\
-				- relationships - object containing relationships, including the animal\
+				- relationships - object containing relationships, including the 					animal\
 				- links - object containing links related to the visit\
 \
 		- PUT /visits/\{visitId\}\
@@ -140,8 +185,8 @@ CS 496 - Final\
 			- response 200 (OK)\
 				- type - \'91Visit\'92\
 				- id - uuid of visit\
-				- attributes - object containing attributes related to visit, including updated ones passed in body\
-				- relationships - object containing relationships, including the animal\
+				- attributes - object containing attributes related to visit, 					including updated ones passed in body\
+				- relationships - object containing relationships, including the 					animal\
 				- links - object containing links related to the visit\
 \
 		- DELETE /visits/\{visitId\}\

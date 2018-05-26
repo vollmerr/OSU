@@ -12,9 +12,9 @@ const schema = {
   name: Joi.string(),
   age: Joi.string(),
   type: Joi.string(),
+  weight: Joi.string(),
   visits: Joi.array(),
-  ownerFirstName: Joi.string(),
-  ownerLastName: Joi.string(),
+  ownerId: Joi.string(),
   createdAt: Joi.date(),
   updatedAt: Joi.date(),
 };
@@ -26,20 +26,18 @@ exports.validation = {
     name: schema.name.required(),
     age: schema.age.required(),
     type: schema.type.required(),
-    ownerFirstName: schema.ownerFirstName.required(),
-    ownerLastName: schema.ownerLastName.required(),
+    weight: schema.weight.required(),
   }),
   update: Joi.object({
     name: schema.name,
     age: schema.age,
     type: schema.type,
-    ownerFirstName: schema.ownerFirstName,
-    ownerLastName: schema.ownerLastName,
+    weight: schema.weight,
   }),
 };
 
 // create new animal
-exports.create = async (values) => {
+exports.create = async (ownerId, values) => {
   const id = uuid();
   const link = `${nconf.get('APP_URL')}/animals/${id}`;
   const data = {
@@ -47,6 +45,7 @@ exports.create = async (values) => {
     id,
     attributes: {
       ...values,
+      ownerId,
       createdAt: date.now(),
       updatedAt: date.now(),
     },
@@ -68,23 +67,33 @@ exports.create = async (values) => {
 };
 
 // get all animals
-exports.read = async () => {
-  const query = ds.createQuery(kind);
+exports.read = async (ownerId) => {
+  const query = ds.createQuery(kind).filter('attributes.ownerId', '=', ownerId);
   const [animals] = await ds.runQuery(query);
+
   return animals;
 };
 
 // get one animal by id
-exports.readOne = async (id) => {
+exports.readOne = async (ownerId, id) => {
   const key = ds.key([kind, id]);
   const [animal] = await ds.get(key);
+
+  if (!animal || animal.attributes.ownerId !== ownerId) {
+    return null;
+  }
+
   return animal;
 };
 
 // helper function for retrieving the animal and applying updates to it
-exports.applyUpdates = async (id, mutator) => {
-  const animal = await exports.readOne(id);
+exports.applyUpdates = async (ownerId, id, mutator) => {
+  const animal = await exports.readOne(ownerId, id);
   const key = ds.key([kind, id]);
+
+  if (!animal) {
+    return null;
+  }
 
   // mutate animal based off function passed in to apply updates
   mutator(animal);
@@ -95,36 +104,42 @@ exports.applyUpdates = async (id, mutator) => {
 };
 
 // update attributes
-exports.update = async (id, values) => {
+exports.update = async (ownerId, id, values) => {
   const mutator = (data) => {
     data.attributes = { ...data.attributes, ...values };
   };
 
-  return exports.applyUpdates(id, mutator);
+  return exports.applyUpdates(ownerId, id, mutator);
 };
 
 // add a visit to its relationships
-exports.addVisit = async (id, visitId) => {
+exports.addVisit = async (ownerId, id, visitId) => {
   const mutator = (data) => {
     data.relationships.visits.data.push({ type: 'Visit', id: visitId });
   };
 
-  return exports.applyUpdates(id, mutator);
+  return exports.applyUpdates(ownerId, id, mutator);
 };
 
 // remove a visit from its relationships
-exports.removeVisit = async (id, visitId) => {
+exports.removeVisit = async (ownerId, id, visitId) => {
   const mutator = (data) => {
     data.relationships.visits.data = data.relationships.visits.data.filter(
       (x) => x.id !== visitId
     );
   };
 
-  return exports.applyUpdates(id, mutator);
+  return exports.applyUpdates(ownerId, id, mutator);
 };
 
 // delete a animal by id
-exports.delete = async (id) => {
+exports.delete = async (ownerId, id) => {
+  const animal = exports.readOne(ownerId, id);
+
+  if (!animal || animal.id !== ownerId) {
+    return null;
+  }
+
   const key = ds.key([kind, id]);
   return ds.delete(key);
 };

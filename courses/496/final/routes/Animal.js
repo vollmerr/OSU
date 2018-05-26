@@ -6,7 +6,7 @@ const Visit = require('../store/Visit');
 
 //  view all animals
 router.get('/', async (req, res) => {
-  const animals = await Animal.read();
+  const animals = await Animal.read(req.user.id);
 
   if (animals) {
     return res.status(200).json(animals);
@@ -15,9 +15,9 @@ router.get('/', async (req, res) => {
   return res.sendStatus(404);
 });
 
-// view a animal
+// view a animal by id
 router.get('/:id', async (req, res) => {
-  const animal = await Animal.readOne(req.params.id);
+  const animal = await Animal.readOne(req.user.id, req.params.id);
 
   if (animal) {
     return res.status(200).json(animal);
@@ -28,7 +28,7 @@ router.get('/:id', async (req, res) => {
 
 // see all visits for animal
 router.get('/:id/visits', async (req, res) => {
-  const visits = await Visit.findByAnimalId(req.params.id);
+  const visits = await Visit.findByAnimalId(req.user.id, req.params.id);
 
   if (visits) {
     return res.status(200).json(visits);
@@ -39,7 +39,7 @@ router.get('/:id/visits', async (req, res) => {
 
 // see visit by id for animal
 router.get('/:id/visits/:visitId', async (req, res) => {
-  const visit = await Visit.readOne(req.params.visitId);
+  const visit = await Visit.readOne(req.user.id, req.params.visitId);
 
   if (visit) {
     return res.status(200).json(visit);
@@ -50,13 +50,13 @@ router.get('/:id/visits/:visitId', async (req, res) => {
 
 // create a new animal
 router.post('/', validate(Animal.validation.create), async (req, res) => {
-  const animal = await Animal.create(req.body);
+  const animal = await Animal.create(req.user.id, req.body);
   res.status(201).json(animal);
 });
 
 // edit a animal
 router.put('/:id', validate(Animal.validation.update), async (req, res) => {
-  const animal = await Animal.update(req.params.id, req.body);
+  const animal = await Animal.update(req.user.id, req.params.id, req.body);
 
   if (animal) {
     return res.status(200).json(animal);
@@ -69,8 +69,8 @@ router.put('/:id', validate(Animal.validation.update), async (req, res) => {
 router.delete('/:id', async (req, res) => {
   const animalId = req.params.id;
 
-  await Animal.delete(animalId);
-  await Visit.deleteByAnimalId(animalId);
+  await Animal.delete(req.user.id, animalId);
+  await Visit.deleteByAnimalId(req.user.id, animalId);
 
   res.sendStatus(204);
 });
