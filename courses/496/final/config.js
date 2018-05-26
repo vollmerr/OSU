@@ -8,11 +8,17 @@ module.exports = nconf
   .argv()
   // 2. Environment variables
   .env([
+    'CLOUD_BUCKET',
     'DATA_BACKEND',
     'GCLOUD_PROJECT',
+    'MEMCACHE_URL',
     'INSTANCE_CONNECTION_NAME',
     'NODE_ENV',
+    'OAUTH2_CLIENT_ID',
+    'OAUTH2_CLIENT_SECRET',
+    'OAUTH2_CALLBACK',
     'PORT',
+    'SECRET',
   ])
   // 3. Config file
   .file({ file: path.join(__dirname, 'config.json') })
@@ -20,8 +26,13 @@ module.exports = nconf
   .defaults({
     DATA_BACKEND: 'datastore',
     GCLOUD_PROJECT: 'vollmerr-final',
+    MEMCACHE_URL: 'localhost:11211',
+    OAUTH2_CLIENT_ID: '',
+    OAUTH2_CLIENT_SECRET: '',
+    OAUTH2_CALLBACK: 'http://localhost:8080/auth/google/callback',
     PORT: 8080,
     APP_URL: 'localhost',
+    SECRET: 'superDuperSecret',
   });
 
 function checkConfig(setting) {
@@ -34,3 +45,5 @@ function checkConfig(setting) {
 
 // Check for required settings
 checkConfig('GCLOUD_PROJECT');
+checkConfig('OAUTH2_CLIENT_ID');
+checkConfig('OAUTH2_CLIENT_SECRET');

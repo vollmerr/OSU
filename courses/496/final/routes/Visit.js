@@ -13,9 +13,11 @@ router.get('/', async (req, res) => {
 // get a visit by id
 router.get('/:id', async (req, res) => {
   const visit = await Visit.readOne(req.params.id);
+
   if (visit) {
     return res.status(200).json(visit);
   }
+
   return res.sendStatus(404);
 });
 
