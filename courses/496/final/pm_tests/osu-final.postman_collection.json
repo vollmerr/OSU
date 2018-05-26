@@ -1,1115 +1,1383 @@
 {
-	"info": {
-		"_postman_id": "348495cb-7618-448e-9d90-f800708c8800",
-		"name": "osu-final",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Visit",
-			"description": "",
-			"item": [
-				{
-					"name": "/animals (SETUP-1)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "a72e2396-3384-47c2-97ff-cb18d783e176",
-								"type": "text/javascript",
-								"exec": [
-									"const animal = pm.response.json();",
-									"",
-									"// this id will be used for future tests",
-									"pm.globals.set(\"ANIMAL__NEW--id\", animal.id);"
-								]
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "956904bb-d7f9-44f7-bdce-34105a3ea69a",
-								"type": "text/javascript",
-								"exec": [
-									"const newValues = {",
-									"    name: 'woofy',",
-									"    age: '11',",
-									"    type: 'dog',",
-									"    ownerFirstName: 'rick',",
-									"    ownerLastName: 'james',",
-									"};",
-									"",
-									"pm.globals.set('ANIMAL__NEW', JSON.stringify(newValues));",
-									"Object.keys(newValues).forEach((x) => {",
-									"    pm.globals.set(`ANIMAL__NEW--${x}`, newValues[x]);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\": \"{{ANIMAL__NEW--name}}\",\n    \"age\": \"{{ANIMAL__NEW--age}}\",\n    \"type\": \"{{ANIMAL__NEW--type}}\",\n    \"ownerFirstName\": \"{{ANIMAL__NEW--ownerFirstName}}\",\n    \"ownerLastName\": \"{{ANIMAL__NEW--ownerLastName}}\"\n}"
-						},
-						"url": {
-							"raw": "{{API_URL}}/animals",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"animals"
-							]
-						},
-						"description": "setup animal, as visits require an animal."
-					},
-					"response": []
-				},
-				{
-					"name": "/visits",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "4cb849e5-8cbf-42f9-b3c0-75609389e7ba",
-								"type": "text/javascript",
-								"exec": [
-									"const visit = pm.response.json();",
-									"",
-									"// this id will be used for future tests",
-									"pm.globals.set(\"VISIT__NEW--id\", visit.id);",
-									"",
-									"pm.test('should have a `201` response code', () => {",
-									"    pm.response.to.have.status(201);",
-									"});",
-									"",
-									"pm.test('should return a type', () => {",
-									"    pm.expect(visit.type).to.equal('visit');",
-									"});",
-									"",
-									"pm.test('should return the new id', () => {",
-									"    pm.expect(visit.id).to.exist;",
-									"});",
-									"",
-									"pm.test('should return the correct attributes', () => {",
-									"    pm.expect(visit).to.have.own.property('attributes');",
-									"    const attributes = JSON.parse(pm.globals.get('VISIT__NEW'));",
-									"    Object.keys(attributes).forEach((key) => {",
-									"        pm.expect(visit.attributes[key]).to.equal(attributes[key]);",
-									"    });",
-									"});",
-									"",
-									"pm.test('should set the updated and created timestamps', () => {",
-									"    pm.expect(visit.attributes).to.have.own.property('createdAt'); ",
-									"    pm.expect(visit.attributes).to.have.own.property('updatedAt'); ",
-									"});",
-									"",
-									"pm.test('should return links', () => {",
-									"    pm.expect(visit).to.have.own.property('links');",
-									"    pm.expect(visit.links).to.have.own.property('self');",
-									"});",
-									""
-								]
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "e2f1fe69-fcf0-47ed-afda-8fbe99f082c0",
-								"type": "text/javascript",
-								"exec": [
-									"// values for new visit",
-									"const newValues = {",
-									"    animalId: \"pm.globals.get('ANIMAL__NEW--id')\",",
-									"    startDate: '2018-05-25T02:34:41.637Z',",
-									"    endDate: '2018-05-25T04:34:41.637Z',",
-									"    reason: 'test reason 1',",
-									"};",
-									"",
-									"pm.globals.set('VISIT__NEW', JSON.stringify(newValues));",
-									"Object.keys(newValues).forEach((x) => {",
-									"    pm.globals.set(`VISIT__NEW--${x}`, newValues[x]);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"startDate\": \"{{VISIT__NEW--startDate}}\",\n    \"endDate\": \"{{VISIT__NEW--endDate}}\",\n    \"reason\": \"{{VISIT__NEW--reason}}\",\n    \"animalId\": \"{{VISIT__NEW--animalId}}\"\n}"
-						},
-						"url": {
-							"raw": "{{API_URL}}/visits",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"visits"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/visits",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "c81d9915-b982-4d14-9274-b02c0b78afff",
-								"type": "text/javascript",
-								"exec": [
-									""
-								]
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "b867d407-c763-41ea-9f46-4369c0c377cb",
-								"type": "text/javascript",
-								"exec": [
-									"const visits = pm.response.json();",
-									"",
-									"pm.test('should have a `200` response code', () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test('should return an array of visits', () => {",
-									"    pm.expect(visits.length).to.be.above(0);",
-									"});",
-									"",
-									"pm.test('should include the visit created', () => {",
-									"    const visit = visits.filter(x => x.id === pm.globals.get('VISIT__NEW--id'));",
-									"    pm.expect(visit.length).to.equal(1);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "{{API_URL}}/visits",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"visits"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/visits/{id}",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "765ceafa-0c0c-4757-94cc-e87e074da22c",
-								"type": "text/javascript",
-								"exec": [
-									"const visit = pm.response.json();",
-									"",
-									"pm.test('should have a `200` response code', () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test('should return a `Visit` type', () => {",
-									"    pm.expect(visit.type).to.equal('visit');",
-									"});",
-									"",
-									"pm.test('should return the id', () => {",
-									"    pm.expect(visit.id).to.exist;",
-									"});",
-									"",
-									"pm.test('should return the correct attributes', () => {",
-									"    pm.expect(visit).to.have.own.property('attributes');",
-									"    const attributes = JSON.parse(pm.globals.get('VISIT__NEW'));",
-									"    Object.keys(attributes).forEach((key) => {",
-									"        pm.expect(visit.attributes[key]).to.equal(attributes[key]);",
-									"    });",
-									"});",
-									"",
-									"pm.test('should set the updated and created timestamps', () => {",
-									"    pm.expect(visit.attributes).to.have.own.property('createdAt'); ",
-									"    pm.expect(visit.attributes).to.have.own.property('updatedAt'); ",
-									"});",
-									"",
-									"pm.test('should return links', () => {",
-									"    pm.expect(visit).to.have.own.property('links');",
-									"    pm.expect(visit.links).to.have.own.property('self');",
-									"});",
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "{{API_URL}}/visits/{{VISIT__NEW--id}}",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"visits",
-								"{{VISIT__NEW--id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/animals (SETUP-2)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "fc812025-687f-4a57-9ee8-2723ba52b330",
-								"type": "text/javascript",
-								"exec": [
-									"const animal = pm.response.json();",
-									"",
-									"// this id will be used for future tests",
-									"pm.globals.set(\"ANIMAL__EDIT--id\", animal.id);"
-								]
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "12f3655d-7507-42d1-820d-f3881d66ef30",
-								"type": "text/javascript",
-								"exec": [
-									"const newValues = {",
-									"    name: 'foo',",
-									"    age: '99',",
-									"    type: 'cat',",
-									"    ownerFirstName: 'charley',",
-									"    ownerLastName: 'charles',",
-									"};",
-									"",
-									"pm.globals.set('ANIMAL__EDIT', JSON.stringify(newValues));",
-									"Object.keys(newValues).forEach((x) => {",
-									"    pm.globals.set(`ANIMAL__EDIT--${x}`, newValues[x]);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\": \"{{ANIMAL__NEW--name}}\",\n    \"age\": \"{{ANIMAL__NEW--age}}\",\n    \"type\": \"{{ANIMAL__NEW--type}}\",\n    \"ownerFirstName\": \"{{ANIMAL__NEW--ownerFirstName}}\",\n    \"ownerLastName\": \"{{ANIMAL__NEW--ownerLastName}}\"\n}"
-						},
-						"url": {
-							"raw": "{{API_URL}}/animals",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"animals"
-							]
-						},
-						"description": "setup animal, as visits require an animal."
-					},
-					"response": []
-				},
-				{
-					"name": "/visits/{id}",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "72ee3d00-57bc-4ef7-a581-c89de27cd1b1",
-								"type": "text/javascript",
-								"exec": [
-									"// values for edited visit",
-									"const editValues = {",
-									"    animalId: pm.globals.get('ANIMAL__EDIT--id'),",
-									"    startDate: '2018-01-25T02:34:41.637Z',",
-									"    endDate: '2018-01-25T04:34:41.637Z',",
-									"    reason: 'test reason 2',",
-									"};",
-									"",
-									"pm.globals.set('VISIT__EDIT', JSON.stringify(editValues));",
-									"Object.keys(editValues).forEach((x) => {",
-									"    pm.globals.set(`VISIT__EDIT--${x}`, editValues[x]);",
-									"});"
-								]
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "c627df7f-b7c3-40db-bc1a-b82ea8bf839e",
-								"type": "text/javascript",
-								"exec": [
-									"const visit = pm.response.json();",
-									"",
-									"pm.test('should have a `200` response code', () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test('should return a type', () => {",
-									"    pm.expect(visit.type).to.equal('visit');",
-									"});",
-									"",
-									"pm.test('should return the same id', () => {",
-									"    pm.expect(visit.id).to.equal(pm.globals.get('VISIT__NEW--id'));",
-									"});",
-									"",
-									"pm.test('should return the updated attributes', () => {",
-									"    pm.expect(visit).to.have.own.property('attributes');",
-									"    const attributes = JSON.parse(pm.globals.get('VISIT__EDIT'));",
-									"    Object.keys(attributes).forEach((key) => {",
-									"        pm.expect(visit.attributes[key]).to.equal(attributes[key]);",
-									"    });",
-									"});",
-									"",
-									"pm.test('should have updated and created timestamps', () => {",
-									"    pm.expect(visit.attributes).to.have.own.property('createdAt'); ",
-									"    pm.expect(visit.attributes).to.have.own.property('updatedAt'); ",
-									"});",
-									"",
-									"pm.test('should return links', () => {",
-									"    pm.expect(visit).to.have.own.property('links');",
-									"    pm.expect(visit.links).to.have.own.property('self');",
-									"});",
-									"",
-									"",
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"startDate\": \"{{VISIT__EDIT--startDate}}\",\n    \"endDate\": \"{{VISIT__EDIT--endDate}}\",\n    \"reason\": \"{{VISIT__EDIT--reason}}\",\n    \"animalId\": \"{{VISIT__EDIT--animalId}}\"\n}"
-						},
-						"url": {
-							"raw": "{{API_URL}}/visits/{{VISIT__NEW--id}}",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"visits",
-								"{{VISIT__NEW--id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/visits/{id}",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "72af0ad2-902d-40d6-af3a-d29ec138cf53",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test('should have a `204` response code', () => {",
-									"    pm.response.to.have.status(204);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{API_URL}}/visits/{{VISIT__NEW--id}}",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"visits",
-								"{{VISIT__NEW--id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/animals/{id} (TEARDOWN-1)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "3bfe5b7b-33fb-44aa-811e-1c9b47cba8ee",
-								"type": "text/javascript",
-								"exec": [
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{API_URL}}/animals/{{ANIMAL__NEW--id}}",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"animals",
-								"{{ANIMAL__NEW--id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/animals/{id} (TEARDOWN-2)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "3bfe5b7b-33fb-44aa-811e-1c9b47cba8ee",
-								"type": "text/javascript",
-								"exec": [
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{API_URL}}/animals/{{ANIMAL__EDIT--id}}",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"animals",
-								"{{ANIMAL__EDIT--id}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Animal",
-			"description": "",
-			"item": [
-				{
-					"name": "/animals",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "ac67658a-260d-4f5f-918f-b43864793de1",
-								"type": "text/javascript",
-								"exec": [
-									"const animal = pm.response.json();",
-									"",
-									"// this id will be used for future tests",
-									"pm.globals.set(\"ANIMAL--id\", animal.id);",
-									"",
-									"pm.test('should have a `201` response code', () => {",
-									"    pm.response.to.have.status(201);",
-									"});",
-									"",
-									"pm.test('should return a type', () => {",
-									"    pm.expect(animal.type).to.equal('animal');",
-									"});",
-									"",
-									"pm.test('should return the new id', () => {",
-									"    pm.expect(animal.id).to.exist;",
-									"});",
-									"",
-									"pm.test('should return the correct attributes', () => {",
-									"    pm.expect(animal).to.have.own.property('attributes');",
-									"    const attributes = JSON.parse(pm.globals.get('ANIMAL__NEW'));",
-									"    Object.keys(attributes).forEach((key) => {",
-									"        pm.expect(animal.attributes[key]).to.equal(attributes[key]);",
-									"    });",
-									"});",
-									"",
-									"pm.test('should set the updated and created timestamps', () => {",
-									"    pm.expect(animal.attributes).to.have.own.property('createdAt'); ",
-									"    pm.expect(animal.attributes).to.have.own.property('updatedAt'); ",
-									"});",
-									"",
-									"pm.test('should return links', () => {",
-									"    pm.expect(animal).to.have.own.property('links');",
-									"    pm.expect(animal.links).to.have.own.property('self');",
-									"});",
-									"",
-									"pm.test('should return relationship of visits', () => {",
-									"    pm.expect(animal).to.have.own.property('relationships');",
-									"    pm.expect(animal.relationships).to.have.own.property('visits');",
-									"});"
-								]
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "f476cad2-ed54-4320-97e1-9607a892f0df",
-								"type": "text/javascript",
-								"exec": [
-									"// values for new animal",
-									"const newValues = {",
-									"    name: 'woofy',",
-									"    age: '11',",
-									"    type: 'dog',",
-									"    ownerFirstName: 'rick',",
-									"    ownerLastName: 'james',",
-									"};",
-									"",
-									"pm.globals.set('ANIMAL__NEW', JSON.stringify(newValues));",
-									"Object.keys(newValues).forEach((x) => {",
-									"    pm.globals.set(`ANIMAL__NEW--${x}`, newValues[x]);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\": \"{{ANIMAL__NEW--name}}\",\n    \"age\": \"{{ANIMAL__NEW--age}}\",\n    \"type\": \"{{ANIMAL__NEW--type}}\",\n    \"ownerFirstName\": \"{{ANIMAL__NEW--ownerFirstName}}\",\n    \"ownerLastName\": \"{{ANIMAL__NEW--ownerLastName}}\"\n}"
-						},
-						"url": {
-							"raw": "{{API_URL}}/animals",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"animals"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/visits (SETUP)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "198b7939-fc41-45fb-b5ed-f52b0bafbd11",
-								"type": "text/javascript",
-								"exec": [
-									"const visit = pm.response.json();",
-									"",
-									"// this id will be used for future tests",
-									"pm.globals.set(\"VISIT--id\", visit.id);"
-								]
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "6d321578-c0e9-499a-9bf2-0a9ee81538ba",
-								"type": "text/javascript",
-								"exec": [
-									"// values for new visit",
-									"const newValues = {",
-									"    animalId: pm.globals.get('ANIMAL--id'),",
-									"    startDate: '2018-05-25T02:34:41.637Z',",
-									"    endDate: '2018-05-25T04:34:41.637Z',",
-									"    reason: 'test reason 1',",
-									"};",
-									"",
-									"pm.globals.set('VISIT__NEW', JSON.stringify(newValues));",
-									"Object.keys(newValues).forEach((x) => {",
-									"    pm.globals.set(`VISIT__NEW--${x}`, newValues[x]);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"startDate\": \"{{VISIT__NEW--startDate}}\",\n    \"endDate\": \"{{VISIT__NEW--endDate}}\",\n    \"reason\": \"{{VISIT__NEW--reason}}\",\n    \"animalId\": \"{{VISIT__NEW--animalId}}\"\n}"
-						},
-						"url": {
-							"raw": "{{API_URL}}/visits",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"visits"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/animals",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "c81d9915-b982-4d14-9274-b02c0b78afff",
-								"type": "text/javascript",
-								"exec": [
-									""
-								]
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "58f19ccc-b72b-4444-9cd8-470245aa34a3",
-								"type": "text/javascript",
-								"exec": [
-									"const animals = pm.response.json();",
-									"",
-									"pm.test('should have a `200` response code', () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test('should return an array of animals', () => {",
-									"    pm.expect(animals.length).to.be.above(0);",
-									"});",
-									"",
-									"pm.test('should include the animal created', () => {",
-									"    const animal = animals.filter(x => x.id === pm.globals.get('ANIMAL--id'));",
-									"    pm.expect(animal.length).to.equal(1);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "{{API_URL}}/animals",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"animals"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/animals/{id}",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "11e5fb86-bc59-441d-bc70-0c68cc2839e9",
-								"type": "text/javascript",
-								"exec": [
-									"const animal = pm.response.json();",
-									"",
-									"pm.test('should have a `200` response code', () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test('should return a `Animal` type', () => {",
-									"    pm.expect(animal.type).to.equal('animal');",
-									"});",
-									"",
-									"pm.test('should return the id', () => {",
-									"    pm.expect(animal.id).to.exist;",
-									"});",
-									"",
-									"pm.test('should return the correct attributes', () => {",
-									"    pm.expect(animal).to.have.own.property('attributes');",
-									"    const attributes = JSON.parse(pm.globals.get('ANIMAL__NEW'));",
-									"    Object.keys(attributes).forEach((key) => {",
-									"        pm.expect(animal.attributes[key]).to.equal(attributes[key]);",
-									"    });",
-									"});",
-									"",
-									"pm.test('should set the updated and created timestamps', () => {",
-									"    pm.expect(animal.attributes).to.have.own.property('createdAt'); ",
-									"    pm.expect(animal.attributes).to.have.own.property('updatedAt'); ",
-									"});",
-									"",
-									"pm.test('should return links', () => {",
-									"    pm.expect(animal).to.have.own.property('links');",
-									"    pm.expect(animal.links).to.have.own.property('self');",
-									"});",
-									"",
-									"pm.test('should return relationship of visits with links and data', () => {",
-									"    pm.expect(animal).to.have.own.property('relationships');",
-									"    pm.expect(animal.relationships).to.have.own.property('visits');",
-									"    pm.expect(animal.relationships.visits).to.have.own.property('data');",
-									"    pm.expect(animal.relationships.visits).to.have.own.property('links');",
-									"});",
-									"",
-									"pm.test('should contain the visit relationship created', () => {",
-									"    pm.expect(animal.relationships.visits.data[0].id).to.equal(pm.globals.get('VISIT--id'));",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "{{API_URL}}/animals/{{ANIMAL--id}}",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"animals",
-								"{{ANIMAL--id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/animals/{id}/visits",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "d773df45-7f23-486b-945c-9b242d9b59e6",
-								"type": "text/javascript",
-								"exec": [
-									"const visits = pm.response.json();",
-									"",
-									"pm.test('should have a `200` response code', () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test('should return an array of visits', () => {",
-									"    pm.expect(visits.length).to.be.above(0);",
-									"    pm.expect(visits[0].type).to.equal('visit');",
-									"});",
-									"",
-									"pm.test('should contain the visit created', () => {",
-									"    pm.expect(visits[0].id).to.equal(pm.globals.get('VISIT--id'));",
-									"});",
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "{{API_URL}}/animals/{{ANIMAL--id}}/visits",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"animals",
-								"{{ANIMAL--id}}",
-								"visits"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/animals/{id}/visits/{visitId}",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "13d08dd3-91de-429a-a088-b33a5882993d",
-								"type": "text/javascript",
-								"exec": [
-									"const visit = pm.response.json();",
-									"",
-									"pm.test('should have a `200` response code', () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test('should return the visit created', () => {",
-									"    pm.expect(visit.id).to.equal(pm.globals.get('VISIT--id'));",
-									"    pm.expect(visit.type).to.equal('visit');",
-									"});",
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"url": {
-							"raw": "{{API_URL}}/animals/{{ANIMAL--id}}/visits/{{VISIT--id}}",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"animals",
-								"{{ANIMAL--id}}",
-								"visits",
-								"{{VISIT--id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/animals/{id}",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "472dbca0-2580-4c85-a53c-d98afb080d84",
-								"type": "text/javascript",
-								"exec": [
-									"// values for edited animal",
-									"const editValues = {",
-									"    name: 'furball',",
-									"    age: '22',",
-									"    type: 'cat',",
-									"    ownerFirstName: 'bruce',",
-									"    ownerLastName: 'lee',",
-									"};",
-									"",
-									"pm.globals.set('ANIMAL__EDIT', JSON.stringify(editValues));",
-									"Object.keys(editValues).forEach((x) => {",
-									"    pm.globals.set(`ANIMAL__EDIT--${x}`, editValues[x]);",
-									"});"
-								]
-							}
-						},
-						{
-							"listen": "test",
-							"script": {
-								"id": "4cbcad3e-6745-4409-91af-5829286c7266",
-								"type": "text/javascript",
-								"exec": [
-									"const animal = pm.response.json();",
-									"",
-									"pm.test('should have a `200` response code', () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test('should return a type', () => {",
-									"    pm.expect(animal.type).to.equal('animal');",
-									"});",
-									"",
-									"pm.test('should return the same id', () => {",
-									"    pm.expect(animal.id).to.equal(pm.globals.get('ANIMAL--id'));",
-									"});",
-									"",
-									"pm.test('should return the updated attributes', () => {",
-									"    pm.expect(animal).to.have.own.property('attributes');",
-									"    const attributes = JSON.parse(pm.globals.get('ANIMAL__EDIT'));",
-									"    Object.keys(attributes).forEach((key) => {",
-									"        pm.expect(animal.attributes[key]).to.equal(attributes[key]);",
-									"    });",
-									"});",
-									"",
-									"pm.test('should have updated and created timestamps', () => {",
-									"    pm.expect(animal.attributes).to.have.own.property('createdAt'); ",
-									"    pm.expect(animal.attributes).to.have.own.property('updatedAt'); ",
-									"});",
-									"",
-									"pm.test('should return links', () => {",
-									"    pm.expect(animal).to.have.own.property('links');",
-									"    pm.expect(animal.links).to.have.own.property('self');",
-									"});",
-									"",
-									"",
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"name\": \"{{ANIMAL__EDIT--name}}\",\n    \"age\": \"{{ANIMAL__EDIT--age}}\",\n    \"type\": \"{{ANIMAL__EDIT--type}}\",\n    \"ownerFirstName\": \"{{ANIMAL__EDIT--ownerFirstName}}\",\n    \"ownerLastName\": \"{{ANIMAL__EDIT--ownerLastName}}\"\n}"
-						},
-						"url": {
-							"raw": "{{API_URL}}/animals/{{ANIMAL--id}}",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"animals",
-								"{{ANIMAL--id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/animals/{id}",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "a46c12d6-23b1-42f8-bb87-297173db9ea2",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test('should have a `204` response code', () => {",
-									"    pm.response.to.have.status(204);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{API_URL}}/animals/{{ANIMAL--id}}",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"animals",
-								"{{ANIMAL--id}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/visits/{id} (TEARDOWN)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "d09ea256-50d3-4347-8cb2-af3da4ee7d47",
-								"type": "text/javascript",
-								"exec": [
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{API_URL}}/visits/{{VISIT--id}}",
-							"host": [
-								"{{API_URL}}"
-							],
-							"path": [
-								"visits",
-								"{{VISIT--id}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		}
-	]
+  "info": {
+    "_postman_id": "348495cb-7618-448e-9d90-f800708c8800",
+    "name": "osu-final",
+    "schema":
+      "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Visit",
+      "description": "",
+      "item": [
+        {
+          "name": "/animals (SETUP-1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "a72e2396-3384-47c2-97ff-cb18d783e176",
+                "type": "text/javascript",
+                "exec": [
+                  "const animal = pm.response.json();",
+                  "",
+                  "// this id will be used for future tests",
+                  "pm.globals.set(\"ANIMAL__NEW--id\", animal.id);"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "401dfddb-fb04-41d3-8a31-c2275c2b39f3",
+                "type": "text/javascript",
+                "exec": [
+                  "const newValues = {",
+                  "    name: 'woofy',",
+                  "    age: '11',",
+                  "    type: 'dog',",
+                  "    weight: '34',",
+                  "};",
+                  "",
+                  "pm.globals.set('ANIMAL__NEW', JSON.stringify(newValues));",
+                  "Object.keys(newValues).forEach((x) => {",
+                  "    pm.globals.set(`ANIMAL__NEW--${x}`, newValues[x]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw":
+                "{\n\t\"name\": \"{{ANIMAL__NEW--name}}\",\n    \"age\": \"{{ANIMAL__NEW--age}}\",\n    \"type\": \"{{ANIMAL__NEW--type}}\",\n    \"weight\": \"{{ANIMAL__NEW--weight}}\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/animals",
+              "host": ["{{API_URL}}"],
+              "path": ["animals"]
+            },
+            "description": "setup animal, as visits require an animal."
+          },
+          "response": []
+        },
+        {
+          "name": "/visits",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "4cb849e5-8cbf-42f9-b3c0-75609389e7ba",
+                "type": "text/javascript",
+                "exec": [
+                  "const visit = pm.response.json();",
+                  "",
+                  "// this id will be used for future tests",
+                  "pm.globals.set(\"VISIT__NEW--id\", visit.id);",
+                  "",
+                  "pm.test('should have a `201` response code', () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('should return a type', () => {",
+                  "    pm.expect(visit.type).to.equal('visit');",
+                  "});",
+                  "",
+                  "pm.test('should return the new id', () => {",
+                  "    pm.expect(visit.id).to.exist;",
+                  "});",
+                  "",
+                  "pm.test('should return the correct attributes', () => {",
+                  "    pm.expect(visit).to.have.own.property('attributes');",
+                  "    const attributes = JSON.parse(pm.globals.get('VISIT__NEW'));",
+                  "    Object.keys(attributes).forEach((key) => {",
+                  "        pm.expect(visit.attributes[key]).to.equal(attributes[key]);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test('should set the updated and created timestamps', () => {",
+                  "    pm.expect(visit.attributes).to.have.own.property('createdAt'); ",
+                  "    pm.expect(visit.attributes).to.have.own.property('updatedAt'); ",
+                  "});",
+                  "",
+                  "pm.test('should return links', () => {",
+                  "    pm.expect(visit).to.have.own.property('links');",
+                  "    pm.expect(visit.links).to.have.own.property('self');",
+                  "});",
+                  ""
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "b133cc67-204f-4f99-b3a3-bed80b4acfdc",
+                "type": "text/javascript",
+                "exec": [
+                  "// values for new visit",
+                  "const newValues = {",
+                  "    animalId: pm.globals.get('ANIMAL__NEW--id'),",
+                  "    startDate: '2018-05-25T02:34:41.637Z',",
+                  "    endDate: '2018-05-25T04:34:41.637Z',",
+                  "    reason: 'test reason 1',",
+                  "};",
+                  "",
+                  "pm.globals.set('VISIT__NEW', JSON.stringify(newValues));",
+                  "Object.keys(newValues).forEach((x) => {",
+                  "    pm.globals.set(`VISIT__NEW--${x}`, newValues[x]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw":
+                "{\n\t\"startDate\": \"{{VISIT__NEW--startDate}}\",\n    \"endDate\": \"{{VISIT__NEW--endDate}}\",\n    \"reason\": \"{{VISIT__NEW--reason}}\",\n    \"animalId\": \"{{VISIT__NEW--animalId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/visits",
+              "host": ["{{API_URL}}"],
+              "path": ["visits"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/visits",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "c81d9915-b982-4d14-9274-b02c0b78afff",
+                "type": "text/javascript",
+                "exec": [""]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "b867d407-c763-41ea-9f46-4369c0c377cb",
+                "type": "text/javascript",
+                "exec": [
+                  "const visits = pm.response.json();",
+                  "",
+                  "pm.test('should have a `200` response code', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('should return an array of visits', () => {",
+                  "    pm.expect(visits.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test('should include the visit created', () => {",
+                  "    const visit = visits.filter(x => x.id === pm.globals.get('VISIT__NEW--id'));",
+                  "    pm.expect(visit.length).to.equal(1);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {},
+            "url": {
+              "raw": "{{API_URL}}/visits",
+              "host": ["{{API_URL}}"],
+              "path": ["visits"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/visits/{id}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "765ceafa-0c0c-4757-94cc-e87e074da22c",
+                "type": "text/javascript",
+                "exec": [
+                  "const visit = pm.response.json();",
+                  "",
+                  "pm.test('should have a `200` response code', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('should return a `Visit` type', () => {",
+                  "    pm.expect(visit.type).to.equal('visit');",
+                  "});",
+                  "",
+                  "pm.test('should return the id', () => {",
+                  "    pm.expect(visit.id).to.exist;",
+                  "});",
+                  "",
+                  "pm.test('should return the correct attributes', () => {",
+                  "    pm.expect(visit).to.have.own.property('attributes');",
+                  "    const attributes = JSON.parse(pm.globals.get('VISIT__NEW'));",
+                  "    Object.keys(attributes).forEach((key) => {",
+                  "        pm.expect(visit.attributes[key]).to.equal(attributes[key]);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test('should set the updated and created timestamps', () => {",
+                  "    pm.expect(visit.attributes).to.have.own.property('createdAt'); ",
+                  "    pm.expect(visit.attributes).to.have.own.property('updatedAt'); ",
+                  "});",
+                  "",
+                  "pm.test('should return links', () => {",
+                  "    pm.expect(visit).to.have.own.property('links');",
+                  "    pm.expect(visit.links).to.have.own.property('self');",
+                  "});",
+                  ""
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {},
+            "url": {
+              "raw": "{{API_URL}}/visits/{{VISIT__NEW--id}}",
+              "host": ["{{API_URL}}"],
+              "path": ["visits", "{{VISIT__NEW--id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/animals (SETUP-2)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "fc812025-687f-4a57-9ee8-2723ba52b330",
+                "type": "text/javascript",
+                "exec": [
+                  "const animal = pm.response.json();",
+                  "",
+                  "// this id will be used for future tests",
+                  "pm.globals.set(\"ANIMAL__EDIT--id\", animal.id);"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "5b6279d0-2b4a-41c0-ac77-5716407bf37d",
+                "type": "text/javascript",
+                "exec": [
+                  "const newValues = {",
+                  "    name: 'foo',",
+                  "    age: '99',",
+                  "    type: 'cat',",
+                  "    weigth: '4',",
+                  "};",
+                  "",
+                  "pm.globals.set('ANIMAL__EDIT', JSON.stringify(newValues));",
+                  "Object.keys(newValues).forEach((x) => {",
+                  "    pm.globals.set(`ANIMAL__EDIT--${x}`, newValues[x]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw":
+                "{\n\t\"name\": \"{{ANIMAL__NEW--name}}\",\n    \"age\": \"{{ANIMAL__NEW--age}}\",\n    \"type\": \"{{ANIMAL__NEW--type}}\",\n    \"weight\": \"{{ANIMAL__NEW--weight}}\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/animals",
+              "host": ["{{API_URL}}"],
+              "path": ["animals"]
+            },
+            "description": "setup animal, as visits require an animal."
+          },
+          "response": []
+        },
+        {
+          "name": "/visits/{id}",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "72ee3d00-57bc-4ef7-a581-c89de27cd1b1",
+                "type": "text/javascript",
+                "exec": [
+                  "// values for edited visit",
+                  "const editValues = {",
+                  "    animalId: pm.globals.get('ANIMAL__EDIT--id'),",
+                  "    startDate: '2018-01-25T02:34:41.637Z',",
+                  "    endDate: '2018-01-25T04:34:41.637Z',",
+                  "    reason: 'test reason 2',",
+                  "};",
+                  "",
+                  "pm.globals.set('VISIT__EDIT', JSON.stringify(editValues));",
+                  "Object.keys(editValues).forEach((x) => {",
+                  "    pm.globals.set(`VISIT__EDIT--${x}`, editValues[x]);",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "c627df7f-b7c3-40db-bc1a-b82ea8bf839e",
+                "type": "text/javascript",
+                "exec": [
+                  "const visit = pm.response.json();",
+                  "",
+                  "pm.test('should have a `200` response code', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('should return a type', () => {",
+                  "    pm.expect(visit.type).to.equal('visit');",
+                  "});",
+                  "",
+                  "pm.test('should return the same id', () => {",
+                  "    pm.expect(visit.id).to.equal(pm.globals.get('VISIT__NEW--id'));",
+                  "});",
+                  "",
+                  "pm.test('should return the updated attributes', () => {",
+                  "    pm.expect(visit).to.have.own.property('attributes');",
+                  "    const attributes = JSON.parse(pm.globals.get('VISIT__EDIT'));",
+                  "    Object.keys(attributes).forEach((key) => {",
+                  "        pm.expect(visit.attributes[key]).to.equal(attributes[key]);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test('should have updated and created timestamps', () => {",
+                  "    pm.expect(visit.attributes).to.have.own.property('createdAt'); ",
+                  "    pm.expect(visit.attributes).to.have.own.property('updatedAt'); ",
+                  "});",
+                  "",
+                  "pm.test('should return links', () => {",
+                  "    pm.expect(visit).to.have.own.property('links');",
+                  "    pm.expect(visit.links).to.have.own.property('self');",
+                  "});",
+                  "",
+                  "",
+                  ""
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw":
+                "{\n\t\"startDate\": \"{{VISIT__EDIT--startDate}}\",\n    \"endDate\": \"{{VISIT__EDIT--endDate}}\",\n    \"reason\": \"{{VISIT__EDIT--reason}}\",\n    \"animalId\": \"{{VISIT__EDIT--animalId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/visits/{{VISIT__NEW--id}}",
+              "host": ["{{API_URL}}"],
+              "path": ["visits", "{{VISIT__NEW--id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/visits/{id}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "72af0ad2-902d-40d6-af3a-d29ec138cf53",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('should have a `204` response code', () => {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{API_URL}}/visits/{{VISIT__NEW--id}}",
+              "host": ["{{API_URL}}"],
+              "path": ["visits", "{{VISIT__NEW--id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/animals/{id} (TEARDOWN-1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "3bfe5b7b-33fb-44aa-811e-1c9b47cba8ee",
+                "type": "text/javascript",
+                "exec": [""]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{API_URL}}/animals/{{ANIMAL__NEW--id}}",
+              "host": ["{{API_URL}}"],
+              "path": ["animals", "{{ANIMAL__NEW--id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/animals/{id} (TEARDOWN-2)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "3bfe5b7b-33fb-44aa-811e-1c9b47cba8ee",
+                "type": "text/javascript",
+                "exec": [""]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{API_URL}}/animals/{{ANIMAL__EDIT--id}}",
+              "host": ["{{API_URL}}"],
+              "path": ["animals", "{{ANIMAL__EDIT--id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Animal",
+      "description": "",
+      "item": [
+        {
+          "name": "/animals",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "ac67658a-260d-4f5f-918f-b43864793de1",
+                "type": "text/javascript",
+                "exec": [
+                  "const animal = pm.response.json();",
+                  "",
+                  "// this id will be used for future tests",
+                  "pm.globals.set(\"ANIMAL--id\", animal.id);",
+                  "",
+                  "pm.test('should have a `201` response code', () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('should return a type', () => {",
+                  "    pm.expect(animal.type).to.equal('animal');",
+                  "});",
+                  "",
+                  "pm.test('should return the new id', () => {",
+                  "    pm.expect(animal.id).to.exist;",
+                  "});",
+                  "",
+                  "pm.test('should return the correct attributes', () => {",
+                  "    pm.expect(animal).to.have.own.property('attributes');",
+                  "    const attributes = JSON.parse(pm.globals.get('ANIMAL__NEW'));",
+                  "    Object.keys(attributes).forEach((key) => {",
+                  "        pm.expect(animal.attributes[key]).to.equal(attributes[key]);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test('should set the updated and created timestamps', () => {",
+                  "    pm.expect(animal.attributes).to.have.own.property('createdAt'); ",
+                  "    pm.expect(animal.attributes).to.have.own.property('updatedAt'); ",
+                  "});",
+                  "",
+                  "pm.test('should return links', () => {",
+                  "    pm.expect(animal).to.have.own.property('links');",
+                  "    pm.expect(animal.links).to.have.own.property('self');",
+                  "});",
+                  "",
+                  "pm.test('should return relationship of visits', () => {",
+                  "    pm.expect(animal).to.have.own.property('relationships');",
+                  "    pm.expect(animal.relationships).to.have.own.property('visits');",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "c378b4a8-c3ae-4df4-b517-7f2c01556bfa",
+                "type": "text/javascript",
+                "exec": [
+                  "// values for new animal",
+                  "const newValues = {",
+                  "    name: 'woofy',",
+                  "    age: '11',",
+                  "    type: 'dog',",
+                  "    weight: '20',",
+                  "};",
+                  "",
+                  "pm.globals.set('ANIMAL__NEW', JSON.stringify(newValues));",
+                  "Object.keys(newValues).forEach((x) => {",
+                  "    pm.globals.set(`ANIMAL__NEW--${x}`, newValues[x]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw":
+                "{\n\t\"name\": \"{{ANIMAL__NEW--name}}\",\n    \"age\": \"{{ANIMAL__NEW--age}}\",\n    \"type\": \"{{ANIMAL__NEW--type}}\",\n    \"weight\": \"{{ANIMAL__NEW--weight}}\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/animals",
+              "host": ["{{API_URL}}"],
+              "path": ["animals"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/visits (SETUP)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "198b7939-fc41-45fb-b5ed-f52b0bafbd11",
+                "type": "text/javascript",
+                "exec": [
+                  "const visit = pm.response.json();",
+                  "",
+                  "// this id will be used for future tests",
+                  "pm.globals.set(\"VISIT--id\", visit.id);"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "6d321578-c0e9-499a-9bf2-0a9ee81538ba",
+                "type": "text/javascript",
+                "exec": [
+                  "// values for new visit",
+                  "const newValues = {",
+                  "    animalId: pm.globals.get('ANIMAL--id'),",
+                  "    startDate: '2018-05-25T02:34:41.637Z',",
+                  "    endDate: '2018-05-25T04:34:41.637Z',",
+                  "    reason: 'test reason 1',",
+                  "};",
+                  "",
+                  "pm.globals.set('VISIT__NEW', JSON.stringify(newValues));",
+                  "Object.keys(newValues).forEach((x) => {",
+                  "    pm.globals.set(`VISIT__NEW--${x}`, newValues[x]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw":
+                "{\n\t\"startDate\": \"{{VISIT__NEW--startDate}}\",\n    \"endDate\": \"{{VISIT__NEW--endDate}}\",\n    \"reason\": \"{{VISIT__NEW--reason}}\",\n    \"animalId\": \"{{VISIT__NEW--animalId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/visits",
+              "host": ["{{API_URL}}"],
+              "path": ["visits"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/animals",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "c81d9915-b982-4d14-9274-b02c0b78afff",
+                "type": "text/javascript",
+                "exec": [""]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "58f19ccc-b72b-4444-9cd8-470245aa34a3",
+                "type": "text/javascript",
+                "exec": [
+                  "const animals = pm.response.json();",
+                  "",
+                  "pm.test('should have a `200` response code', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('should return an array of animals', () => {",
+                  "    pm.expect(animals.length).to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.test('should include the animal created', () => {",
+                  "    const animal = animals.filter(x => x.id === pm.globals.get('ANIMAL--id'));",
+                  "    pm.expect(animal.length).to.equal(1);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {},
+            "url": {
+              "raw": "{{API_URL}}/animals",
+              "host": ["{{API_URL}}"],
+              "path": ["animals"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/animals/{id}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "11e5fb86-bc59-441d-bc70-0c68cc2839e9",
+                "type": "text/javascript",
+                "exec": [
+                  "const animal = pm.response.json();",
+                  "",
+                  "pm.test('should have a `200` response code', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('should return a `Animal` type', () => {",
+                  "    pm.expect(animal.type).to.equal('animal');",
+                  "});",
+                  "",
+                  "pm.test('should return the id', () => {",
+                  "    pm.expect(animal.id).to.exist;",
+                  "});",
+                  "",
+                  "pm.test('should return the correct attributes', () => {",
+                  "    pm.expect(animal).to.have.own.property('attributes');",
+                  "    const attributes = JSON.parse(pm.globals.get('ANIMAL__NEW'));",
+                  "    Object.keys(attributes).forEach((key) => {",
+                  "        pm.expect(animal.attributes[key]).to.equal(attributes[key]);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test('should set the updated and created timestamps', () => {",
+                  "    pm.expect(animal.attributes).to.have.own.property('createdAt'); ",
+                  "    pm.expect(animal.attributes).to.have.own.property('updatedAt'); ",
+                  "});",
+                  "",
+                  "pm.test('should return links', () => {",
+                  "    pm.expect(animal).to.have.own.property('links');",
+                  "    pm.expect(animal.links).to.have.own.property('self');",
+                  "});",
+                  "",
+                  "pm.test('should return relationship of visits with links and data', () => {",
+                  "    pm.expect(animal).to.have.own.property('relationships');",
+                  "    pm.expect(animal.relationships).to.have.own.property('visits');",
+                  "    pm.expect(animal.relationships.visits).to.have.own.property('data');",
+                  "    pm.expect(animal.relationships.visits).to.have.own.property('links');",
+                  "});",
+                  "",
+                  "pm.test('should contain the visit relationship created', () => {",
+                  "    pm.expect(animal.relationships.visits.data[0].id).to.equal(pm.globals.get('VISIT--id'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {},
+            "url": {
+              "raw": "{{API_URL}}/animals/{{ANIMAL--id}}",
+              "host": ["{{API_URL}}"],
+              "path": ["animals", "{{ANIMAL--id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/animals/{id}/visits",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "d773df45-7f23-486b-945c-9b242d9b59e6",
+                "type": "text/javascript",
+                "exec": [
+                  "const visits = pm.response.json();",
+                  "",
+                  "pm.test('should have a `200` response code', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('should return an array of visits', () => {",
+                  "    pm.expect(visits.length).to.be.above(0);",
+                  "    pm.expect(visits[0].type).to.equal('visit');",
+                  "});",
+                  "",
+                  "pm.test('should contain the visit created', () => {",
+                  "    pm.expect(visits[0].id).to.equal(pm.globals.get('VISIT--id'));",
+                  "});",
+                  ""
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {},
+            "url": {
+              "raw": "{{API_URL}}/animals/{{ANIMAL--id}}/visits",
+              "host": ["{{API_URL}}"],
+              "path": ["animals", "{{ANIMAL--id}}", "visits"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/animals/{id}/visits/{visitId}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "13d08dd3-91de-429a-a088-b33a5882993d",
+                "type": "text/javascript",
+                "exec": [
+                  "const visit = pm.response.json();",
+                  "",
+                  "pm.test('should have a `200` response code', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('should return the visit created', () => {",
+                  "    pm.expect(visit.id).to.equal(pm.globals.get('VISIT--id'));",
+                  "    pm.expect(visit.type).to.equal('visit');",
+                  "});",
+                  ""
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {},
+            "url": {
+              "raw": "{{API_URL}}/animals/{{ANIMAL--id}}/visits/{{VISIT--id}}",
+              "host": ["{{API_URL}}"],
+              "path": ["animals", "{{ANIMAL--id}}", "visits", "{{VISIT--id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/animals/{id}",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "bd72ebc8-bd50-4f1b-81dc-328fa02f92eb",
+                "type": "text/javascript",
+                "exec": [
+                  "// values for edited animal",
+                  "const editValues = {",
+                  "    name: 'furball',",
+                  "    age: '22',",
+                  "    type: 'cat',",
+                  "    weight: '340',",
+                  "};",
+                  "",
+                  "pm.globals.set('ANIMAL__EDIT', JSON.stringify(editValues));",
+                  "Object.keys(editValues).forEach((x) => {",
+                  "    pm.globals.set(`ANIMAL__EDIT--${x}`, editValues[x]);",
+                  "});"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "id": "4cbcad3e-6745-4409-91af-5829286c7266",
+                "type": "text/javascript",
+                "exec": [
+                  "const animal = pm.response.json();",
+                  "",
+                  "pm.test('should have a `200` response code', () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('should return a type', () => {",
+                  "    pm.expect(animal.type).to.equal('animal');",
+                  "});",
+                  "",
+                  "pm.test('should return the same id', () => {",
+                  "    pm.expect(animal.id).to.equal(pm.globals.get('ANIMAL--id'));",
+                  "});",
+                  "",
+                  "pm.test('should return the updated attributes', () => {",
+                  "    pm.expect(animal).to.have.own.property('attributes');",
+                  "    const attributes = JSON.parse(pm.globals.get('ANIMAL__EDIT'));",
+                  "    Object.keys(attributes).forEach((key) => {",
+                  "        pm.expect(animal.attributes[key]).to.equal(attributes[key]);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test('should have updated and created timestamps', () => {",
+                  "    pm.expect(animal.attributes).to.have.own.property('createdAt'); ",
+                  "    pm.expect(animal.attributes).to.have.own.property('updatedAt'); ",
+                  "});",
+                  "",
+                  "pm.test('should return links', () => {",
+                  "    pm.expect(animal).to.have.own.property('links');",
+                  "    pm.expect(animal.links).to.have.own.property('self');",
+                  "});",
+                  "",
+                  "",
+                  ""
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw":
+                "{\n\t\"name\": \"{{ANIMAL__EDIT--name}}\",\n    \"age\": \"{{ANIMAL__EDIT--age}}\",\n    \"type\": \"{{ANIMAL__EDIT--type}}\",\n    \"weight\": \"{{ANIMAL__EDIT--weight}}\"\n}"
+            },
+            "url": {
+              "raw": "{{API_URL}}/animals/{{ANIMAL--id}}",
+              "host": ["{{API_URL}}"],
+              "path": ["animals", "{{ANIMAL--id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/animals/{id}",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "a46c12d6-23b1-42f8-bb87-297173db9ea2",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('should have a `204` response code', () => {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{API_URL}}/animals/{{ANIMAL--id}}",
+              "host": ["{{API_URL}}"],
+              "path": ["animals", "{{ANIMAL--id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/visits/{id} (TEARDOWN)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "d09ea256-50d3-4347-8cb2-af3da4ee7d47",
+                "type": "text/javascript",
+                "exec": [""]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "oauth2",
+              "oauth2": [
+                {
+                  "key": "accessToken",
+                  "value": "{{OAUTH_TOKEN}}",
+                  "type": "string"
+                },
+                {
+                  "key": "tokenType",
+                  "value": "Bearer",
+                  "type": "string"
+                },
+                {
+                  "key": "addTokenTo",
+                  "value": "header",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{API_URL}}/visits/{{VISIT--id}}",
+              "host": ["{{API_URL}}"],
+              "path": ["visits", "{{VISIT--id}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
 }
