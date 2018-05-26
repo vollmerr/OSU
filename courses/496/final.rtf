@@ -9,12 +9,28 @@
 CS 496 - Final\
 \
 
-\fs36 Routes
-\fs24 :\
-	- 
-\fs28 \ul Animal
-\fs24 \ulnone \
-		- POST /animals		\
+\fs48 Animal\
+
+\fs24 	
+\fs36 Schema\
+		
+\fs24 id			string		primary key\
+		name			string\
+		age			string (not number due to cannot figure out how to make number when using postman)\
+		type			string\
+		visits			array of Visit ids\
+		ownerFirstName	string\
+		ownerLastName	string\
+		createdAt		datetime\
+		updatedAt		datetime
+\fs36 \
+
+\fs24 \
+	
+\fs36 Routes\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\fs24 \cf0 		- POST /animals		\
 			- creates a new animal\
 			- body\
 				- name - string, required\
@@ -23,9 +39,10 @@ CS 496 - Final\
 				- ownerFirstName - string, required\
 				- ownerLastName - string, required\
 			- response 201 (Created)\
-				- type - \'91Animal\'92\
+				- type - \'91animal\'92\
 				- id - new uuid of animal generated\
 				- attributes - object containing attributes related to animal, including ones passed in body\
+				- relationships - object containing relationships, including visits\
 				- links - object containing links related to the animal\
 \
 		- GET /animals \
@@ -37,42 +54,54 @@ CS 496 - Final\
 			- retrieves single animal by id\
 			- response 200 (OK)\
 				- type - \'91Animal\'92\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 				- id - uuid of animal\
+				- id - uuid of animal\
 				- attributes - object containing attributes related to animal\
+				- relationships - object containing relationships, including visits\
 				- links - object containing links related to the animal\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \
+\
 		- PUT /animals/\{animalId\}\
 			- edits an existing animal by id\
 			- body\
 				- name - string\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 				- age - string\
+				- age - string\
 				- type - string\
 				- ownerFirstName - string\
 				- ownerLastName - string\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 			- response 200 (OK)\
-				- type - \'91Animal\'92\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 				- id - uuid of animal\
+			- response 200 (OK)\
+				- type - \'91animal\'92\
+				- id - uuid of animal\
 				- attributes - object containing attributes related to animal, including updated ones passed in body\
+				- relationships - object containing relationships, including visits\
 				- links - object containing links related to the animal\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \
+\
 		- DELETE /animals/\{animalId\}\
 			- deletes an animal\
-			- TODO: deletes any visits related to animal\
+			- deletes any visits related to animal\
 			- response 204 (No Content)\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \
+
+\fs48 Visit\
+	
+\fs36 Schema\
+		
+\fs24 id			string		primary key\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 		startDate		datetime\
+		endDate		datetime\
+		reason		string\
+		animalId		string\
+		createdAt		datetime\
+		updatedAt		datetime\
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 	- 
-\fs28 \ul Visit
-\fs24 \ulnone \
-		- POST /visits		\
-			- creates a new visit\
-			- TODO: requires animal is created for associated animalId\
+
+\fs36 \cf0 	Routes
+\fs24 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 		- POST /visits		\
+			- creates a new visit			\
+			- adds a visit to associated animal\
 			- body\
 				- startDate - datetime, required\
 				- endDate - datetime, required\
@@ -82,6 +111,7 @@ CS 496 - Final\
 				- type - \'91Visit\'92\
 				- id - new uuid of visit generated\
 				- attributes - object containing attributes related to visit, including ones passed in body\
+				- relationships - object containing relationships, including the animal\
 				- links - object containing links related to the visit\
 \
 		- GET /visits \
@@ -95,10 +125,13 @@ CS 496 - Final\
 				- type - \'91Visit\'92\
 				- id - uuid of visit\
 				- attributes - object containing attributes related to visit\
+				- relationships - object containing relationships, including the animal\
 				- links - object containing links related to the visit\
 \
 		- PUT /visits/\{visitId\}\
 			- edits an existing visit by id\
+			- adds visit to new animals if new animal passed\
+			- removes visit from old animals if new animal passed\
 			- body\
 				- startDate - datetime\
 				- endDate - datetime\
@@ -108,8 +141,10 @@ CS 496 - Final\
 				- type - \'91Visit\'92\
 				- id - uuid of visit\
 				- attributes - object containing attributes related to visit, including updated ones passed in body\
+				- relationships - object containing relationships, including the animal\
 				- links - object containing links related to the visit\
 \
 		- DELETE /visits/\{visitId\}\
-			- deletes an visit\
+			- deletes a visit\
+			- removes from visits array in associated animal\
 			- response 204 (No Content)}
