@@ -10,25 +10,88 @@
 			"description": "",
 			"item": [
 				{
+					"name": "/animals (SETUP-1)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a72e2396-3384-47c2-97ff-cb18d783e176",
+								"type": "text/javascript",
+								"exec": [
+									"const animal = pm.response.json();",
+									"",
+									"// this id will be used for future tests",
+									"pm.globals.set(\"ANIMAL__NEW--id\", animal.id);"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "956904bb-d7f9-44f7-bdce-34105a3ea69a",
+								"type": "text/javascript",
+								"exec": [
+									"const newValues = {",
+									"    name: 'woofy',",
+									"    age: '11',",
+									"    type: 'dog',",
+									"    ownerFirstName: 'rick',",
+									"    ownerLastName: 'james',",
+									"};",
+									"",
+									"pm.globals.set('ANIMAL__NEW', JSON.stringify(newValues));",
+									"Object.keys(newValues).forEach((x) => {",
+									"    pm.globals.set(`ANIMAL__NEW--${x}`, newValues[x]);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"{{ANIMAL__NEW--name}}\",\n    \"age\": \"{{ANIMAL__NEW--age}}\",\n    \"type\": \"{{ANIMAL__NEW--type}}\",\n    \"ownerFirstName\": \"{{ANIMAL__NEW--ownerFirstName}}\",\n    \"ownerLastName\": \"{{ANIMAL__NEW--ownerLastName}}\"\n}"
+						},
+						"url": {
+							"raw": "{{API_URL}}/animals",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"animals"
+							]
+						},
+						"description": "setup animal, as visits require an animal."
+					},
+					"response": []
+				},
+				{
 					"name": "/visits",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "08d972cb-4866-453a-9062-d34b8c99cdb8",
+								"id": "4cb849e5-8cbf-42f9-b3c0-75609389e7ba",
 								"type": "text/javascript",
 								"exec": [
 									"const visit = pm.response.json();",
 									"",
 									"// this id will be used for future tests",
-									"pm.globals.set(\"VISIT--id\", visit.id);",
+									"pm.globals.set(\"VISIT__NEW--id\", visit.id);",
 									"",
 									"pm.test('should have a `201` response code', () => {",
 									"    pm.response.to.have.status(201);",
 									"});",
 									"",
 									"pm.test('should return a type', () => {",
-									"    pm.expect(visit.type).to.equal('Visit');",
+									"    pm.expect(visit.type).to.equal('visit');",
 									"});",
 									"",
 									"pm.test('should return the new id', () => {",
@@ -59,15 +122,12 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "059eab91-82e1-4c04-967a-c91cd6168478",
+								"id": "e2f1fe69-fcf0-47ed-afda-8fbe99f082c0",
 								"type": "text/javascript",
 								"exec": [
-									"// create new animal",
-									"const animalId = '123';",
-									"",
 									"// values for new visit",
 									"const newValues = {",
-									"    animalId,",
+									"    animalId: \"pm.globals.get('ANIMAL__NEW--id')\",",
 									"    startDate: '2018-05-25T02:34:41.637Z',",
 									"    endDate: '2018-05-25T04:34:41.637Z',",
 									"    reason: 'test reason 1',",
@@ -121,7 +181,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "11b78bc5-46d9-4713-8fce-539510063ba9",
+								"id": "b867d407-c763-41ea-9f46-4369c0c377cb",
 								"type": "text/javascript",
 								"exec": [
 									"const visits = pm.response.json();",
@@ -135,7 +195,7 @@
 									"});",
 									"",
 									"pm.test('should include the visit created', () => {",
-									"    const visit = visits.filter(x => x.id === pm.globals.get('VISIT--id'));",
+									"    const visit = visits.filter(x => x.id === pm.globals.get('VISIT__NEW--id'));",
 									"    pm.expect(visit.length).to.equal(1);",
 									"});"
 								]
@@ -164,7 +224,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "6e794e61-5d91-4011-b485-9f2ccabf2ace",
+								"id": "765ceafa-0c0c-4757-94cc-e87e074da22c",
 								"type": "text/javascript",
 								"exec": [
 									"const visit = pm.response.json();",
@@ -174,7 +234,7 @@
 									"});",
 									"",
 									"pm.test('should return a `Visit` type', () => {",
-									"    pm.expect(visit.type).to.equal('Visit');",
+									"    pm.expect(visit.type).to.equal('visit');",
 									"});",
 									"",
 									"pm.test('should return the id', () => {",
@@ -208,15 +268,78 @@
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "{{API_URL}}/visits/{{VISIT--id}}",
+							"raw": "{{API_URL}}/visits/{{VISIT__NEW--id}}",
 							"host": [
 								"{{API_URL}}"
 							],
 							"path": [
 								"visits",
-								"{{VISIT--id}}"
+								"{{VISIT__NEW--id}}"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "/animals (SETUP-2)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fc812025-687f-4a57-9ee8-2723ba52b330",
+								"type": "text/javascript",
+								"exec": [
+									"const animal = pm.response.json();",
+									"",
+									"// this id will be used for future tests",
+									"pm.globals.set(\"ANIMAL__EDIT--id\", animal.id);"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "12f3655d-7507-42d1-820d-f3881d66ef30",
+								"type": "text/javascript",
+								"exec": [
+									"const newValues = {",
+									"    name: 'foo',",
+									"    age: '99',",
+									"    type: 'cat',",
+									"    ownerFirstName: 'charley',",
+									"    ownerLastName: 'charles',",
+									"};",
+									"",
+									"pm.globals.set('ANIMAL__EDIT', JSON.stringify(newValues));",
+									"Object.keys(newValues).forEach((x) => {",
+									"    pm.globals.set(`ANIMAL__EDIT--${x}`, newValues[x]);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"{{ANIMAL__NEW--name}}\",\n    \"age\": \"{{ANIMAL__NEW--age}}\",\n    \"type\": \"{{ANIMAL__NEW--type}}\",\n    \"ownerFirstName\": \"{{ANIMAL__NEW--ownerFirstName}}\",\n    \"ownerLastName\": \"{{ANIMAL__NEW--ownerLastName}}\"\n}"
+						},
+						"url": {
+							"raw": "{{API_URL}}/animals",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"animals"
+							]
+						},
+						"description": "setup animal, as visits require an animal."
 					},
 					"response": []
 				},
@@ -226,15 +349,12 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "22a1579f-632a-470d-a229-6bf5eda78e29",
+								"id": "72ee3d00-57bc-4ef7-a581-c89de27cd1b1",
 								"type": "text/javascript",
 								"exec": [
-									"// create new animal",
-									"const animalId = '456';",
-									"",
 									"// values for edited visit",
 									"const editValues = {",
-									"    animalId,",
+									"    animalId: pm.globals.get('ANIMAL__EDIT--id'),",
 									"    startDate: '2018-01-25T02:34:41.637Z',",
 									"    endDate: '2018-01-25T04:34:41.637Z',",
 									"    reason: 'test reason 2',",
@@ -250,7 +370,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f7b90eee-80ca-4f2b-a44c-50ba5f3fb416",
+								"id": "c627df7f-b7c3-40db-bc1a-b82ea8bf839e",
 								"type": "text/javascript",
 								"exec": [
 									"const visit = pm.response.json();",
@@ -260,11 +380,11 @@
 									"});",
 									"",
 									"pm.test('should return a type', () => {",
-									"    pm.expect(visit.type).to.equal('Visit');",
+									"    pm.expect(visit.type).to.equal('visit');",
 									"});",
 									"",
 									"pm.test('should return the same id', () => {",
-									"    pm.expect(visit.id).to.equal(pm.globals.get('VISIT--id'));",
+									"    pm.expect(visit.id).to.equal(pm.globals.get('VISIT__NEW--id'));",
 									"});",
 									"",
 									"pm.test('should return the updated attributes', () => {",
@@ -304,13 +424,13 @@
 							"raw": "{\n\t\"startDate\": \"{{VISIT__EDIT--startDate}}\",\n    \"endDate\": \"{{VISIT__EDIT--endDate}}\",\n    \"reason\": \"{{VISIT__EDIT--reason}}\",\n    \"animalId\": \"{{VISIT__EDIT--animalId}}\"\n}"
 						},
 						"url": {
-							"raw": "{{API_URL}}/visits/{{VISIT--id}}",
+							"raw": "{{API_URL}}/visits/{{VISIT__NEW--id}}",
 							"host": [
 								"{{API_URL}}"
 							],
 							"path": [
 								"visits",
-								"{{VISIT--id}}"
+								"{{VISIT__NEW--id}}"
 							]
 						}
 					},
@@ -345,13 +465,91 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{API_URL}}/visits/{{VISIT--id}}",
+							"raw": "{{API_URL}}/visits/{{VISIT__NEW--id}}",
 							"host": [
 								"{{API_URL}}"
 							],
 							"path": [
 								"visits",
-								"{{VISIT--id}}"
+								"{{VISIT__NEW--id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/animals/{id} (TEARDOWN-1)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3bfe5b7b-33fb-44aa-811e-1c9b47cba8ee",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{API_URL}}/animals/{{ANIMAL__NEW--id}}",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"animals",
+								"{{ANIMAL__NEW--id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/animals/{id} (TEARDOWN-2)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3bfe5b7b-33fb-44aa-811e-1c9b47cba8ee",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{API_URL}}/animals/{{ANIMAL__EDIT--id}}",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"animals",
+								"{{ANIMAL__EDIT--id}}"
 							]
 						}
 					},
@@ -369,7 +567,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b825cad9-dd4e-4cd7-842a-a02e748c6d30",
+								"id": "ac67658a-260d-4f5f-918f-b43864793de1",
 								"type": "text/javascript",
 								"exec": [
 									"const animal = pm.response.json();",
@@ -382,7 +580,7 @@
 									"});",
 									"",
 									"pm.test('should return a type', () => {",
-									"    pm.expect(animal.type).to.equal('Animal');",
+									"    pm.expect(animal.type).to.equal('animal');",
 									"});",
 									"",
 									"pm.test('should return the new id', () => {",
@@ -406,7 +604,11 @@
 									"    pm.expect(animal).to.have.own.property('links');",
 									"    pm.expect(animal.links).to.have.own.property('self');",
 									"});",
-									""
+									"",
+									"pm.test('should return relationship of visits', () => {",
+									"    pm.expect(animal).to.have.own.property('relationships');",
+									"    pm.expect(animal.relationships).to.have.own.property('visits');",
+									"});"
 								]
 							}
 						},
@@ -452,6 +654,68 @@
 							],
 							"path": [
 								"animals"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/visits (SETUP)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "198b7939-fc41-45fb-b5ed-f52b0bafbd11",
+								"type": "text/javascript",
+								"exec": [
+									"const visit = pm.response.json();",
+									"",
+									"// this id will be used for future tests",
+									"pm.globals.set(\"VISIT--id\", visit.id);"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "6d321578-c0e9-499a-9bf2-0a9ee81538ba",
+								"type": "text/javascript",
+								"exec": [
+									"// values for new visit",
+									"const newValues = {",
+									"    animalId: pm.globals.get('ANIMAL--id'),",
+									"    startDate: '2018-05-25T02:34:41.637Z',",
+									"    endDate: '2018-05-25T04:34:41.637Z',",
+									"    reason: 'test reason 1',",
+									"};",
+									"",
+									"pm.globals.set('VISIT__NEW', JSON.stringify(newValues));",
+									"Object.keys(newValues).forEach((x) => {",
+									"    pm.globals.set(`VISIT__NEW--${x}`, newValues[x]);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"startDate\": \"{{VISIT__NEW--startDate}}\",\n    \"endDate\": \"{{VISIT__NEW--endDate}}\",\n    \"reason\": \"{{VISIT__NEW--reason}}\",\n    \"animalId\": \"{{VISIT__NEW--animalId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{API_URL}}/visits",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"visits"
 							]
 						}
 					},
@@ -516,7 +780,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "259f1d22-ffaa-42e4-9700-874d13c361da",
+								"id": "11e5fb86-bc59-441d-bc70-0c68cc2839e9",
 								"type": "text/javascript",
 								"exec": [
 									"const animal = pm.response.json();",
@@ -526,7 +790,7 @@
 									"});",
 									"",
 									"pm.test('should return a `Animal` type', () => {",
-									"    pm.expect(animal.type).to.equal('Animal');",
+									"    pm.expect(animal.type).to.equal('animal');",
 									"});",
 									"",
 									"pm.test('should return the id', () => {",
@@ -550,7 +814,17 @@
 									"    pm.expect(animal).to.have.own.property('links');",
 									"    pm.expect(animal.links).to.have.own.property('self');",
 									"});",
-									""
+									"",
+									"pm.test('should return relationship of visits with links and data', () => {",
+									"    pm.expect(animal).to.have.own.property('relationships');",
+									"    pm.expect(animal.relationships).to.have.own.property('visits');",
+									"    pm.expect(animal.relationships.visits).to.have.own.property('data');",
+									"    pm.expect(animal.relationships.visits).to.have.own.property('links');",
+									"});",
+									"",
+									"pm.test('should contain the visit relationship created', () => {",
+									"    pm.expect(animal.relationships.visits.data[0].id).to.equal(pm.globals.get('VISIT--id'));",
+									"});"
 								]
 							}
 						}
@@ -567,6 +841,95 @@
 							"path": [
 								"animals",
 								"{{ANIMAL--id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/animals/{id}/visits",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d773df45-7f23-486b-945c-9b242d9b59e6",
+								"type": "text/javascript",
+								"exec": [
+									"const visits = pm.response.json();",
+									"",
+									"pm.test('should have a `200` response code', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('should return an array of visits', () => {",
+									"    pm.expect(visits.length).to.be.above(0);",
+									"    pm.expect(visits[0].type).to.equal('visit');",
+									"});",
+									"",
+									"pm.test('should contain the visit created', () => {",
+									"    pm.expect(visits[0].id).to.equal(pm.globals.get('VISIT--id'));",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{API_URL}}/animals/{{ANIMAL--id}}/visits",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"animals",
+								"{{ANIMAL--id}}",
+								"visits"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/animals/{id}/visits/{visitId}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "13d08dd3-91de-429a-a088-b33a5882993d",
+								"type": "text/javascript",
+								"exec": [
+									"const visit = pm.response.json();",
+									"",
+									"pm.test('should have a `200` response code', () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('should return the visit created', () => {",
+									"    pm.expect(visit.id).to.equal(pm.globals.get('VISIT--id'));",
+									"    pm.expect(visit.type).to.equal('visit');",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{API_URL}}/animals/{{ANIMAL--id}}/visits/{{VISIT--id}}",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"animals",
+								"{{ANIMAL--id}}",
+								"visits",
+								"{{VISIT--id}}"
 							]
 						}
 					},
@@ -600,7 +963,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3edceb23-d92e-4604-bc2e-41ae805bed2d",
+								"id": "4cbcad3e-6745-4409-91af-5829286c7266",
 								"type": "text/javascript",
 								"exec": [
 									"const animal = pm.response.json();",
@@ -610,7 +973,7 @@
 									"});",
 									"",
 									"pm.test('should return a type', () => {",
-									"    pm.expect(animal.type).to.equal('Animal');",
+									"    pm.expect(animal.type).to.equal('animal');",
 									"});",
 									"",
 									"pm.test('should return the same id', () => {",
@@ -672,13 +1035,12 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "34ff516d-ce04-4777-b41f-ffdfd43aebc7",
+								"id": "a46c12d6-23b1-42f8-bb87-297173db9ea2",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test('should have a `204` response code', () => {",
 									"    pm.response.to.have.status(204);",
-									"});",
-									""
+									"});"
 								]
 							}
 						}
@@ -703,6 +1065,45 @@
 							"path": [
 								"animals",
 								"{{ANIMAL--id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/visits/{id} (TEARDOWN)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d09ea256-50d3-4347-8cb2-af3da4ee7d47",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{API_URL}}/visits/{{VISIT--id}}",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"visits",
+								"{{VISIT--id}}"
 							]
 						}
 					},

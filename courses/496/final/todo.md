@@ -11,59 +11,13 @@
 
 # entity 1 - Animal
 
-    [ ] has at least 4 properties - id, name, age, type, owner (just id?), nextVist, visits(just ids?), (self link), last updated, created
-    [ ] create - id (auto), name, age, type, owner, nextVist ? (new visit + link it), visits (empty array), last updated + created (now)
-        [ ] route
-        [ ] model
-        [ ] controller
-        [ ] tests
-        [ ] pdf
-    [ ] read
-        [ ] route
-        [ ] model
-        [ ] controller
-        [ ] tests
-        [ ] pdf
-    [ ] update
-        [ ] route
-        [ ] model
-        [ ] controller
-        [ ] tests
-        [ ] pdf
-    [ ] delete
-        [ ] route
-        [ ] model
-        [ ] controller
-        [ ] tests
-        [ ] pdf
+[ ] only visible if owner
+[ ] swap ownerFullName/last for ownerId?
+
 
 # entity 2 - Visit
 
-    [ ] has at least 4 properties - id, datetime start, datetime end, reason, vet, animal(just id?), (self link), last updated, created
-    [ ] create
-        [ ] route
-        [ ] model
-        [ ] controller
-        [ ] tests
-        [ ] pdf
-    [ ] read
-        [ ] route
-        [ ] model
-        [ ] controller
-        [ ] tests
-        [ ] pdf
-    [ ] update
-        [ ] route
-        [ ] model
-        [ ] controller
-        [ ] tests
-        [ ] pdf
-    [ ] delete
-        [ ] route
-        [ ] model
-        [ ] controller
-        [ ] tests
-        [ ] pdf
+[ ] validate animal exists
 
 # deliverables
 
