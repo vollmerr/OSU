@@ -1,0 +1,7 @@
+{
+  "APP_URL": "http://localhost",
+  "OAUTH2_CLIENT_ID": "client-id",
+  "OAUTH2_CLIENT_SECRET": "client-secret",
+  "OAUTH2_CALLBACK": "http://localhost/auth/google/callback",
+  "MEMCACHE_URL": "redis-url"
+}

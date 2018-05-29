@@ -7,7 +7,6 @@ const Visit = require('../store/Visit');
 //  view all animals
 router.get('/', async (req, res) => {
   const animals = await Animal.read(req.user.id);
-
   if (animals) {
     return res.status(200).json(animals);
   }

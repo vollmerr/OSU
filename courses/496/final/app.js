@@ -3,7 +3,7 @@ const express = require('express');
 const config = require('./config');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const MemcachedStore = require('connect-memcached')(session);
+const MemcachedStore = require('connect-memjs')(session);
 const passport = require('passport');
 
 const auth = require('./utils/auth');
@@ -26,7 +26,7 @@ const sessionConfig = {
 // otherwise fallback to the default MemoryStore in development.
 if (config.get('NODE_ENV') === 'production' && config.get('MEMCACHE_URL')) {
   sessionConfig.store = new MemcachedStore({
-    hosts: [config.get('MEMCACHE_URL')],
+    servers: [config.get('MEMCACHE_URL')],
   });
 }
 
